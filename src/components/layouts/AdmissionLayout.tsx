@@ -280,7 +280,7 @@ export default function AdmissionLayout({
                     <FormControl>
                       <Select onChange={(e) => setFilterType(e.target.value)}>
                         <option value={""}>Select Filter</option>
-                        <option value={"DATE"}>By Date</option>
+                        <option value={"DATE"}>By Enquiry Date</option>
                         <option value={"SOURCE"}>By source.</option>
                       </Select>
                     </FormControl>

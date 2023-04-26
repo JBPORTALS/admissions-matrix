@@ -24,7 +24,7 @@ export default async function DashboardLayout({
           <HStack>
             {params.get("type") == "DATE" && (
               <Tag size={"lg"} colorScheme="purple">
-                date: {params.get("date")}
+                Equiry Date: {params.get("date")}
               </Tag>
             )}
             {params.get("type") == "SOURCE" && (
