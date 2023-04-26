@@ -11,13 +11,6 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const params = useSearchParams();
 
-  if (!params.has("type") || params.get("type") == "")
-    return (
-      <Center h={"full"} pb={"36"}>
-        <Heading size={"lg"}>Not Valid Search Request !</Heading>
-      </Center>
-    );
-
   async function getSearchData(
     type: "DATE" | "SOURCE",
     date: string,
@@ -40,9 +33,9 @@ export default function Page() {
     } catch (e: any) {
       setError("No data found");
     }
-    // setIsLoading(false);
+    setIsLoading(false);
   }
-
+  
   useEffect(() => {
     getSearchData(
       params.get("type") as "SOURCE" | "DATE",
@@ -51,6 +44,13 @@ export default function Page() {
     );
     console.log(data);
   }, [params.get("type"), params.get("date"), params.get("source")]);
+
+  if (!params.has("type") || params.get("type") == "")
+    return (
+      <Center h={"full"} pb={"36"}>
+        <Heading size={"lg"}>Not Valid Search Request !</Heading>
+      </Center>
+    );
 
   if (isLoading)
     return (
