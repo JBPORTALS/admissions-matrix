@@ -12,7 +12,7 @@
     @apply bg-lightgray;
 }
 
-/* .ag-theme-material .ag-header-cell-label{
+.ag-theme-material .ag-header-cell-label{
 font-size: 14px;
 }
 .ag-theme-material{
@@ -26,6 +26,9 @@ font-size: 14px;
     @apply border-r;
     @apply bg-primary;
     @apply text-black;
+}
+.ag-header-row{
+    /* @apply flex; */
 }
 
 .ag-cell{
@@ -47,4 +50,4 @@ font-size: 14px;
 
 .ag-checkbox-inpu{
     @apply hover:cursor-pointer !important;
-} */
+}

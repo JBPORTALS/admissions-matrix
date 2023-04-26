@@ -490,7 +490,7 @@ export default function AdmissionLayout({
                 )}
               </HStack>
             </HStack>
-            <VStack h={"100vh"} w={"full"}>
+            <VStack h={"100vh"} overflow={"scroll"} w={"full"}>
               {children}
             </VStack>
           </TabPanel>
