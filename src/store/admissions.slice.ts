@@ -363,6 +363,9 @@ export interface BranchAdmission {
   remaining_amount: string;
   due_date: string;
   approved_by: string;
+  father_no:string;
+  mother_name:string;
+  mother_no:string;
 }
 
 export interface AddStudent

@@ -33,7 +33,6 @@ import {
   AiOutlineFilter,
   AiOutlineLogout,
   AiOutlinePlusCircle,
-  AiOutlinePlusSquare,
   AiOutlineSearch,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
@@ -47,7 +46,7 @@ import {
   fetchBranchList,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
@@ -90,7 +89,6 @@ export default function AdmissionLayout({
     (state) => state.admissions.selectedMatrix.error
   ) as string | null;
   const dispatch = useAppDispatch();
-  const navigation = useRouter()
 
   useEffect(() => {
     if (ucollege !== undefined)
