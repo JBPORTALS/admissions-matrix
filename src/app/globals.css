@@ -20,14 +20,12 @@ font-size: 14px;
 }
 .ag-theme-material .ag-cell{
     font-size: 14px;
-    padding:12px
 }
 
 .ag-header-cell{
     @apply border-r;
     @apply bg-primary;
     @apply text-black;
-    @apply h-[55px] !important;
 }
 .ag-header-row{
     /* @apply flex; */
@@ -37,7 +35,6 @@ font-size: 14px;
     @apply border-r !important;
     @apply border-r-gray-300 !important;
     @apply bg-secondary !important;
-    @apply h-[55px] !important;
 }
 
 .ag-cell-focus{

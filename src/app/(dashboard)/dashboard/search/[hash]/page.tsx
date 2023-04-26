@@ -6,7 +6,6 @@ import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import "./styles.css"
 
 export default function Page() {
   const [data, setData] = useState();
@@ -75,11 +74,11 @@ export default function Page() {
     );
 
   return (
-    <VStack h={"full"} w={"full"} className="ag-theme-material">
+    <VStack h={"80vh"} overflow={"scroll"} w={"100vw"} className="ag-theme-material">
       <AgGridReact
         alwaysShowHorizontalScroll
         animateRows={true}
-        className="w-full h-full  pb-6 ag-theme-material"
+        className="w-full h-full ag-theme-material"
         rowData={data as any}
         columnDefs={SearchColumns as any}
       />
