@@ -26,50 +26,57 @@ export default function Home() {
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
-          <Table px={"5"} variant={"simple"} bg={"white"} colorScheme="facebook" size={"lg"}>
-            <Tbody px={"5"}>
-              <Tr>
-                <Th>College</Th>
-                <Th>Mangement Seats</Th>
-                <Th>Allotted Seats</Th>
-                <Th>Remaining Seats</Th>
-                <Th>Filled Percentage</Th>
-              </Tr>
-              {overAllMatrix.map((value, index) => {
-                return (
-                  <Tr  key={index}>
-                    <Td>
-                      <Link href={"/dashboard/" + value.college}>
-                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                          {value.college}
-                        </div>
-                      </Link>
-                    </Td>
-                    <Td>{value.total}</Td>
-                    <Td>{value.allotted_seats}</Td>
-                    <Td>{value.remaining_seats}</Td>
-                    <Td>
-                      <div className="flex flex-col justify-center items-center relative text-xl text-black h-full w-full">
-                        <h3 className="z-2 text-brand drop-shadow-lg">
-                          {value.filled_percentage} %
-                        </h3>
-                        <Progress
-                          w={"full"}
-                          hasStripe
-                          value={value.filled_percentage}
-                          rounded={"full"}
-                          isAnimated
-                          isIndeterminate={value.filled_percentage == undefined}
-                          size="sm"
-                          colorScheme="blue"
-                        />
+      <Table
+        px={"5"}
+        variant={"simple"}
+        bg={"white"}
+        colorScheme="facebook"
+        size={"lg"}
+      >
+        <Tbody px={"5"}>
+          <Tr>
+            <Th>College</Th>
+            <Th>Mangement Seats</Th>
+            <Th>Allotted Seats</Th>
+            <Th>Remaining Seats</Th>
+            <Th>Filled Percentage</Th>
+          </Tr>
+          {overAllMatrix.length &&
+            overAllMatrix?.map((value, index) => {
+              return (
+                <Tr key={index}>
+                  <Td>
+                    <Link href={"/dashboard/" + value.college}>
+                      <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                        {value.college}
                       </div>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
+                    </Link>
+                  </Td>
+                  <Td>{value.total}</Td>
+                  <Td>{value.allotted_seats}</Td>
+                  <Td>{value.remaining_seats}</Td>
+                  <Td>
+                    <div className="flex flex-col justify-center items-center relative text-xl text-black h-full w-full">
+                      <h3 className="z-2 text-brand drop-shadow-lg">
+                        {value.filled_percentage} %
+                      </h3>
+                      <Progress
+                        w={"full"}
+                        hasStripe
+                        value={value.filled_percentage}
+                        rounded={"full"}
+                        isAnimated
+                        isIndeterminate={value.filled_percentage == undefined}
+                        size="sm"
+                        colorScheme="blue"
+                      />
+                    </div>
+                  </Td>
+                </Tr>
+              );
+            })}
+        </Tbody>
+      </Table>
     </Stack>
   );
 }

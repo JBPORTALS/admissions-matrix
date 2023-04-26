@@ -52,7 +52,7 @@ export default function Home() {
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>
               </Tr>
-              {data.data.map((value: any,index) => {
+              {data.data.length && data.data?.map((value: any,index) => {
                 return (
                   <Tr key={index}>
                     <Td>
