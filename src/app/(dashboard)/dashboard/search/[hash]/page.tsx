@@ -75,7 +75,7 @@ export default function Page() {
     );
 
   return (
-    <VStack h={"full"} w={"full"} className="">
+    <VStack h={"full"} w={"full"} className="ag-theme-material">
       <AgGridReact
         alwaysShowHorizontalScroll
         animateRows={true}
