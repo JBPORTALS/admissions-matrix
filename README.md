@@ -1,4 +1,4 @@
 ## Admissions Matrix
->> The tool that manage admission details during admission process.
+> The tool that manage admission details during admission process.
 
 
