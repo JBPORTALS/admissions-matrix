@@ -8,20 +8,20 @@
 }
 
 .ag-theme-material .ag-header-cell-label{
-font-size: 14px !important;
+font-size: 14px;
 }
 .ag-theme-material{
     z-index:1;
 }
 .ag-theme-material .ag-cell{
-    font-size: 14px !important;
+    font-size: 14px;
 }
 
 .ag-header-cell{
     @apply border-r;
     @apply bg-primary;
     @apply text-black;
-    @apply p-5 !important;
+    @apply h-[55px] !important;
 }
 .ag-header-row{
     /* @apply flex; */
@@ -31,7 +31,7 @@ font-size: 14px !important;
     @apply border-r !important;
     @apply border-r-gray-300 !important;
     @apply bg-secondary !important;
-    @apply p-5 !important;
+    @apply h-[55px] !important;
 }
 
 .ag-cell-focus{
