@@ -41,7 +41,7 @@ export default function Home() {
             <Th>Remaining Seats</Th>
             <Th>Filled Percentage</Th>
           </Tr>
-          {overAllMatrix.length &&
+          {overAllMatrix.length>0 &&
             overAllMatrix?.map((value, index) => {
               return (
                 <Tr key={index}>

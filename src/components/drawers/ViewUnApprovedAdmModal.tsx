@@ -299,6 +299,29 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Quoted By
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              type={"text"}
+              variant={"outline"}
+              bg={"white"}
+              readOnly
+              value={user?.username}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
+              }}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Fixed
               </Heading>
             </VStack>
@@ -402,7 +425,6 @@ export default function ViewUnApprovedAdmModal({
             className="w-full justify-between"
             justifyContent={"space-between"}
             alignItems={"center"}
-            pb={"5"}
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
@@ -414,6 +436,28 @@ export default function ViewUnApprovedAdmModal({
               variant={"outline"}
               bg={"white"}
               value={selectedAdmissionDetails[0]?.remarks}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
+              }}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            pb={"5"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Status
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.status}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 dispatch(updateSelectedMatrix({ remarks: e.target.value }));

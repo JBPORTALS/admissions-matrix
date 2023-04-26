@@ -377,6 +377,7 @@ export interface SelectedMatrix extends BranchAdmission {
   total: string;
   fee_quoted: string;
   quoted_by: string;
+  status:string;
 }
 
 export interface OverallMatrix {
