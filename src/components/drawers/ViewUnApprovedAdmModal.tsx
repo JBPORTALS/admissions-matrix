@@ -299,28 +299,6 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Quoted By
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              type={"text"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.quoted_by}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ quoted_by: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Fixed
               </Heading>
             </VStack>
@@ -443,7 +421,7 @@ export default function ViewUnApprovedAdmModal({
             />
           </Flex>
           <HStack zIndex={"sticky"} position={"sticky"} bottom={"0"}  py={"2"} w={"full"} className={"border-t border-t-lightgray bg-primary"}>
-            <Button isLoading={isUpdating} onClick={()=>dispatch(updateEnquiry())} colorScheme={"purple"} w={"full"}>Update Details</Button>
+            <Button isLoading={isUpdating} onClick={()=>dispatch(updateEnquiry({username:user?.username!}))} colorScheme={"purple"} w={"full"}>Update Details</Button>
           </HStack>
         </VStack>
       </IDrawer>

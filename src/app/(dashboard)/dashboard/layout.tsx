@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { headers, cookies } from "next/headers";
+import "../../globals.css";
 
 
 export default async function DashboardRootLayout({

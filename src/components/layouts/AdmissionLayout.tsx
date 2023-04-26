@@ -1,21 +1,24 @@
 "use client";
 import {
+  Avatar,
   Box,
   Button,
   Center,
   Heading,
   HStack,
+  IconButton,
+  Input,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Tag,
+  Tooltip,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import {
   AiOutlineArrowRight,
   AiOutlineCheckCircle,
@@ -24,6 +27,7 @@ import {
   AiOutlineLogout,
   AiOutlinePlusCircle,
   AiOutlinePlusSquare,
+  AiOutlineSearch,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import ISelect from "../ui/utils/ISelect";
@@ -40,6 +44,10 @@ import { useParams } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
+import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
+import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -56,6 +64,8 @@ export default function AdmissionLayout({
 
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
+  const [adno, setAdno] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [branchList, setBranchList] = useState<[]>([]);
 
   const data = useAppSelector(
@@ -64,6 +74,9 @@ export default function AdmissionLayout({
   const Error = useAppSelector(
     (state) => state.admissions.unapproved_matrix.error
   ) as [];
+  const selectedMatrixError = useAppSelector(
+    (state) => state.admissions.selectedMatrix.error
+  ) as string | null;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -88,23 +101,81 @@ export default function AdmissionLayout({
   const { user } = useSupabase();
 
   return (
-    <div className="bg-primary overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
       <HStack
         w={"full"}
+        position={"fixed"}
+        top={"0"}
+        left={"0"}
         px={"5"}
         justifyContent={"space-between"}
         h={"14"}
-        className="bg-secondary border-b border-b-lightgray"
+        bg={"whiteAlpha.100"}
+        className="border-b border-b-lightgray backdrop-blur-sm"
       >
         <HStack color={"blue.600"}>
           <AiOutlineUsergroupAdd className="text-3xl" />
           <Heading size={"md"}>Admissions Matrix</Heading>
         </HStack>
         <HStack>
-          <Heading size={"sm"}>{user?.username}</Heading>
-          <Tag colorScheme="gray" variant={"outline"}>
-            {user?.email}
-          </Tag>
+          <Input
+            onChange={(e) => setAdno(e.target.value)}
+            value={adno}
+            size={"sm"}
+            variant={"filled"}
+            w={"72"}
+            type={"number"}
+            placeholder="Search admission no."
+          />
+          <ViewAdmissionDetailsModal admissionno={adno!}>
+            {({ onOpen }) => (
+              <ViewUnApprovedAdmModal admissionno={adno!}>
+                {({ onOpen: onUnapprovedOpen }) => (
+                  <IconButton
+                  isLoading={isLoading}
+                    onClick={async () => {
+                      setIsLoading(true)
+                      try {
+                        const formData = new FormData();
+                        formData.append("admissionno", adno);
+                        const response = await axios({
+                          url:
+                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                            "searchbyid.php",
+                          method: "POST",
+                          data: formData,
+                        });
+
+                        const resData = response.data.status as
+                          | "APPROVED"
+                          | "NOT APPROVED";
+                        if (resData == "APPROVED" && !selectedMatrixError)
+                          onOpen();
+                        else if (resData == "NOT APPROVED" && !selectedMatrixError)
+                          onUnapprovedOpen();
+                        else
+                          toast.error("No record found !",{position:"top-right"})  
+                      } catch (e: any) {
+                        toast.error(e.response.data?.msg,{position:"top-right"});
+                      }
+                      setIsLoading(false)
+                    }}
+                    colorScheme="facebook"
+                    size={"sm"}
+                    aria-label="search"
+                    icon={<AiOutlineSearch className="text-lg" />}
+                  />
+                )}
+              </ViewUnApprovedAdmModal>
+            )}
+          </ViewAdmissionDetailsModal>
+        </HStack>
+        <HStack>
+          <Tooltip bg={"whiteAlpha.800"} className="backdrop-blur-sm" color={"black"} placement="bottom" hasArrow label={user?.email}>
+          <HStack>
+            <Heading size={"sm"}>{user?.username}</Heading>
+            <Avatar size={"sm"}></Avatar></HStack>
+          </Tooltip>
           <Button
             variant={"ghost"}
             colorScheme="blue"
@@ -116,6 +187,7 @@ export default function AdmissionLayout({
         </HStack>
       </HStack>
       <Tabs
+        mt={"14"}
         size={"sm"}
         variant={"line"}
         h={"92vh"}
@@ -161,7 +233,12 @@ export default function AdmissionLayout({
             <HStack>
               <AddCouncelAddmissionModel>
                 {({ onOpen }) => (
-                  <Button leftIcon={<AiOutlinePlusCircle className="text-lg"/>} onClick={onOpen} size={"sm"} colorScheme="facebook">
+                  <Button
+                    leftIcon={<AiOutlinePlusCircle className="text-lg" />}
+                    onClick={onOpen}
+                    size={"sm"}
+                    colorScheme="facebook"
+                  >
                     Add Enquiry
                   </Button>
                 )}

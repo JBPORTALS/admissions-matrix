@@ -33,6 +33,36 @@ export const fetchSelectedMatrix = createAsyncThunk<
   }
 );
 
+export const fetchSearchByAdNo = createAsyncThunk<
+  SelectedMatrix[],
+  {
+    admissionno: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admission/fetchSearchByAdNo",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("admissionno", payload.admissionno);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchbyid.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchSearchClass = createAsyncThunk<
   SelectedMatrix[],
   {
@@ -208,7 +238,9 @@ export const updateMatrix = createAsyncThunk<
 
 export const updateEnquiry = createAsyncThunk<
   { msg: string },
-  void,
+  {
+    username:string
+  },
   {
     rejectValue: {
       msg: string;
@@ -226,6 +258,7 @@ export const updateEnquiry = createAsyncThunk<
       const state = getState() as RootState;
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
+        const name = payload.username;
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
@@ -234,7 +267,7 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("phone", selected_Matrix[0].phone_no);
       formData.append("email", selected_Matrix[0].email);
       formData.append("fee_quoted", selected_Matrix[0].fee_quoted);
-      formData.append("quoted_by", selected_Matrix[0].quoted_by);
+      formData.append("quoted_by", name);
       formData.append("fee_fixed", selected_Matrix[0].fee_fixed);
       formData.append("fee_fixed", selected_Matrix[0].fee_fixed);
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
@@ -506,6 +539,7 @@ export const AdmissionsSlice = createSlice({
       state.search_class.error = action.payload?.msg;
     },
     [fetchSelectedMatrix.pending.toString()]: (state, action) => {
+      state.selectedMatrix.data = [];
       state.selectedMatrix.pending = true;
     },
     [fetchSelectedMatrix.fulfilled.toString()]: (state, action) => {
@@ -514,6 +548,7 @@ export const AdmissionsSlice = createSlice({
     },
     [fetchSelectedMatrix.rejected.toString()]: (state, action) => {
       state.selectedMatrix.pending = false;
+      state.selectedMatrix.data = [];
       state.selectedMatrix.error = action.payload?.msg;
       toast.error(action.payload?.msg, { position: "top-right" });
     },

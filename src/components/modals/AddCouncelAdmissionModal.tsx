@@ -100,6 +100,10 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       type: "select",
       option: [
         {
+          option: "MANAGEMENT",
+          value: "MANAGEMENT",
+        },
+        {
           option: "COLLEGE WEBSITE",
           value: "COLLEGE WEBSITE",
         },
@@ -108,8 +112,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "STUDENT REFERENCE",
         },
         {
-          option: "PARENT REFERENCE",
-          value: "PARENT REFERENCE",
+          option: "PARENT/RELATIVE REFERENCE",
+          value: "PARENT/RELATIVE REFERENCE",
         },
         {
           option: "FACULTY REFERENCE",
@@ -124,12 +128,16 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "TV OR RADIO AD",
         },
         {
-          option: "METRO OR BUS AD",
-          value: "METRO OR BUS AD",
+          option: "METRO BRANDING",
+          value: "METRO BRANDING",
         },
         {
-          option: "EDUCATIONAL EVENT",
-          value: "EDUCATIONAL EVENT",
+          option: "BUS BRANDING",
+          value: "BUS BRANDING",
+        },
+        {
+          option: "EDUCATION FAIR",
+          value: "EDUCATION FAIR",
         },
         {
           option: "PHONE OR SMS OR WHATSAPP",
@@ -138,6 +146,10 @@ export default function AddCouncelAddmissionModel({ children }: props) {
         {
           option: "SOCAIL MEDIA",
           value: "SOCAIL MEDIA",
+        },
+        {
+          option: "OTHERS",
+          value: "OTHERS",
         },
       ],
     },
@@ -307,12 +319,24 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       type: "select",
       option: [
         {
-          option: "CET",
-          value: "CET",
+          option: "CET/DCET",
+          value: "CET/DCET",
         },
         {
           option: "COMEDK",
           value: "COMEDK",
+        },
+        {
+          option: "JEE (M)",
+          value: "JEE (M)",
+        },
+        {
+          option: "NATA",
+          value: "NATA",
+        },
+        {
+          option: "OTHERS",
+          value: "OTHERS",
         },
       ],
     },
