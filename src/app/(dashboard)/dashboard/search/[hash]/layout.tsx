@@ -1,7 +1,7 @@
 "use client"
 import { HStack, Heading, Tag, VStack } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import "../../../../globals.css"
+
 
 
 export default async function DashboardLayout({
