@@ -6,7 +6,7 @@ import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import "../../../../globals.css"
+import "./styles.css"
 
 export default function Page() {
   const [data, setData] = useState();
