@@ -2,6 +2,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import SupabaseProvider from "./supabase-provider";
+import "ag-grid-community/styles/ag-grid.css"
+import "ag-grid-community/styles/ag-theme-material.css"
 
 const inter = Inter({ subsets: ["greek"] });
 

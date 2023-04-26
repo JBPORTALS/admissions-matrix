@@ -1,7 +1,11 @@
-import {  IconButton, Progress } from "@chakra-ui/react";
-import {Link} from "@chakra-ui/next-js";
+import { IconButton, Progress } from "@chakra-ui/react";
+import { Link } from "@chakra-ui/next-js";
 import { useRouter } from "next/router";
-import { AiOutlineCheckSquare, AiOutlineDownload, AiOutlineEye } from "react-icons/ai";
+import {
+  AiOutlineCheckSquare,
+  AiOutlineDownload,
+  AiOutlineEye,
+} from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 
@@ -21,6 +25,28 @@ const CustomUnApproveViewButton = (data: any) => {
       <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
         {({ onOpen }) => <AiOutlineCheckSquare onClick={onOpen} />}
       </ViewUnApprovedAdmModal>
+    </div>
+  );
+};
+
+const CustomSearchButton = (data: any) => {
+  return ( 
+    <div className={"flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl h-full w-full "+(data.value.status == "APPROVED"?" text-green-500":" text-orange-500")}>
+      <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
+        {({ onOpen: VeiwAdOpen }) => (
+          <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
+            {({ onOpen: ViewUnAdOpen }) => (
+              <AiOutlineEye
+                onClick={() => {
+                  data.value.status == "APPROVED"
+                    ? VeiwAdOpen()
+                    : ViewUnAdOpen();
+                }}
+              />
+            )}
+          </ViewUnApprovedAdmModal>
+        )}
+      </ViewAdmissionDetailsModal>
     </div>
   );
 };
@@ -48,8 +74,19 @@ const DownloadProvisional = (data: { value: any }) => {
 const PercentageView = (data: { value: any }) => {
   return (
     <div className="flex flex-col justify-center items-center relative text-xl text-black h-full w-full">
-      <h3 className="z-2 text-brand drop-shadow-lg">{data.value.filled_percentage} %</h3>
-      <Progress w={"full"} hasStripe value={data.value.filled_percentage} rounded={"full"} isAnimated isIndeterminate={data.value.filled_percentage == undefined} size='sm' colorScheme='blue' />
+      <h3 className="z-2 text-brand drop-shadow-lg">
+        {data.value.filled_percentage} %
+      </h3>
+      <Progress
+        w={"full"}
+        hasStripe
+        value={data.value.filled_percentage}
+        rounded={"full"}
+        isAnimated
+        isIndeterminate={data.value.filled_percentage == undefined}
+        size="sm"
+        colorScheme="blue"
+      />
     </div>
   );
 };
@@ -259,7 +296,88 @@ export const UnAprrovedColumns = [
       "align-items": "center",
       "justify-content": "center",
     },
-  }
+  },
+];
+
+export const SearchColumns = [
+  {
+    field: "",
+    pinned: "left",
+    headerName: "Actions",
+    width: "120px",
+    cellRenderer: CustomSearchButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+  {
+    field: "admission_id",
+    headerName: "ADD No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "140px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    filter: true,
+    resizable: true,
+    suppressMovable: true,
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "father_name",
+    headerName: "Father Name",
+    width: "180px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "phone_no",
+    headerName: "Phone No.",
+    width: "130px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: "180px",
+    resizable: true,
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    filter: true,
+    width: "180px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
 ];
 
 const CollegeLink = (data: { value: string }) => {
@@ -338,7 +456,7 @@ export const OverallColumn = [
     cellRenderer: PercentageView,
     valueGetter: (params: any) => {
       return params.data;
-    }
+    },
   },
 ];
 
@@ -396,6 +514,6 @@ export const CollegeMatrixCol = [
     cellRenderer: PercentageView,
     valueGetter: (params: any) => {
       return params.data;
-    }
+    },
   },
 ];

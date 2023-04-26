@@ -47,7 +47,7 @@ import {
   fetchBranchList,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
@@ -90,6 +90,7 @@ export default function AdmissionLayout({
     (state) => state.admissions.selectedMatrix.error
   ) as string | null;
   const dispatch = useAppDispatch();
+  const navigation = useRouter()
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -370,8 +371,11 @@ export default function AdmissionLayout({
                         <FormControl>
                           <Button
                             as={Link}
-                            href={`/dashboard/search?type=${filterType}&date=${filterState.date}&source=${filterState.source}`}
+                            href={`/dashboard/search/${new Date(Date.now()).getTime()}/?type=${filterType}&date=${filterState.date}&source=${filterState.source}`}
                             colorScheme={"blue"}
+                            onClick={()=>{
+                            //  navigation.refresh()
+                            }}
                             rightIcon={
                               <AiOutlineSearch className={"text-lg"} />
                             }

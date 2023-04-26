@@ -5,6 +5,8 @@ import { AgGridReact } from "ag-grid-react";
 import { columns } from "../mock-data/admission-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
 import "../../app/globals.css"
+import "ag-grid-community/styles/ag-grid.css"
+import "ag-grid-community/styles/ag-theme-material.css"
 
 function ClassDataGrid() {
     const data = useAppSelector(state=>state.admissions.search_class.data) as [];

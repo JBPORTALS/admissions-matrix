@@ -1,7 +1,9 @@
 "use client";
+import { SearchColumns } from "@/components/mock-data/admission-meta";
 import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
+import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
@@ -10,6 +12,7 @@ export default function Page() {
   const [isError, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
   const params = useSearchParams();
+  const p = useParams();
 
   async function getSearchData(
     type: "DATE" | "SOURCE",
@@ -35,7 +38,7 @@ export default function Page() {
     }
     setIsLoading(false);
   }
-  
+
   useEffect(() => {
     getSearchData(
       params.get("type") as "SOURCE" | "DATE",
@@ -43,7 +46,7 @@ export default function Page() {
       params.get("source")!
     );
     console.log(data);
-  }, [params.get("type"), params.get("date"), params.get("source")]);
+  }, [p.hash]);
 
   if (!params.has("type") || params.get("type") == "")
     return (
@@ -54,9 +57,9 @@ export default function Page() {
 
   if (isLoading)
     return (
-      <VStack spacing={1} h={"full"} w={"full"}>
-        {new Array(8).fill(0).map((value, index) => {
-          return <Skeleton w={"full"} h={"14"} key={index} />;
+      <VStack justifyContent={"start"} alignItems={"start"} h={"full"} spacing={0.5} w={"full"}>
+        {new Array(9).fill(0).map((value, index) => {
+          return <Skeleton w={"85%"} h={"12"} key={index} />;
         })}
       </VStack>
     );
@@ -70,5 +73,15 @@ export default function Page() {
       </Center>
     );
 
-  return <VStack></VStack>;
+  return (
+    <VStack h={"full"} w={"full"} className="">
+      <AgGridReact
+        alwaysShowHorizontalScroll
+        animateRows={true}
+        className="w-full h-full  pb-6 ag-theme-material"
+        rowData={data as any}
+        columnDefs={SearchColumns as any}
+      />
+    </VStack>
+  );
 }
