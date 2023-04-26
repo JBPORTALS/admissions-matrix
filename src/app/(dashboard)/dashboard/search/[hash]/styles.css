@@ -8,19 +8,20 @@
 }
 
 .ag-theme-material .ag-header-cell-label{
-font-size: 14px;
+font-size: 14px !important;
 }
 .ag-theme-material{
     z-index:1;
 }
 .ag-theme-material .ag-cell{
-    font-size: 14px;
+    font-size: 14px !important;
 }
 
 .ag-header-cell{
     @apply border-r;
     @apply bg-primary;
     @apply text-black;
+    @apply p-5 !important;
 }
 .ag-header-row{
     /* @apply flex; */
@@ -30,6 +31,7 @@ font-size: 14px;
     @apply border-r !important;
     @apply border-r-gray-300 !important;
     @apply bg-secondary !important;
+    @apply p-5 !important;
 }
 
 .ag-cell-focus{
