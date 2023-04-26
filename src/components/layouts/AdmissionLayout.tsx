@@ -4,10 +4,16 @@ import {
   Box,
   Button,
   Center,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
   IconButton,
   Input,
+  Menu,
+  MenuButton,
+  MenuList,
+  Select,
   Tab,
   TabList,
   TabPanel,
@@ -18,12 +24,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import {Link} from "@chakra-ui/next-js";
+import { Link } from "@chakra-ui/next-js";
 import {
   AiOutlineArrowRight,
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
   AiOutlineCloudDownload,
+  AiOutlineFilter,
   AiOutlineLogout,
   AiOutlinePlusCircle,
   AiOutlinePlusSquare,
@@ -64,6 +71,11 @@ export default function AdmissionLayout({
 
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
+  const [filterType, setFilterType] = useState<string>("");
+  const [filterState, setFilterState] = useState({
+    source: "",
+    date: "",
+  });
   const [adno, setAdno] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [branchList, setBranchList] = useState<[]>([]);
@@ -132,9 +144,9 @@ export default function AdmissionLayout({
               <ViewUnApprovedAdmModal admissionno={adno!}>
                 {({ onOpen: onUnapprovedOpen }) => (
                   <IconButton
-                  isLoading={isLoading}
+                    isLoading={isLoading}
                     onClick={async () => {
-                      setIsLoading(true)
+                      setIsLoading(true);
                       try {
                         const formData = new FormData();
                         formData.append("admissionno", adno);
@@ -151,14 +163,21 @@ export default function AdmissionLayout({
                           | "NOT APPROVED";
                         if (resData == "APPROVED" && !selectedMatrixError)
                           onOpen();
-                        else if (resData == "NOT APPROVED" && !selectedMatrixError)
+                        else if (
+                          resData == "NOT APPROVED" &&
+                          !selectedMatrixError
+                        )
                           onUnapprovedOpen();
                         else
-                          toast.error("No record found !",{position:"top-right"})  
+                          toast.error("No record found !", {
+                            position: "top-right",
+                          });
                       } catch (e: any) {
-                        toast.error(e.response.data?.msg,{position:"top-right"});
+                        toast.error(e.response.data?.msg, {
+                          position: "top-right",
+                        });
                       }
-                      setIsLoading(false)
+                      setIsLoading(false);
                     }}
                     colorScheme="facebook"
                     size={"sm"}
@@ -171,10 +190,18 @@ export default function AdmissionLayout({
           </ViewAdmissionDetailsModal>
         </HStack>
         <HStack>
-          <Tooltip bg={"whiteAlpha.800"} className="backdrop-blur-sm" color={"black"} placement="bottom" hasArrow label={user?.email}>
-          <HStack>
-            <Heading size={"sm"}>{user?.username}</Heading>
-            <Avatar size={"sm"}></Avatar></HStack>
+          <Tooltip
+            bg={"whiteAlpha.800"}
+            className="backdrop-blur-sm"
+            color={"black"}
+            placement="bottom"
+            hasArrow
+            label={user?.email}
+          >
+            <HStack>
+              <Heading size={"sm"}>{user?.username}</Heading>
+              <Avatar size={"sm"}></Avatar>
+            </HStack>
           </Tooltip>
           <Button
             variant={"ghost"}
@@ -231,6 +258,133 @@ export default function AdmissionLayout({
               </Tab>
             </HStack>
             <HStack>
+              <Menu placement="bottom-start" size={"md"}>
+                <MenuButton>
+                  <Button
+                    as={"view"}
+                    size={"sm"}
+                    shadow={"md"}
+                    leftIcon={<AiOutlineFilter className={"text-xl"} />}
+                    colorScheme={"teal"}
+                  >
+                    Filter
+                  </Button>
+                </MenuButton>
+                <MenuList
+                  shadow={"2xl"}
+                  position={"absolute"}
+                  zIndex={"dropdown"}
+                >
+                  <VStack px={"4"}>
+                    <FormControl>
+                      <Select onChange={(e) => setFilterType(e.target.value)}>
+                        <option value={""}>Select Filter</option>
+                        <option value={"DATE"}>By Date</option>
+                        <option value={"SOURCE"}>By source.</option>
+                      </Select>
+                    </FormControl>
+                    {filterType && (
+                      <>
+                        <FormControl>
+                          {filterType == "SOURCE" ? (
+                            <>
+                              <FormLabel>Source</FormLabel>
+                              <Select
+                                onChange={(e) => setFilterState((prev)=>({...prev,source:e.target.value}))}
+                              >
+                                <option value={""}>Select Source</option>
+                                {
+                                  [
+                                    {
+                                      option: "MANAGEMENT",
+                                      value: "MANAGEMENT",
+                                    },
+                                    {
+                                      option: "COLLEGE WEBSITE",
+                                      value: "COLLEGE WEBSITE",
+                                    },
+                                    {
+                                      option: "STUDENT REFERENCE",
+                                      value: "STUDENT REFERENCE",
+                                    },
+                                    {
+                                      option: "PARENT/RELATIVE REFERENCE",
+                                      value: "PARENT/RELATIVE REFERENCE",
+                                    },
+                                    {
+                                      option: "FACULTY REFERENCE",
+                                      value: "FACULTY REFERENCE",
+                                    },
+                                    {
+                                      option: "NEWS PAPER AD",
+                                      value: "NEWS PAPER AD",
+                                    },
+                                    {
+                                      option: "TV OR RADIO AD",
+                                      value: "TV OR RADIO AD",
+                                    },
+                                    {
+                                      option: "METRO BRANDING",
+                                      value: "METRO BRANDING",
+                                    },
+                                    {
+                                      option: "BUS BRANDING",
+                                      value: "BUS BRANDING",
+                                    },
+                                    {
+                                      option: "EDUCATION FAIR",
+                                      value: "EDUCATION FAIR",
+                                    },
+                                    {
+                                      option: "PHONE OR SMS OR WHATSAPP",
+                                      value: "PHONE OR SMS OR WHATSAPP",
+                                    },
+                                    {
+                                      option: "SOCAIL MEDIA",
+                                      value: "SOCAIL MEDIA",
+                                    },
+                                    {
+                                      option: "OTHERS",
+                                      value: "OTHERS",
+                                    },
+                                  ].map((value,index)=>(<option value={value.value}>{value.option}</option>))
+                                }
+                              </Select>
+                            </>
+                          ) : filterType == "DATE" ? (
+                            <>
+                              <FormLabel>Date</FormLabel>
+                              <Input
+                                value={filterState.date}
+                                onChange={(e) =>
+                                  setFilterState((prev) => ({
+                                    ...prev,
+                                    date: e.target.value,
+                                  }))
+                                }
+                                type={"date"}
+                              />
+                            </>
+                          ) : null}
+                        </FormControl>
+                        <FormControl>
+                          <Button
+                            as={Link}
+                            href={`/dashboard/search?type=${filterType}&date=${filterState.date}&source=${filterState.source}`}
+                            colorScheme={"blue"}
+                            rightIcon={
+                              <AiOutlineSearch className={"text-lg"} />
+                            }
+                            w={"full"}
+                          >
+                            Search
+                          </Button>
+                        </FormControl>
+                      </>
+                    )}
+                  </VStack>
+                </MenuList>
+              </Menu>
               <AddCouncelAddmissionModel>
                 {({ onOpen }) => (
                   <Button

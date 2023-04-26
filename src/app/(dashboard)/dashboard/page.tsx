@@ -30,7 +30,7 @@ export default function Home() {
             <Tbody px={"5"}>
               <Tr>
                 <Th>College</Th>
-                <Th>Total Seats</Th>
+                <Th>Mangement Seats</Th>
                 <Th>Allotted Seats</Th>
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>

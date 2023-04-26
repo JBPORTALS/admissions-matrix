@@ -47,7 +47,7 @@ export default function Home() {
             <Tbody>
               <Tr>
                 <Th>Branch</Th>
-                <Th>Total Seats</Th>
+                <Th>Management Seats</Th>
                 <Th>Allotted Seats</Th>
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>
