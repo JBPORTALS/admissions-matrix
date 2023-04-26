@@ -1,11 +1,11 @@
 "use client";
-import { Center, Heading, VStack } from "@chakra-ui/react";
+import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
-export default function page() {
+export default function Page() {
   const [data, setData] = useState();
   const [isError, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function page() {
     } catch (e: any) {
       setError("No data found");
     }
-    setIsLoading(false);
+    // setIsLoading(false);
   }
 
   useEffect(() => {
@@ -52,6 +52,14 @@ export default function page() {
     console.log(data);
   }, [params.get("type"), params.get("date"), params.get("source")]);
 
+  if (isLoading)
+    return (
+      <VStack spacing={1} h={"full"} w={"full"}>
+        {new Array(8).fill(0).map((value, index) => {
+          return <Skeleton w={"full"} h={"14"} key={index} />;
+        })}
+      </VStack>
+    );
   if (isError)
     return (
       <Center h={"full"} pb={"44"}>

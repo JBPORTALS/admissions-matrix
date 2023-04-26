@@ -347,7 +347,7 @@ export default function AdmissionLayout({
                                       option: "OTHERS",
                                       value: "OTHERS",
                                     },
-                                  ].map((value,index)=>(<option value={value.value}>{value.option}</option>))
+                                  ].map((value,index)=>(<option key={value.value} value={value.value}>{value.option}</option>))
                                 }
                               </Select>
                             </>
