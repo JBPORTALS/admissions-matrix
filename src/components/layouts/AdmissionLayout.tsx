@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import {Link} from "@chakra-ui/next-js";
 import {
   AiOutlineArrowRight,
   AiOutlineCheckCircle,

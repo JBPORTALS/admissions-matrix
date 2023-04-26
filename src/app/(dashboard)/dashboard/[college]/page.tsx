@@ -42,10 +42,8 @@ export default function Home() {
   }, [router.college]);
 
   return (
-    <Stack h={"full"} w={"full"} justifyContent={"start"}>
-      <AdmissionLayout>
-        <div className="ag-theme-material">
-          <Table colorScheme="gray" size={"lg"}>
+    <Stack h={"full"} w={"full"} pb={"5"} justifyContent={"start"}>
+          <Table px={"5"} variant={"simple"} bg={"white"} colorScheme="facebook" size={"lg"}>
             <Tbody>
               <Tr>
                 <Th>Branch</Th>
@@ -89,8 +87,6 @@ export default function Home() {
               })}
             </Tbody>
           </Table>
-        </div>
-      </AdmissionLayout>
     </Stack>
   );
 }

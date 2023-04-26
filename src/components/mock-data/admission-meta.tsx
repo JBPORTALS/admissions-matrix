@@ -1,5 +1,5 @@
 import {  IconButton, Progress } from "@chakra-ui/react";
-import Link from "next/link";
+import {Link} from "@chakra-ui/next-js";
 import { useRouter } from "next/router";
 import { AiOutlineCheckSquare, AiOutlineDownload, AiOutlineEye } from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";

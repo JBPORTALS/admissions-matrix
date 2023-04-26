@@ -1,5 +1,4 @@
 "use client";
-import AdmissionLayout from "@/components/layouts/AdmissionLayout";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchOverallMatrix } from "@/store/admissions.slice";
@@ -27,10 +26,8 @@ export default function Home() {
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
-      <AdmissionLayout>
-        <div className="ag-theme-material">
-          <Table colorScheme="gray" size={"lg"}>
-            <Tbody>
+          <Table px={"5"} variant={"simple"} bg={"white"} colorScheme="facebook" size={"lg"}>
+            <Tbody px={"5"}>
               <Tr>
                 <Th>College</Th>
                 <Th>Total Seats</Th>
@@ -73,8 +70,6 @@ export default function Home() {
               })}
             </Tbody>
           </Table>
-        </div>
-      </AdmissionLayout>
     </Stack>
   );
 }

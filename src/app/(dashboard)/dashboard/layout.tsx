@@ -1,19 +1,12 @@
-import { redirect } from "next/navigation";
-import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { headers, cookies } from "next/headers";
-import "../../globals.css";
+"use client"
+import AdmissionLayout from "@/components/layouts/AdmissionLayout";
 
 
-export default async function DashboardRootLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { auth } = createServerComponentSupabaseClient({
-    headers,
-    cookies,
-  });
-  const { data } = await auth.getSession();
-  if (data.session == null) redirect("/signin");
-  return <>{children}</>;
+  return <AdmissionLayout>{children}</AdmissionLayout>;
 }
+
