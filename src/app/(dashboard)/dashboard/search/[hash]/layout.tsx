@@ -17,7 +17,7 @@ export default async function DashboardLayout({
         w={"full"}
         className="border-b bg border-b-lightgray"
       >
-        <Heading size={"lg"} color={"gray.600"}>
+        <Heading size={"md"} fontWeight={"medium"} color={"gray.600"}>
           Search results for
         </Heading>
         {params.get("type") && (

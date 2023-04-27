@@ -1,14 +1,15 @@
 "use client";
 import { SearchColumns } from "@/components/mock-data/admission-meta";
+import { Image } from "@chakra-ui/next-js";
 import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineScan, AiOutlineSearch } from "react-icons/ai";
 
 export default function Page() {
-  const [data, setData] = useState();
+  const [data, setData] = useState<[]>();
   const [isError, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
   const params = useSearchParams();
@@ -20,6 +21,7 @@ export default function Page() {
     source: string
   ) {
     setIsLoading(true);
+    setData([]);
     try {
       const formData = new FormData();
       formData.append("date", date);
@@ -57,24 +59,43 @@ export default function Page() {
 
   if (isLoading)
     return (
-      <VStack justifyContent={"start"} alignItems={"start"} h={"full"} spacing={0.5} w={"full"}>
+      <VStack
+        justifyContent={"start"}
+        alignItems={"start"}
+        h={"full"}
+        spacing={0.5}
+        w={"100vw"}
+      >
         {new Array(9).fill(0).map((value, index) => {
           return <Skeleton w={"85%"} h={"12"} key={index} />;
         })}
       </VStack>
     );
+
   if (isError)
     return (
-      <Center h={"full"} pb={"44"}>
+      <Center h={"75vh"} pb={"28"}>
         <VStack>
-          <AiOutlineSearch className="text-brand text-6xl" />
-          <Heading size={"lg"}>{isError}</Heading>
+          <Image
+            src={"/empty-box.png"}
+            width={120}
+            height={120}
+            alt={"empty-box"}
+          />
+          <Heading size={"lg"} color={"gray.600"} fontWeight={"semibold"}>
+            {isError} !
+          </Heading>
         </VStack>
       </Center>
     );
 
   return (
-    <VStack h={"80vh"} overflow={"scroll"} w={"100vw"} className="ag-theme-material">
+    <VStack
+      h={"80vh"}
+      overflow={"scroll"}
+      w={"100vw"}
+      className="ag-theme-material"
+    >
       <AgGridReact
         alwaysShowHorizontalScroll
         animateRows={true}
