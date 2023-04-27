@@ -1,4 +1,4 @@
-import { IconButton, Progress } from "@chakra-ui/react";
+import { Box, IconButton, Progress, Tag, VStack } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { useRouter } from "next/router";
 import {
@@ -30,8 +30,15 @@ const CustomUnApproveViewButton = (data: any) => {
 };
 
 const CustomSearchButton = (data: any) => {
-  return ( 
-    <div className={"flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl h-full w-full "+(data.value.status == "APPROVED"?" text-green-500":" text-orange-500")}>
+  return (
+    <div
+      className={
+        "flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl h-full w-full " +
+        (data.value.status == "APPROVED"
+          ? " text-green-500"
+          : " text-orange-500")
+      }
+    >
       <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
         {({ onOpen: VeiwAdOpen }) => (
           <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
@@ -73,20 +80,22 @@ const DownloadProvisional = (data: { value: any }) => {
 
 const PercentageView = (data: { value: any }) => {
   return (
-    <div className="flex flex-col justify-center items-center relative text-xl text-black h-full w-full">
-      <h3 className="z-2 text-brand drop-shadow-lg">
-        {data.value.filled_percentage} %
-      </h3>
-      <Progress
-        w={"full"}
-        hasStripe
-        value={data.value.filled_percentage}
-        rounded={"full"}
-        isAnimated
-        isIndeterminate={data.value.filled_percentage == undefined}
-        size="sm"
-        colorScheme="blue"
-      />
+    <Box position={"relative"} zIndex={"base"}>
+      <h1>Helo</h1>
+    </Box>
+  );
+};
+
+const StatusView = (data: { value: any }) => {
+  return (
+    <div className="flex justify-center items-center font-medium text-brand h-full w-full">
+      {
+        data.value == "APPROVED" ? (
+          <Tag fontWeight={"medium"} colorScheme="whatsapp" size={"lg"}>Approved</Tag>
+        ):(
+          <Tag fontWeight={"medium"} colorScheme="orange" size={"lg"}>Un-Approved</Tag>
+        )
+      }
     </div>
   );
 };
@@ -337,6 +346,32 @@ export const SearchColumns = [
     },
   },
   {
+    field: "college",
+    headerName: "College",
+    filter: true,
+    width:120,
+    resizable: true,
+    suppressMovable: true,
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "branch",
+    headerName: "Branch",
+    width:120,
+    filter: true,
+    resizable: true,
+    suppressMovable: true,
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
     field: "father_name",
     headerName: "Father Name",
     width: "180px",
@@ -372,11 +407,7 @@ export const SearchColumns = [
     headerName: "Status",
     filter: true,
     width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
+    cellRenderer:StatusView
   },
 ];
 

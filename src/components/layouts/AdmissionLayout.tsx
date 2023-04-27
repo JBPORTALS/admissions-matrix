@@ -13,6 +13,18 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Select,
   Tab,
   TabList,
@@ -21,6 +33,7 @@ import {
   Tabs,
   Tag,
   Tooltip,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
@@ -30,10 +43,13 @@ import {
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
   AiOutlineCloudDownload,
+  AiOutlineFieldTime,
   AiOutlineFilter,
   AiOutlineLogout,
+  AiOutlineMail,
   AiOutlinePlusCircle,
   AiOutlineSearch,
+  AiOutlineUser,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import ISelect from "../ui/utils/ISelect";
@@ -109,10 +125,12 @@ export default function AdmissionLayout({
       );
   }, [ucollege, ubranch, dispatch]);
 
-  const { user } = useSupabase();
+  const { user,supabase } = useSupabase();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log(user)
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
       <HStack
         w={"full"}
         position={"fixed"}
@@ -188,28 +206,53 @@ export default function AdmissionLayout({
             )}
           </ViewAdmissionDetailsModal>
         </HStack>
-        <HStack>
-          <Tooltip
-            bg={"whiteAlpha.800"}
-            className="backdrop-blur-sm"
-            color={"black"}
-            placement="bottom"
-            hasArrow
-            label={user?.email}
-          >
-            <HStack>
-              <Heading size={"sm"}>{user?.username}</Heading>
-              <Avatar size={"sm"}></Avatar>
-            </HStack>
-          </Tooltip>
-          <Button
-            variant={"ghost"}
-            colorScheme="blue"
-            rightIcon={<AiOutlineLogout className="text-md" />}
-            onClick={async () => await SC().auth.signOut()}
-          >
-            Sign Out
-          </Button>
+
+        <HStack position={"relative"}>
+          
+          <HStack>
+           <Heading size={"md"}>{user?.username}</Heading>
+          <IconButton onClick={onOpen} variant={"unstyled"} aria-label="avatar">
+            <Avatar size={"sm"}></Avatar>
+          </IconButton>
+          </HStack>
+          <Modal isOpen={isOpen} size={"sm"} onClose={onClose}>
+            <ModalOverlay className="backdrop-blur-sm"/>
+            <ModalContent
+              position={"relative"}
+              zIndex={"toast"}
+              backdropBlur={"2xl"}
+              shadow={"2xl"}
+            >
+              <ModalHeader fontWeight="semibold" fontSize={"lg"}>
+                Profile Info
+              </ModalHeader>
+              <ModalBody>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineUser className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {user?.username}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineMail className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {user?.email}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineFieldTime className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {user?.session?.user.last_sign_in_at}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <Button leftIcon={<AiOutlineLogout/>} onClick={async ()=>await supabase.auth.signOut()} colorScheme="facebook" w={"full"}>
+                    SignOut
+                  </Button>
+                </HStack>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </HStack>
       </HStack>
       <Tabs
@@ -220,186 +263,196 @@ export default function AdmissionLayout({
         w={"full"}
         px={"0"}
       >
-        <TabList className="px-5">
-          <HStack justifyContent={"space-between"} w={"full"}>
-            <HStack>
-              <Tab
-                as={Button}
-                rounded={"none"}
-                colorScheme="green"
-                variant={"ghost"}
-                size={"lg"}
-                py={"2"}
-                _selected={{
-                  color: "green.400",
-                  borderBottom: "2px",
-                  borderBottomColor: "green.400",
-                }}
-                leftIcon={<AiOutlineCheckCircle className="text-lg" />}
-              >
-                Approved
-              </Tab>
-              <Tab
-                as={Button}
-                py={"2"}
-                colorScheme="orange"
-                variant={"ghost"}
-                rounded={"none"}
-                size={"lg"}
-                _selected={{
-                  color: "orange.400",
-                  borderBottom: "2px",
-                  borderBottomColor: "orange.400",
-                }}
-                leftIcon={<AiOutlineClockCircle className="text-lg" />}
-              >
-                Un-Approved
-              </Tab>
-            </HStack>
-            <HStack>
-              <Menu placement="bottom-start" size={"md"}>
-                <MenuButton>
-                  <Button
-                    as={"view"}
-                    size={"sm"}
-                    shadow={"md"}
-                    leftIcon={<AiOutlineFilter className={"text-xl"} />}
-                    colorScheme={"teal"}
-                  >
-                    Filter
-                  </Button>
-                </MenuButton>
-                <MenuList
-                  shadow={"2xl"}
-                  position={"absolute"}
-                  zIndex={"dropdown"}
+        <TabList className="px-5" justifyContent={"space-between"}>
+          <HStack>
+            <Tab
+              as={Button}
+              rounded={"none"}
+              colorScheme="green"
+              variant={"ghost"}
+              size={"lg"}
+              py={"2"}
+              _selected={{
+                color: "green.400",
+                borderBottom: "2px",
+                borderBottomColor: "green.400",
+              }}
+              leftIcon={<AiOutlineCheckCircle className="text-lg" />}
+            >
+              Approved
+            </Tab>
+            <Tab
+              as={Button}
+              py={"2"}
+              colorScheme="orange"
+              variant={"ghost"}
+              rounded={"none"}
+              size={"lg"}
+              _selected={{
+                color: "orange.400",
+                borderBottom: "2px",
+                borderBottomColor: "orange.400",
+              }}
+              leftIcon={<AiOutlineClockCircle className="text-lg" />}
+            >
+              Un-Approved
+            </Tab>
+          </HStack>
+          <HStack mr={"2"}>
+            <Menu placement="bottom-start" size={"md"}>
+              <MenuButton position={"relative"} zIndex={"0"}>
+                <Button
+                  as={"view"}
+                  size={"sm"}
+                  shadow={"md"}
+                  leftIcon={<AiOutlineFilter className={"text-xl"} />}
+                  colorScheme={"teal"}
+                  position={"relative"}
+                  z={-1}
                 >
-                  <VStack px={"4"}>
-                    <FormControl>
-                      <Select onChange={(e) => setFilterType(e.target.value)}>
-                        <option value={""}>Select Filter</option>
-                        <option value={"DATE"}>By Enquiry Date</option>
-                        <option value={"SOURCE"}>By source.</option>
-                      </Select>
-                    </FormControl>
-                    {filterType && (
-                      <>
-                        <FormControl>
-                          {filterType == "SOURCE" ? (
-                            <>
-                              <FormLabel>Source</FormLabel>
-                              <Select
-                                onChange={(e) => setFilterState((prev)=>({...prev,source:e.target.value}))}
-                              >
-                                <option value={""}>Select Source</option>
+                  Filter
+                </Button>
+              </MenuButton>
+              <MenuList
+                shadow={"2xl"}
+                position={"absolute"}
+                zIndex={"dropdown"}
+              >
+                <VStack px={"4"}>
+                  <FormControl>
+                    <Select onChange={(e) => setFilterType(e.target.value)}>
+                      <option value={""}>Select Filter</option>
+                      <option value={"DATE"}>By Enquiry Date</option>
+                      <option value={"SOURCE"}>By source.</option>
+                    </Select>
+                  </FormControl>
+                  {filterType && (
+                    <>
+                      <FormControl>
+                        {filterType == "SOURCE" ? (
+                          <>
+                            <FormLabel>Source</FormLabel>
+                            <Select
+                              onChange={(e) =>
+                                setFilterState((prev) => ({
+                                  ...prev,
+                                  source: e.target.value,
+                                }))
+                              }
+                            >
+                              <option value={""}>Select Source</option>
+                              {[
                                 {
-                                  [
-                                    {
-                                      option: "MANAGEMENT",
-                                      value: "MANAGEMENT",
-                                    },
-                                    {
-                                      option: "COLLEGE WEBSITE",
-                                      value: "COLLEGE WEBSITE",
-                                    },
-                                    {
-                                      option: "STUDENT REFERENCE",
-                                      value: "STUDENT REFERENCE",
-                                    },
-                                    {
-                                      option: "PARENT/RELATIVE REFERENCE",
-                                      value: "PARENT/RELATIVE REFERENCE",
-                                    },
-                                    {
-                                      option: "FACULTY REFERENCE",
-                                      value: "FACULTY REFERENCE",
-                                    },
-                                    {
-                                      option: "NEWS PAPER AD",
-                                      value: "NEWS PAPER AD",
-                                    },
-                                    {
-                                      option: "TV OR RADIO AD",
-                                      value: "TV OR RADIO AD",
-                                    },
-                                    {
-                                      option: "METRO BRANDING",
-                                      value: "METRO BRANDING",
-                                    },
-                                    {
-                                      option: "BUS BRANDING",
-                                      value: "BUS BRANDING",
-                                    },
-                                    {
-                                      option: "EDUCATION FAIR",
-                                      value: "EDUCATION FAIR",
-                                    },
-                                    {
-                                      option: "PHONE OR SMS OR WHATSAPP",
-                                      value: "PHONE OR SMS OR WHATSAPP",
-                                    },
-                                    {
-                                      option: "SOCAIL MEDIA",
-                                      value: "SOCAIL MEDIA",
-                                    },
-                                    {
-                                      option: "OTHERS",
-                                      value: "OTHERS",
-                                    },
-                                  ].map((value,index)=>(<option key={value.value} value={value.value}>{value.option}</option>))
-                                }
-                              </Select>
-                            </>
-                          ) : filterType == "DATE" ? (
-                            <>
-                              <FormLabel>Date</FormLabel>
-                              <Input
-                                value={filterState.date}
-                                onChange={(e) =>
-                                  setFilterState((prev) => ({
-                                    ...prev,
-                                    date: e.target.value,
-                                  }))
-                                }
-                                type={"date"}
-                              />
-                            </>
-                          ) : null}
-                        </FormControl>
-                        <FormControl>
-                          <Button
-                            as={Link}
-                            href={`/dashboard/search/${new Date(Date.now()).getTime()}/?type=${filterType}&date=${filterState.date}&source=${filterState.source}`}
-                            colorScheme={"blue"}
-                            onClick={()=>{
+                                  option: "MANAGEMENT",
+                                  value: "MANAGEMENT",
+                                },
+                                {
+                                  option: "COLLEGE WEBSITE",
+                                  value: "COLLEGE WEBSITE",
+                                },
+                                {
+                                  option: "STUDENT REFERENCE",
+                                  value: "STUDENT REFERENCE",
+                                },
+                                {
+                                  option: "PARENT/RELATIVE REFERENCE",
+                                  value: "PARENT/RELATIVE REFERENCE",
+                                },
+                                {
+                                  option: "FACULTY REFERENCE",
+                                  value: "FACULTY REFERENCE",
+                                },
+                                {
+                                  option: "NEWS PAPER AD",
+                                  value: "NEWS PAPER AD",
+                                },
+                                {
+                                  option: "TV OR RADIO AD",
+                                  value: "TV OR RADIO AD",
+                                },
+                                {
+                                  option: "METRO BRANDING",
+                                  value: "METRO BRANDING",
+                                },
+                                {
+                                  option: "BUS BRANDING",
+                                  value: "BUS BRANDING",
+                                },
+                                {
+                                  option: "EDUCATION FAIR",
+                                  value: "EDUCATION FAIR",
+                                },
+                                {
+                                  option: "PHONE OR SMS OR WHATSAPP",
+                                  value: "PHONE OR SMS OR WHATSAPP",
+                                },
+                                {
+                                  option: "SOCAIL MEDIA",
+                                  value: "SOCAIL MEDIA",
+                                },
+                                {
+                                  option: "OTHERS",
+                                  value: "OTHERS",
+                                },
+                              ].map((value, index) => (
+                                <option key={value.value} value={value.value}>
+                                  {value.option}
+                                </option>
+                              ))}
+                            </Select>
+                          </>
+                        ) : filterType == "DATE" ? (
+                          <>
+                            <FormLabel>Date</FormLabel>
+                            <Input
+                              value={filterState.date}
+                              onChange={(e) =>
+                                setFilterState((prev) => ({
+                                  ...prev,
+                                  date: e.target.value,
+                                }))
+                              }
+                              type={"date"}
+                            />
+                          </>
+                        ) : null}
+                      </FormControl>
+                      <FormControl>
+                        <Button
+                          as={Link}
+                          href={`/dashboard/search/${new Date(
+                            Date.now()
+                          ).getTime()}/?type=${filterType}&date=${
+                            filterState.date
+                          }&source=${filterState.source}`}
+                          colorScheme={"blue"}
+                          onClick={() => {
                             //  navigation.refresh()
-                            }}
-                            rightIcon={
-                              <AiOutlineSearch className={"text-lg"} />
-                            }
-                            w={"full"}
-                          >
-                            Search
-                          </Button>
-                        </FormControl>
-                      </>
-                    )}
-                  </VStack>
-                </MenuList>
-              </Menu>
-              <AddCouncelAddmissionModel>
-                {({ onOpen }) => (
-                  <Button
-                    leftIcon={<AiOutlinePlusCircle className="text-lg" />}
-                    onClick={onOpen}
-                    size={"sm"}
-                    colorScheme="facebook"
-                  >
-                    Add Enquiry
-                  </Button>
-                )}
-              </AddCouncelAddmissionModel>
-            </HStack>
+                          }}
+                          rightIcon={<AiOutlineSearch className={"text-lg"} />}
+                          w={"full"}
+                        >
+                          Search
+                        </Button>
+                      </FormControl>
+                    </>
+                  )}
+                </VStack>
+              </MenuList>
+            </Menu>
+            <AddCouncelAddmissionModel>
+              {({ onOpen }) => (
+                <Button
+                  leftIcon={<AiOutlinePlusCircle className="text-lg" />}
+                  onClick={onOpen}
+                  size={"sm"}
+                  colorScheme="facebook"
+                  zIndex={"-1"}
+                >
+                  Add Enquiry
+                </Button>
+              )}
+            </AddCouncelAddmissionModel>
           </HStack>
         </TabList>
         <TabPanels px={"0"} h={"full"}>

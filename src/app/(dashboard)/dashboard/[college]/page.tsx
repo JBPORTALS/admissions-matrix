@@ -65,23 +65,21 @@ export default function Home() {
                     <Td>{value.total}</Td>
                     <Td>{value.allotted_seats}</Td>
                     <Td>{value.remaining_seats}</Td>
-                    <Td>
-                      <div className="flex flex-col justify-center items-center relative text-xl text-black h-full w-full">
-                        <h3 className="z-2 text-brand drop-shadow-lg">
-                          {value.filled_percentage} %
-                        </h3>
-                        <Progress
-                          w={"full"}
-                          hasStripe
-                          value={value.filled_percentage}
-                          rounded={"full"}
-                          isAnimated
-                          isIndeterminate={value.filled_percentage == undefined}
-                          size="sm"
-                          colorScheme="blue"
-                        />
-                      </div>
-                    </Td>
+                    <Td position={"relative"} zIndex={"base"}>
+                    <h3 className="text-brand drop-shadow-lg text-lg font-medium">
+                      {value.filled_percentage} %
+                    </h3>
+                    <Progress
+                      w={"full"}
+                      hasStripe
+                      value={value.filled_percentage}
+                      rounded={"full"}
+                      isAnimated
+                      isIndeterminate={value.filled_percentage == undefined}
+                      size="sm"
+                      colorScheme="blue"
+                    />
+                  </Td>
                   </Tr>
                 );
               })}

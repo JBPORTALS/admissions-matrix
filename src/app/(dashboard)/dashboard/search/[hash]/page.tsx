@@ -67,7 +67,7 @@ export default function Page() {
         w={"100vw"}
       >
         {new Array(9).fill(0).map((value, index) => {
-          return <Skeleton w={"85%"} h={"12"} key={index} />;
+          return <Skeleton w={"100%"} h={"12"} key={index} />;
         })}
       </VStack>
     );
