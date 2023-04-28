@@ -12,6 +12,7 @@ type SupabaseContext = {
   user: {
     email: string | undefined;
     username: string | undefined;
+    last_login_at: string | undefined;
     session: AuthSession | null;
   } | null;
 };
@@ -28,6 +29,7 @@ export default function SupabaseProvider({
     username: undefined | string;
     email: string | undefined;
     session: AuthSession | null;
+    last_login_at:string|undefined
   } | null>(null);
   const router = useRouter();
 
@@ -35,12 +37,13 @@ export default function SupabaseProvider({
     const { data } = await supabase.auth.getSession();
     const { data: User } = await supabase
       .from("profiles")
-      .select("username")
+      .select("username,last_login_at")
       .eq("id", data.session?.user.id)
       .single();
     setUser({
       username: User?.username,
       email: data.session?.user.email,
+      last_login_at:User?.last_login_at,
       session: data.session,
     });
   }

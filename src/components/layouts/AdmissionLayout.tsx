@@ -70,6 +70,7 @@ import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import moment from "moment";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -242,7 +243,7 @@ export default function AdmissionLayout({
                 <HStack spacing={"3"} py={"2"}>
                   <AiOutlineFieldTime className="text-2xl" />
                   <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.session?.user.last_sign_in_at}
+                    {moment(user?.last_login_at).format("MMMM Do YYYY, h:mm a")}
                   </Heading>
                 </HStack>
                 <HStack spacing={"3"} py={"2"}>
