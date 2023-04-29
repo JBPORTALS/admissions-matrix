@@ -20,7 +20,7 @@ export default function ISelect({
 
   useEffect(() => {
     onChange(currentValue);
-  }, [currentValue,value]);
+  }, [currentValue,value]);// eslint-disable-line
 
   return (
     <VStack p={0} px={0} className="bg-primary w-52 relative flex flex-col px-10">
