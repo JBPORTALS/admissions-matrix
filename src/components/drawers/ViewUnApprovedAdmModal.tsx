@@ -3,6 +3,7 @@ import { useAppSelector } from "@/store";
 import {
   fetchBranchList,
   fetchSelectedMatrix,
+  fetchUnApprovedAdmissions,
   SelectedMatrix,
   updateEnquiry,
   updateSelectedMatrix,
@@ -19,10 +20,13 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
+import { AiOutlineDelete } from "react-icons/ai";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -33,8 +37,18 @@ export default function ViewUnApprovedAdmModal({
   children,
   admissionno,
 }: props) {
+  const [isDeleting, setIsDeleting] = useState(false);
   const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
-  const { isOpen:isConfirm, onClose:onConfirmClose, onOpen: onConfirmOpen } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onClose: onDeleteClose,
+    onOpen: onDeleteOpen,
+  } = useDisclosure();
+  const {
+    isOpen: isConfirm,
+    onClose: onConfirmClose,
+    onOpen: onConfirmOpen,
+  } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
@@ -51,7 +65,7 @@ export default function ViewUnApprovedAdmModal({
     (state) => state.admissions.branchlist.data
   ) as [];
   const dispatch = useAppDispatch();
-  const {user} = useSupabase()
+  const { user } = useSupabase();
 
   const onOpen = () => {
     onModalOpen();
@@ -60,6 +74,27 @@ export default function ViewUnApprovedAdmModal({
     dispatch(
       fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
     );
+  };
+
+  const onDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const formData = new FormData();
+      formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
+        method: "POST",
+        data: formData,
+      });
+      dispatch(fetchUnApprovedAdmissions({
+        college:selectedAdmissionDetails[0].college,
+        branch:selectedAdmissionDetails[0].branch
+      }))
+      toast.success(response.data?.msg, { position: "top-right" });
+    } catch (e: any) {
+      toast.error(e.response?.data?.msg, { position: "top-right" });
+    }
+    setIsDeleting(false);
   };
 
   useEffect(() => {
@@ -85,7 +120,7 @@ export default function ViewUnApprovedAdmModal({
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
-    await dispatch(updateToApprove({username:user?.username!}));
+    await dispatch(updateToApprove({ username: user?.username! }));
     if (!isError) onClose();
   };
 
@@ -102,10 +137,21 @@ export default function ViewUnApprovedAdmModal({
         isOpen={isOpen}
         heading="Approve Enquiry"
       >
-        <IModal onSubmit={onsubmit} buttonTitle="Yes" heading="Are you sure ?" isOpen={isConfirm} onClose={onConfirmClose}>
+        <IModal
+          onSubmit={onsubmit}
+          buttonTitle="Yes"
+          heading="Are you sure ?"
+          isOpen={isConfirm}
+          onClose={onConfirmClose}
+        >
           <Center py={"3"}>
-            <Heading size={"md"} fontWeight={"medium"}>You want to approve the</Heading>
-            <Heading size={"md"} ml={"2"}>{selectedAdmissionDetails[0]?.name}({selectedAdmissionDetails[0]?.admission_id})</Heading>
+            <Heading size={"md"} fontWeight={"medium"}>
+              You want to approve the
+            </Heading>
+            <Heading size={"md"} ml={"2"}>
+              {selectedAdmissionDetails[0]?.name}(
+              {selectedAdmissionDetails[0]?.admission_id})
+            </Heading>
           </Center>
         </IModal>
         <VStack w={"full"} h={"full"} px={"5"} spacing={"3"} py={"5"}>
@@ -371,7 +417,7 @@ export default function ViewUnApprovedAdmModal({
               variant={"outline"}
               bg={"white"}
               readOnly
-              value={user?.username}
+              value={selectedAdmissionDetails[0]?.quoted_by}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
@@ -481,7 +527,9 @@ export default function ViewUnApprovedAdmModal({
               bg={"white"}
               value={selectedAdmissionDetails[0]?.referred_by}
               className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {dispatch(updateSelectedMatrix({ referred_by: e.target.value }));}}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ referred_by: e.target.value }));
+              }}
             />
           </Flex>
           <Flex
@@ -527,8 +575,49 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
-          <HStack zIndex={"sticky"} position={"sticky"} bottom={"0"}  py={"2"} w={"full"} className={"border-t border-t-lightgray bg-primary"}>
-            <Button isLoading={isUpdating} onClick={()=>dispatch(updateEnquiry({username:user?.username!}))} colorScheme={"purple"} w={"full"}>Update Details</Button>
+          <HStack
+            zIndex={"sticky"}
+            position={"sticky"}
+            bottom={"0"}
+            py={"2"}
+            w={"full"}
+            className={"border-t border-t-lightgray bg-primary"}
+          >
+            <IModal
+              heading="Are you sure ?"
+              isOpen={isDeleteOpen}
+              onClose={onDeleteClose}
+              colorBtn="red"
+              onSubmit={()=>{
+               onDelete();
+               onDeleteClose(); 
+              }}
+              buttonTitle="Yes"
+            >
+              <VStack py={"5"}>
+                <Heading size={"md"} fontWeight={"medium"}>You want to delete this record</Heading>
+                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>This action can't be undo</Heading>
+              </VStack>
+            </IModal>
+            <Button
+              isLoading={isDeleting}
+              onClick={onDeleteOpen}
+              leftIcon={<AiOutlineDelete />}
+              colorScheme={"red"}
+              w={"full"}
+            >
+              Delete
+            </Button>
+            <Button
+              isLoading={isUpdating}
+              onClick={() =>
+                dispatch(updateEnquiry({ username: user?.username! }))
+              }
+              colorScheme={"purple"}
+              w={"full"}
+            >
+              Update Details
+            </Button>
           </HStack>
         </VStack>
       </IDrawer>

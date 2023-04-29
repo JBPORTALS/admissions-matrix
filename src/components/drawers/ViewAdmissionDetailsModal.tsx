@@ -2,23 +2,30 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
   fetchBranchList,
+  fetchSearchClass,
   fetchSelectedMatrix,
   SelectedMatrix,
   updateMatrix,
   updateSelectedMatrix,
 } from "@/store/admissions.slice";
 import {
+  Button,
   Flex,
   Heading,
+  HStack,
   Input,
   Select,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
+import { AiOutlineDelete } from "react-icons/ai";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import IModal from "../ui/utils/IModal";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -29,6 +36,12 @@ export default function ViewAdmissionDetailsModal({
   children,
   admissionno,
 }: props) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const {
+    isOpen: isDeleteOpen,
+    onClose: onDeleteClose,
+    onOpen: onDeleteOpen,
+  } = useDisclosure();
   const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
@@ -47,6 +60,28 @@ export default function ViewAdmissionDetailsModal({
     onModalOpen();
     dispatch(fetchSelectedMatrix({ admissionno }));
   };
+
+  const onDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const formData = new FormData();
+      formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
+        method: "POST",
+        data: formData,
+      });
+      dispatch(fetchSearchClass({
+        college:selectedAdmissionDetails[0].college,
+        branch:selectedAdmissionDetails[0].branch
+      }))
+      toast.success(response.data?.msg, { position: "top-right" });
+    } catch (e: any) {
+      toast.error(e.response?.data?.msg, { position: "top-right" });
+    }
+    setIsDeleting(false);
+  };
+
 
   useEffect(() => {
     isOpen &&
@@ -539,6 +574,33 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
+          <HStack zIndex={"sticky"} position={"sticky"} bottom={"0"}  py={"2"} w={"full"} className={"border-t border-t-lightgray bg-primary"}>
+          <IModal
+              heading="Are you sure ?"
+              isOpen={isDeleteOpen}
+              onClose={onDeleteClose}
+              colorBtn="red"
+              onSubmit={()=>{
+               onDelete();
+               onDeleteClose(); 
+              }}
+              buttonTitle="Yes"
+            >
+              <VStack py={"5"}>
+                <Heading size={"md"} fontWeight={"medium"}>You want to delete this record</Heading>
+                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>This action can't be undo</Heading>
+              </VStack>
+            </IModal>
+            <Button
+              isLoading={isDeleting}
+              onClick={onDeleteOpen}
+              leftIcon={<AiOutlineDelete />}
+              colorScheme={"red"}
+              w={"full"}
+            >
+              Delete
+            </Button>
+          </HStack>
         </VStack>
       </IDrawer>
       {children({ onOpen })}
