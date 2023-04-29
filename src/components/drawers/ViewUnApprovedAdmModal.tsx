@@ -113,7 +113,7 @@ export default function ViewUnApprovedAdmModal({
         ).toString(),
       })
     );
-  }, [
+  }, [// eslint-disable-line
     selectedAdmissionDetails[0]?.fee_fixed,// eslint-disable-line
     selectedAdmissionDetails[0]?.fee_paid,// eslint-disable-line
     dispatch,// eslint-disable-line
@@ -596,7 +596,7 @@ export default function ViewUnApprovedAdmModal({
             >
               <VStack py={"5"}>
                 <Heading size={"md"} fontWeight={"medium"}>You want to delete this record</Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>This action can't be undo</Heading>
+                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>{"This action can't be undo"}</Heading>
               </VStack>
             </IModal>
             <Button
