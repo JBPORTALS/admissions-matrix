@@ -162,7 +162,7 @@ export default function ViewAdmissionDetailsModal({
               value={selectedAdmissionDetails[0]?.name}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ name: e.target.value }));
+                dispatch(updateSelectedMatrix({ name: e.target.value }));// eslint-disable-line
               }}
             />
           </Flex>
