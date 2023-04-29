@@ -64,7 +64,7 @@ export default function SupabaseProvider({
 
   useEffect(() => {
     getUserData();
-  }, [router, supabase]);
+  }, [router, supabase]);// eslint-disable-line
 
   return (
     <Context.Provider value={{ supabase, user }}>
