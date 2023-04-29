@@ -47,8 +47,7 @@ export default function Page() {
       params.get("date")!,
       params.get("source")!
     );
-    console.log(data);
-  }, [p.hash]);
+  }, [p.hash,params]);
 
   if (!params.has("type") || params.get("type") == "")
     return (

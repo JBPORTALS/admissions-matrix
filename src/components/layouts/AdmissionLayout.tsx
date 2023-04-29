@@ -126,9 +126,9 @@ export default function AdmissionLayout({
       );
   }, [ucollege, ubranch, dispatch]);
 
-  const { user,supabase } = useSupabase();
+  const { user, supabase } = useSupabase();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  console.log(user)
+  console.log(user);
 
   return (
     <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
@@ -209,15 +209,18 @@ export default function AdmissionLayout({
         </HStack>
 
         <HStack position={"relative"}>
-          
           <HStack>
-           <Heading size={"md"}>{user?.username}</Heading>
-          <IconButton onClick={onOpen} variant={"unstyled"} aria-label="avatar">
-            <Avatar size={"sm"}></Avatar>
-          </IconButton>
+            <Heading size={"md"}>{user?.username}</Heading>
+            <IconButton
+              onClick={onOpen}
+              variant={"unstyled"}
+              aria-label="avatar"
+            >
+              <Avatar size={"sm"}></Avatar>
+            </IconButton>
           </HStack>
           <Modal isOpen={isOpen} size={"sm"} onClose={onClose}>
-            <ModalOverlay className="backdrop-blur-sm"/>
+            <ModalOverlay className="backdrop-blur-sm" />
             <ModalContent
               position={"relative"}
               zIndex={"toast"}
@@ -247,7 +250,18 @@ export default function AdmissionLayout({
                   </Heading>
                 </HStack>
                 <HStack spacing={"3"} py={"2"}>
-                  <Button leftIcon={<AiOutlineLogout/>} onClick={async ()=>await supabase.auth.signOut()} colorScheme="facebook" w={"full"}>
+                  <Button
+                    leftIcon={<AiOutlineLogout />}
+                    onClick={async () => {
+                      await supabase
+                        .from("profiles")
+                        .update({ last_login_at: new Date(Date.now()) })
+                        .eq("id", user?.session?.user.id);
+                      await supabase.auth.signOut();
+                    }}
+                    colorScheme="facebook"
+                    w={"full"}
+                  >
                     SignOut
                   </Button>
                 </HStack>

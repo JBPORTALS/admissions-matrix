@@ -28,10 +28,7 @@ export default function Home() {
       email: state.email,
       password: state.password,
     });
-    await SC()
-      .from("profiles")
-      .update({ last_login_at: new Date(Date.now()) })
-      .eq("id", data!.user!.id!);
+    
     if (error) {
       toast.error("Invalid credentials !");
       setIsLoading(false);

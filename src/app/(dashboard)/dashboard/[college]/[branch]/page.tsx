@@ -17,7 +17,7 @@ export default function Home() {
     dispatch(
       fetchSearchClass({ college: router.college, branch: router.branch })
     );
-  }, [router.college, router.branch]);
+  }, [router.college, router.branch,dispatch]);
 
   return (
     <VStack h={"90vh"} className="ag">

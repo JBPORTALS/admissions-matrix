@@ -314,6 +314,7 @@ export const SearchColumns = [
     pinned: "left",
     headerName: "Actions",
     width: "120px",
+    height:"80px",
     cellRenderer: CustomSearchButton,
     valueGetter: (params: any) => {
       return params.data;
@@ -322,6 +323,7 @@ export const SearchColumns = [
   {
     field: "admission_id",
     headerName: "ADD No.",
+    height:"80px",
     filter: true,
     pinned: "left",
     resizable: true,
@@ -335,6 +337,7 @@ export const SearchColumns = [
   },
   {
     field: "name",
+    height:"80px",
     headerName: "Name",
     filter: true,
     resizable: true,
@@ -348,6 +351,7 @@ export const SearchColumns = [
   {
     field: "college",
     headerName: "College",
+    height:"80px",
     filter: true,
     width:120,
     resizable: true,
@@ -363,6 +367,7 @@ export const SearchColumns = [
     headerName: "Branch",
     width:120,
     filter: true,
+    height:"80px",
     resizable: true,
     suppressMovable: true,
     cellStyle: {
@@ -375,6 +380,7 @@ export const SearchColumns = [
     field: "father_name",
     headerName: "Father Name",
     width: "180px",
+    height:"80px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -385,6 +391,7 @@ export const SearchColumns = [
     field: "phone_no",
     headerName: "Phone No.",
     width: "130px",
+    height:"80px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -395,6 +402,7 @@ export const SearchColumns = [
     field: "email",
     headerName: "Email",
     width: "180px",
+    height:"80px",
     resizable: true,
     cellStyle: {
       display: "flex",
@@ -405,6 +413,7 @@ export const SearchColumns = [
   {
     field: "status",
     headerName: "Status",
+    height:"80px",
     filter: true,
     width: "180px",
     cellRenderer:StatusView

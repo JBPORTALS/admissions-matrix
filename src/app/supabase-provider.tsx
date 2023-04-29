@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import type { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { AuthSession } from "@supabase/supabase-js";
+import { get } from "http";
 
 type SupabaseContext = {
   supabase: SupabaseClient<any>;
@@ -59,7 +60,7 @@ export default function SupabaseProvider({
     return () => {
       subscription.unsubscribe();
     };
-  }, [router, supabase]);
+  }, [router, supabase]);//eslint disable
 
   useEffect(() => {
     getUserData();
