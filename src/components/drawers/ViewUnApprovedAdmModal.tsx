@@ -114,9 +114,9 @@ export default function ViewUnApprovedAdmModal({
       })
     );
   }, [
-    selectedAdmissionDetails[0]?.fee_fixed,
-    selectedAdmissionDetails[0]?.fee_paid,
-    dispatch,
+    selectedAdmissionDetails[0]?.fee_fixed,// eslint-disable-line
+    selectedAdmissionDetails[0]?.fee_paid,// eslint-disable-line
+    dispatch,// eslint-disable-line
   ]); // eslint-disable-line
 
   const onsubmit = async () => {

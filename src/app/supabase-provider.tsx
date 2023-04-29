@@ -60,7 +60,7 @@ export default function SupabaseProvider({
     return () => {
       subscription.unsubscribe();
     };
-  }, [router, supabase]);//eslint disable
+  }, [router, supabase]);// eslint-disable-line
 
   useEffect(() => {
     getUserData();
