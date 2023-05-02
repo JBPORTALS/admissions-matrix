@@ -462,7 +462,6 @@ export default function AdmissionLayout({
                   onClick={onOpen}
                   size={"sm"}
                   colorScheme="facebook"
-                  zIndex={"-1"}
                 >
                   Add Enquiry
                 </Button>
