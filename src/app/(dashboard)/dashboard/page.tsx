@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     dispatch(fetchOverallMatrix({college:user?.college!}));
-  }, [dispatch]);
+  }, [dispatch,user?.college]);
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
