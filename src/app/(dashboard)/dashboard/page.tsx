@@ -7,9 +7,11 @@ import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
+import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
   const dispatch = useAppDispatch();
+  const {user} = useSupabase()
   const overAllMatrix = useAppSelector(
     (state) => state.admissions.overall_matrix.data
   ) as {
@@ -21,7 +23,7 @@ export default function Home() {
   }[];
 
   useEffect(() => {
-    dispatch(fetchOverallMatrix());
+    dispatch(fetchOverallMatrix({college:user?.college!}));
   }, [dispatch]);
 
   return (

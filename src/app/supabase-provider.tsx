@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 import type { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { AuthSession } from "@supabase/supabase-js";
-import { get } from "http";
 
 type SupabaseContext = {
   supabase: SupabaseClient<any>;
@@ -15,6 +14,7 @@ type SupabaseContext = {
     username: string | undefined;
     last_login_at: string | undefined;
     session: AuthSession | null;
+    college:string|undefined;
   } | null;
 };
 
@@ -30,7 +30,8 @@ export default function SupabaseProvider({
     username: undefined | string;
     email: string | undefined;
     session: AuthSession | null;
-    last_login_at:string|undefined
+    last_login_at:string|undefined;
+    college:string|undefined;
   } | null>(null);
   const router = useRouter();
 
@@ -38,13 +39,14 @@ export default function SupabaseProvider({
     const { data } = await supabase.auth.getSession();
     const { data: User } = await supabase
       .from("profiles")
-      .select("username,last_login_at")
+      .select("username,last_login_at,college")
       .eq("id", data.session?.user.id)
       .single();
     setUser({
       username: User?.username,
       email: data.session?.user.email,
       last_login_at:User?.last_login_at,
+      college:User?.college,
       session: data.session,
     });
   }

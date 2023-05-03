@@ -97,7 +97,7 @@ export const fetchSearchClass = createAsyncThunk<
 
 export const fetchOverallMatrix = createAsyncThunk<
   OverallMatrix[],
-  void,
+  { college: string },
   {
     rejectValue: {
       msg: string;
@@ -105,13 +105,18 @@ export const fetchOverallMatrix = createAsyncThunk<
   }
 >(
   "/admissions/fetchoverallmatrix",
-  async (_payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
-      const response = await axios({
-        url:
-          process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrieveoverallmatrix.php",
-      });
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrieveoverallmatrix.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
       data = response.data;
       return fulfillWithValue(data);
     } catch (error: any) {
@@ -239,7 +244,7 @@ export const updateMatrix = createAsyncThunk<
 export const updateEnquiry = createAsyncThunk<
   { msg: string },
   {
-    username:string
+    username: string;
   },
   {
     rejectValue: {
@@ -258,7 +263,7 @@ export const updateEnquiry = createAsyncThunk<
       const state = getState() as RootState;
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
-        const name = payload.username;
+      const name = payload.username;
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
@@ -297,7 +302,7 @@ export const updateEnquiry = createAsyncThunk<
 
 export const updateToApprove = createAsyncThunk<
   { msg: string },
-  {username:string},
+  { username: string },
   {
     rejectValue: {
       msg: string;
@@ -363,9 +368,9 @@ export interface BranchAdmission {
   remaining_amount: string;
   due_date: string;
   approved_by: string;
-  father_no:string;
-  mother_name:string;
-  mother_no:string;
+  father_no: string;
+  mother_name: string;
+  mother_no: string;
 }
 
 export interface AddStudent
@@ -380,7 +385,7 @@ export interface SelectedMatrix extends BranchAdmission {
   total: string;
   fee_quoted: string;
   quoted_by: string;
-  status:string;
+  status: string;
 }
 
 export interface OverallMatrix {
