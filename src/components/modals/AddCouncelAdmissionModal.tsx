@@ -403,6 +403,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("hostel", state.hostel_facility);
       fd.append("transport", state.trasport_facility);
       fd.append("counselled", state.counselled);
+      fd.append("fee_quoted", state.fee_quoted);
+      fd.append("quoted_by", state.quoted_by);
       await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
         {
