@@ -7,8 +7,6 @@ import {
 import {
   FormControl,
   FormLabel,
-  Grid,
-  HStack,
   Input,
   Select,
   SimpleGrid,
@@ -47,6 +45,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     college: "",
     branch: "",
     counselled: "",
+    entry: "REGULAR",
   });
   const [isLoading, setIsLoading] = useState(false);
   const branchList = useAppSelector(
@@ -344,6 +343,31 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "rank",
       label: "Rank",
       type: "number",
+    },
+    {
+      name: "fee_quoted",
+      label: "Fee Quoted",
+      type: "number",
+    },
+    {
+      name: "quoted_by",
+      label: "Fee Quoted By",
+      type: "text",
+    },
+    {
+      name: "entry",
+      label: "Entry Type",
+      type: "select",
+      option: [
+        {
+          option: "REGULAR",
+          value: "REGULAR",
+        },
+        {
+          option: "LATERAL",
+          value: "LATERAL",
+        }
+      ],
     },
     {
       name: "counselled",
