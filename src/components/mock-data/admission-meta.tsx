@@ -137,7 +137,7 @@ export const columns = [
   },
   {
     field: "admission_id",
-    headerName: "Application No.",
+    headerName: "App No.",
     filter: true,
     pinned: "left",
     resizable: true,
@@ -254,7 +254,7 @@ export const UnAprrovedColumns = [
   },
   {
     field: "admission_id",
-    headerName: "Aplication No.",
+    headerName: "App No.",
     filter: true,
     pinned: "left",
     resizable: true,
@@ -336,7 +336,7 @@ export const SearchColumns = [
   },
   {
     field: "admission_id",
-    headerName: "Aplication No.",
+    headerName: "App No.",
     height:"80px",
     filter: true,
     pinned: "left",
