@@ -16,7 +16,7 @@ export default function Page() {
   const p = useParams();
 
   async function getSearchData(
-    type: "DATE" | "SOURCE",
+    type: "ENQUIRY" | "SOURCE" | "APPROVAL",
     date: string,
     source: string
   ) {
@@ -28,7 +28,7 @@ export default function Page() {
       formData.append("source", source);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `${type == "DATE" ? "searchbydate" : "searchbysource"}.php`,
+          `${type == "ENQUIRY" ? "searchbydate":type == "APPROVAL" ?"searchbyapprovaldate" : "searchbysource"}.php`,
         {
           method: "POST",
           data: formData,
@@ -43,7 +43,7 @@ export default function Page() {
 
   useEffect(() => {
     getSearchData(
-      params.get("type") as "SOURCE" | "DATE",
+      params.get("type") as "SOURCE" | "ENQUIRY" | "APPROVAL",
       params.get("date")!,
       params.get("source")!
     );
