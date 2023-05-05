@@ -162,7 +162,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Admission No.
+                App No.
               </Heading>
             </VStack>
             <Input
