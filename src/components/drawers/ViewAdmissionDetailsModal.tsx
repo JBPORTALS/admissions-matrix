@@ -19,7 +19,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -56,9 +56,15 @@ export default function ViewAdmissionDetailsModal({
   const router = useRouter();
   const aspath = usePathname();
 
+  const fetchBranchLists = useCallback(() => {
+    selectedAdmissionDetails[0]?.college &&
+      dispatch(fetchBranchList({college:selectedAdmissionDetails[0]?.college}));
+  }, [dispatch]);
+
   const onOpen = () => {
     onModalOpen();
     dispatch(fetchSelectedMatrix({ admissionno }));
+    isOpen && fetchBranchLists()
   };
 
   const onDelete = async () => {
@@ -71,25 +77,18 @@ export default function ViewAdmissionDetailsModal({
         method: "POST",
         data: formData,
       });
-      dispatch(fetchSearchClass({
-        college:selectedAdmissionDetails[0].college,
-        branch:selectedAdmissionDetails[0].branch
-      }))
+      dispatch(
+        fetchSearchClass({
+          college: selectedAdmissionDetails[0].college,
+          branch: selectedAdmissionDetails[0].branch,
+        })
+      );
       toast.success(response.data?.msg, { position: "top-right" });
     } catch (e: any) {
       toast.error(e.response?.data?.msg, { position: "top-right" });
     }
     setIsDeleting(false);
   };
-
-
-  useEffect(() => {
-    isOpen &&
-      selectedAdmissionDetails[0]?.college &&
-      dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
-      );
-  }, [selectedAdmissionDetails[0]?.college, isOpen, dispatch]); // eslint-disable-line
 
   useEffect(() => {
     dispatch(
@@ -100,7 +99,8 @@ export default function ViewAdmissionDetailsModal({
         ).toString(),
       })
     );
-  }, [// eslint-disable-line
+  }, [
+    // eslint-disable-line
     selectedAdmissionDetails[0]?.fee_fixed, // eslint-disable-line
     selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
     isOpen,
@@ -133,7 +133,7 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Admission No.
+                App No.
               </Heading>
             </VStack>
             <Input
@@ -143,6 +143,29 @@ export default function ViewAdmissionDetailsModal({
               bg={"white"}
               value={selectedAdmissionDetails[0]?.admission_id}
               className={"shadow-md shadow-lightBrand"}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Enquiry Date
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              isReadOnly
+              variant={"outline"}
+              bg={"white"}
+              type={"date"}
+              value={selectedAdmissionDetails[0]?.enquiry_date}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
+              }}
             />
           </Flex>
           <Flex
@@ -162,10 +185,11 @@ export default function ViewAdmissionDetailsModal({
               value={selectedAdmissionDetails[0]?.name}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ name: e.target.value }));// eslint-disable-line
+                dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
               }}
             />
           </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -357,7 +381,7 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Qouted
+                Management Fee
               </Heading>
             </VStack>
             <Input
@@ -537,6 +561,27 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Approved Date
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              readOnly
+              variant={"outline"}
+              bg={"white"}
+              type="date"
+              value={selectedAdmissionDetails[0]?.approved_date}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {}}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Remarks
               </Heading>
             </VStack>
@@ -574,21 +619,32 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
-          <HStack zIndex={"sticky"} position={"sticky"} bottom={"0"}  py={"2"} w={"full"} className={"border-t border-t-lightgray bg-primary"}>
-          <IModal
+          <HStack
+            zIndex={"sticky"}
+            position={"sticky"}
+            bottom={"0"}
+            py={"2"}
+            w={"full"}
+            className={"border-t border-t-lightgray bg-primary"}
+          >
+            <IModal
               heading="Are you sure ?"
               isOpen={isDeleteOpen}
               onClose={onDeleteClose}
               colorBtn="red"
-              onSubmit={()=>{
-               onDelete();
-               onDeleteClose(); 
+              onSubmit={() => {
+                onDelete();
+                onDeleteClose();
               }}
               buttonTitle="Yes"
             >
               <VStack py={"5"}>
-                <Heading size={"md"} fontWeight={"medium"}>You want to delete this record</Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>{"This action can't be undo"}</Heading>
+                <Heading size={"md"} fontWeight={"medium"}>
+                  You want to delete this record
+                </Heading>
+                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
+                  {"This action can't be undo"}
+                </Heading>
               </VStack>
             </IModal>
             <Button

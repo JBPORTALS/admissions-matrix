@@ -2,6 +2,8 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
   fetchBranchList,
+  fetchCollegeList,
+  fetchFeeQouted,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
 import {
@@ -33,6 +35,7 @@ interface FormDataProps {
   max?: number;
   isReadonly?: boolean;
   option?: { value: string; option: string }[];
+  value?:string;
 }
 
 export default function AddCouncelAddmissionModel({ children }: props) {
@@ -51,11 +54,26 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   const branchList = useAppSelector(
     (state) => state.admissions.branchlist.data
   ) as [];
+  const collegeList = useAppSelector(
+    (state) => state.admissions.collegeList.data
+  ) as [];
+  const fee = useAppSelector(
+    (state) => state.admissions.fee
+  ) as string;
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    state.course && dispatch(fetchCollegeList({ course: state.course }));
+    setState(prev=>({...prev,college:"",branch:""}))
+  }, [state.course, dispatch]);
 
   useEffect(() => {
     state.college && dispatch(fetchBranchList({ college: state.college }));
   }, [state.college, dispatch]);
+
+  useEffect(() => {
+    state.college&&state.branch && dispatch(fetchFeeQouted({ college: state.college,branch:state.branch }))
+  }, [state.college,state.branch, dispatch]);
 
   const formData: FormDataProps[] = [
     {
@@ -183,34 +201,20 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "college",
       label: "College",
       type: "select",
-      option: [
-        {
-          option: "KS PRE-UNIVERSITY",
-          value: "KSPU",
-        },
-        {
-          option: "KS POLYTECHNIC",
-          value: "KSPT",
-        },
-        {
-          option: "KS INSTITUTE OF TECHNOLOGY",
-          value: "KSIT",
-        },
-        {
-          option: "KS SCHOOL OF ENGG. & MGMT.",
-          value: "KSSEM",
-        },
-        {
-          option: "KS SCHOOL OF ARCH.",
-          value: "KSSA",
-        },
-      ],
+      option: collegeList
     },
     {
       name: "branch",
       label: "Branch",
       type: "select",
       option: branchList,
+    },
+    {
+      name: "fee_quoted",
+      label: "Fee",
+      type: "number",
+      isReadonly:true,
+      value:fee
     },
     {
       name: "email",
@@ -345,18 +349,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       type: "number",
     },
     {
-      name: "fee_quoted",
-      label: "Fee Quoted",
-      type: "number",
-    },
-    {
-      name: "quoted_by",
-      label: "Fee Quoted By",
-      type: "text",
-    },
-    {
-      name: "entry",
-      label: "Entry Type",
+      name: "category",
+      label: "Category",
       type: "select",
       option: [
         {
@@ -403,7 +397,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("hostel", state.hostel_facility);
       fd.append("transport", state.trasport_facility);
       fd.append("counselled", state.counselled);
-      fd.append("fee_quoted", state.fee_quoted);
+      fd.append("fee_quoted", fee);
       fd.append("quoted_by", state.quoted_by);
       await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
@@ -501,7 +495,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                       bg={"white"}
                       w={"64"}
                       maxLength={field?.max}
-                      value={state[field.name]}
+                      value={field.value ? field.value : state[field.name]}
                       onChange={(e) => {
                         if (field.max && field.type == "number") {
                           if (e.target.value.length <= field.max) {

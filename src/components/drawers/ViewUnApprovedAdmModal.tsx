@@ -162,7 +162,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Admission No.
+                App No.
               </Heading>
             </VStack>
             <Input
@@ -386,7 +386,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Quoted
+                Mangement Fee
               </Heading>
             </VStack>
             <Input
@@ -417,7 +417,7 @@ export default function ViewUnApprovedAdmModal({
               variant={"outline"}
               bg={"white"}
               readOnly
-              value={selectedAdmissionDetails[0]?.quoted_by}
+              value={selectedAdmissionDetails[0]?.quoted_by || "-"}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));

@@ -1,7 +1,7 @@
 "use client";
 import AddCouncelAddmissionModel from "@/components/modals/AddCouncelAdmissionModal";
 import { Image } from "@chakra-ui/next-js";
-import Link from "next/link"
+import Link from "next/link";
 import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
         <Image
           alt={"ismart"}
           src={"/iSmartLogo.png"}
-          className="object-scale-down aspect-auto"
+          className={"object-scale-down aspect-auto"}
           width={120}
           height={70}
         />
@@ -30,7 +30,7 @@ export default function Home() {
                 colorScheme="blue"
                 onClick={onOpen}
               >
-                Add Enquery
+                Add Enquiry
               </Button>
             )}
           </AddCouncelAddmissionModel>
@@ -47,10 +47,10 @@ export default function Home() {
       </HStack>
       <Center h={"full"}>
         <Card border={"1px"} shadow={"md"} p={"10"}>
-        <Heading color={"blue.600"}>Admission Matrix</Heading>
-        <p className="mt-3">to manage admission process details</p>
-        <Button
-        mt={"4"}
+          <Heading color={"blue.600"}>Admission Matrix</Heading>
+          <p className="mt-3">to manage admission process details</p>
+          <Button
+            mt={"4"}
             size={"md"}
             variant={"outline"}
             colorScheme="blue"

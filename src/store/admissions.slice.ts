@@ -63,6 +63,38 @@ export const fetchSearchByAdNo = createAsyncThunk<
   }
 );
 
+export const fetchFeeQouted = createAsyncThunk<
+  SelectedMatrix[],
+  {
+    college: string;
+    branch: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admission/fetchFeeQouted",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      formData.append("branch", payload.branch);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievefee.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchSearchClass = createAsyncThunk<
   SelectedMatrix[],
   {
@@ -145,6 +177,36 @@ export const fetchBranchList = createAsyncThunk<
       const response = await axios({
         url:
           process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebrancheslist.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchCollegeList = createAsyncThunk<
+  { msg: string },
+  {
+    course: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admissions/fetchCollegeList",
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("course", payload.course);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievecollege.php",
         method: "POST",
         data: formData,
       });
@@ -386,6 +448,8 @@ export interface SelectedMatrix extends BranchAdmission {
   fee_quoted: string;
   quoted_by: string;
   status: string;
+  approved_date:string;
+  enquiry_date:string;
 }
 
 export interface OverallMatrix {
@@ -405,6 +469,7 @@ export interface BranchMatrix {
 }
 
 interface FeesIntialState {
+  fee: string;
   branch_admissions: {
     data: [];
     pending: boolean;
@@ -416,6 +481,11 @@ interface FeesIntialState {
     error: null | string;
   };
   branchlist: {
+    data: [];
+    pending: boolean;
+    error: null | string;
+  };
+  collegeList: {
     data: [];
     pending: boolean;
     error: null | string;
@@ -451,12 +521,18 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
+  fee: "",
   branch_admissions: {
     data: [],
     error: null,
     pending: false,
   },
   branchlist: {
+    data: [],
+    error: null,
+    pending: false,
+  },
+  collegeList: {
     data: [],
     error: null,
     pending: false,
@@ -569,7 +645,23 @@ export const AdmissionsSlice = createSlice({
       state.branchlist.data = action.payload;
     },
     [fetchBranchList.rejected.toString()]: (state, action) => {
-      state.branch_admissions.data = [];
+      state.branchlist.data = [];
+    },
+    [fetchFeeQouted.fulfilled.toString()]: (state, action) => {
+      state.fee = action.payload[0].fee;
+    },
+    [fetchFeeQouted.rejected.toString()]: (state, action) => {
+      state.fee = "";
+    },
+    [fetchCollegeList.pending.toString()]: (state, action) => {
+      state.collegeList.pending = true;
+    },
+    [fetchCollegeList.fulfilled.toString()]: (state, action) => {
+      state.collegeList.pending = false;
+      state.collegeList.data = action.payload;
+    },
+    [fetchCollegeList.rejected.toString()]: (state, action) => {
+      state.collegeList.data = [];
     },
     [updateMatrix.pending.toString()]: (state, action) => {
       state.selectedMatrix.pending = true;

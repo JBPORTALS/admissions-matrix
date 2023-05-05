@@ -106,6 +106,9 @@ export default function AdmissionLayout({
     (state) => state.admissions.selectedMatrix.error
   ) as string | null;
   const dispatch = useAppDispatch();
+  const metaData = useAppSelector(
+    (state) => state.admissions.search_class.data
+  ) as { remaining: string; intake: string }[];
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -337,7 +340,8 @@ export default function AdmissionLayout({
                   <FormControl>
                     <Select onChange={(e) => setFilterType(e.target.value)}>
                       <option value={""}>Select Filter</option>
-                      <option value={"DATE"}>By Enquiry Date</option>
+                      <option value={"ENQUIRY"}>By Enquiry Date</option>
+                      <option value={"APPROVAL"}>By Aprroval Date</option>
                       <option value={"SOURCE"}>By source.</option>
                     </Select>
                   </FormControl>
@@ -416,7 +420,8 @@ export default function AdmissionLayout({
                               ))}
                             </Select>
                           </>
-                        ) : filterType == "DATE" ? (
+                        ) : filterType == "APPROVAL" ||
+                          filterType == "ENQUIRY" ? (
                           <>
                             <FormLabel>Date</FormLabel>
                             <Input
@@ -519,8 +524,26 @@ export default function AdmissionLayout({
                 )}
               </HStack>
               <HStack>
-                {showDownloadFile && (
+                {college && branch && (
                   <>
+                    <VStack px={3}>
+                      <Heading
+                        size={"sm"}
+                        whiteSpace={"nowrap"}
+                        fontWeight={"medium"}
+                      >
+                        Reamaing/Intake
+                      </Heading>
+                      {metaData.length > 0 && (
+                        <Heading
+                          size={"sm"}
+                          whiteSpace={"nowrap"}
+                          fontWeight={"medium"}
+                        >
+                          {metaData[0]?.remaining!}/{metaData[0]?.intake!}
+                        </Heading>
+                      )}
+                    </VStack>
                     <Button
                       as={Link}
                       target={"_blank"}

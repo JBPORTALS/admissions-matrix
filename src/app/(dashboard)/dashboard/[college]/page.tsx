@@ -18,7 +18,6 @@ import {useParams } from "next/navigation";
 import axios from "axios";
 
 export default function Home() {
-  const dispatch = useAppDispatch();
   const router = useParams();
   const [data, setData] = useState({ data: [], error: null });
 
