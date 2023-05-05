@@ -335,6 +335,20 @@ export const SearchColumns = [
     },
   },
   {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "110px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
     field: "admission_id",
     headerName: "App No.",
     height:"80px",
