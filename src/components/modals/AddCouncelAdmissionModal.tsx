@@ -397,6 +397,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("hostel", state.hostel_facility);
       fd.append("transport", state.trasport_facility);
       fd.append("counselled", state.counselled);
+      fd.append("category", state.category);
       fd.append("fee_quoted", fee);
       fd.append("quoted_by", state.quoted_by);
       await axios(
