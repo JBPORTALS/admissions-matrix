@@ -108,7 +108,7 @@ export default function AdmissionLayout({
   const dispatch = useAppDispatch();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
-  ) as { remaining: string; intake: string }[];
+  ) as { remaining: string; intake: string,allotted:string }[];
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -532,7 +532,7 @@ export default function AdmissionLayout({
                         whiteSpace={"nowrap"}
                         fontWeight={"medium"}
                       >
-                        Reamaing/Intake
+                        Intake - Alloted = Remaining
                       </Heading>
                       {metaData.length > 0 && (
                         <Heading
@@ -540,7 +540,7 @@ export default function AdmissionLayout({
                           whiteSpace={"nowrap"}
                           fontWeight={"medium"}
                         >
-                          {metaData[0]?.remaining!}/{metaData[0]?.intake!}
+                          {metaData[0]?.intake!} - {metaData[0]?.allotted!} = {metaData[0]?.remaining!}
                         </Heading>
                       )}
                     </VStack>
