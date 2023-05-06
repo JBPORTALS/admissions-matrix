@@ -137,7 +137,7 @@ export const columns = [
   },
   {
     field: "admission_id",
-    headerName: "App No.",
+    headerName: "Application No.",
     filter: true,
     pinned: "left",
     resizable: true,
@@ -350,7 +350,7 @@ export const SearchColumns = [
   },
   {
     field: "admission_id",
-    headerName: "App No.",
+    headerName: "Application No.",
     height:"80px",
     filter: true,
     pinned: "left",

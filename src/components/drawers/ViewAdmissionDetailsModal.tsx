@@ -133,7 +133,7 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                App No.
+              Application No.
               </Heading>
             </VStack>
             <Input
@@ -388,7 +388,6 @@ export default function ViewAdmissionDetailsModal({
               w={"60%"}
               type={"number"}
               variant={"outline"}
-              isReadOnly
               bg={"white"}
               value={selectedAdmissionDetails[0]?.fee_quoted}
               className={"shadow-md shadow-lightBrand"}

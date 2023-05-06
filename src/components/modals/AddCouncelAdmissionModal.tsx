@@ -213,7 +213,6 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "fee_quoted",
       label: "Fee",
       type: "number",
-      isReadonly:true,
       value:fee
     },
     {
@@ -358,8 +357,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "REGULAR",
         },
         {
-          option: "LATERAL",
-          value: "LATERAL",
+          option: "LATERAL ENTRY",
+          value: "LATERAL_ENTRY",
         }
       ],
     },
