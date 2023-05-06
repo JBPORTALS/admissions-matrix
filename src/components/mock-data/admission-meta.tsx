@@ -254,7 +254,7 @@ export const UnAprrovedColumns = [
   },
   {
     field: "admission_id",
-    headerName: "App No.",
+    headerName: "Application No.",
     filter: true,
     pinned: "left",
     resizable: true,

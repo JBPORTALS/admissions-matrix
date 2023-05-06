@@ -181,6 +181,25 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+              Enquiry Date
+              </Heading>
+            </VStack>
+            <Input
+              isReadOnly
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.enquiry_date}
+              className={"shadow-md shadow-lightBrand"}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Name
               </Heading>
             </VStack>
