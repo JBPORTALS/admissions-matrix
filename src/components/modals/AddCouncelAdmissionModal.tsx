@@ -49,6 +49,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     branch: "",
     counselled: "",
     entry: "REGULAR",
+    fee_quoted:"",
   });
   const [isLoading, setIsLoading] = useState(false);
   const branchList = useAppSelector(
@@ -57,7 +58,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   const collegeList = useAppSelector(
     (state) => state.admissions.collegeList.data
   ) as [];
-  const fee = useAppSelector(
+  const feeOn = useAppSelector(
     (state) => state.admissions.fee
   ) as string;
   const dispatch = useAppDispatch();
@@ -72,7 +73,9 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   }, [state.college, dispatch]);
 
   useEffect(() => {
-    state.college&&state.branch && dispatch(fetchFeeQouted({ college: state.college,branch:state.branch }))
+    state.college&&state.branch && dispatch(fetchFeeQouted({ college: state.college,branch:state.branch })).then(()=>{
+      setState(prev=>({...prev,fee_quoted:feeOn}))
+    })
   }, [state.college,state.branch, dispatch]);
 
   const formData: FormDataProps[] = [
@@ -213,7 +216,6 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "fee_quoted",
       label: "Fee",
       type: "number",
-      value:fee
     },
     {
       name: "email",
@@ -397,7 +399,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("transport", state.trasport_facility);
       fd.append("counselled", state.counselled);
       fd.append("category", state.category);
-      fd.append("fee_quoted", fee);
+      fd.append("fee_quoted", state.fee_quoted);
       fd.append("quoted_by", state.quoted_by);
       await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
