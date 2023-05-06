@@ -41,7 +41,7 @@ export default function Home() {
   }, [router.college]);
 
   return (
-    <Stack h={"full"} w={"full"} pb={"5"} justifyContent={"start"}>
+    <Stack h={"fit"} w={"full"} pb={"40"} justifyContent={"start"}>
           <Table px={"5"} variant={"simple"} bg={"white"} colorScheme="facebook" size={"lg"}>
             <Tbody>
               <Tr>

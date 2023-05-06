@@ -27,7 +27,7 @@ export default function Home() {
   }, [dispatch,user?.college]);
 
   return (
-    <Stack h={"full"} w={"full"} justifyContent={"start"}>
+    <Stack h={"fit"} pb={"40"} w={"full"} justifyContent={"start"} overflowY={"scroll"}>
       <Table
         px={"5"}
         variant={"simple"}

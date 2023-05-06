@@ -427,7 +427,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Quoted By
+                Qouted By
               </Heading>
             </VStack>
             <Input
