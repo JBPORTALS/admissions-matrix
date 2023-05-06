@@ -403,7 +403,7 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Qouted by
+                Quoted by
               </Heading>
             </VStack>
             <Input
