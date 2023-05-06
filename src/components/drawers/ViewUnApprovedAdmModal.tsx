@@ -162,7 +162,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                App No.
+              Application No.
               </Heading>
             </VStack>
             <Input
@@ -386,7 +386,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Mangement Fee
+                Management Fee
               </Heading>
             </VStack>
             <Input
