@@ -5,6 +5,7 @@ import {
   fetchCollegeList,
   fetchFeeQouted,
   fetchUnApprovedAdmissions,
+  updateFee,
 } from "@/store/admissions.slice";
 import {
   FormControl,
@@ -35,7 +36,8 @@ interface FormDataProps {
   max?: number;
   isReadonly?: boolean;
   option?: { value: string; option: string }[];
-  value?:string;
+  value?: string;
+  onChange?: (e: string) => void;
 }
 
 export default function AddCouncelAddmissionModel({ children }: props) {
@@ -49,7 +51,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     branch: "",
     counselled: "",
     entry: "REGULAR",
-    fee_quoted:"",
+    fee_quoted: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const branchList = useAppSelector(
@@ -58,14 +60,12 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   const collegeList = useAppSelector(
     (state) => state.admissions.collegeList.data
   ) as [];
-  const feeOn = useAppSelector(
-    (state) => state.admissions.fee
-  ) as string;
+  const feeOn = useAppSelector((state) => state.admissions.fee) as string;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     state.course && dispatch(fetchCollegeList({ course: state.course }));
-    setState(prev=>({...prev,college:"",branch:""}))
+    setState((prev) => ({ ...prev, college: "", branch: "" }));
   }, [state.course, dispatch]);
 
   useEffect(() => {
@@ -73,10 +73,12 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   }, [state.college, dispatch]);
 
   useEffect(() => {
-    state.college&&state.branch && dispatch(fetchFeeQouted({ college: state.college,branch:state.branch })).then(()=>{
-      setState(prev=>({...prev,fee_quoted:feeOn}))
-    })
-  }, [state.college,state.branch, dispatch]);
+    state.college &&
+      state.branch &&
+      dispatch(
+        fetchFeeQouted({ college: state.college, branch: state.branch })
+      );
+  }, [state.college, state.branch, dispatch]);
 
   const formData: FormDataProps[] = [
     {
@@ -204,7 +206,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "college",
       label: "College",
       type: "select",
-      option: collegeList
+      option: collegeList,
     },
     {
       name: "branch",
@@ -216,6 +218,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "fee_quoted",
       label: "Fee",
       type: "number",
+      value: feeOn,
+      onChange: (value) => dispatch(updateFee(value)),
     },
     {
       name: "email",
@@ -361,7 +365,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
         {
           option: "LATERAL ENTRY",
           value: "LATERAL_ENTRY",
-        }
+        },
       ],
     },
     {
@@ -399,7 +403,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("transport", state.trasport_facility);
       fd.append("counselled", state.counselled);
       fd.append("category", state.category);
-      fd.append("fee_quoted", state.fee_quoted);
+      fd.append("fee_quoted", feeOn);
       fd.append("quoted_by", state.quoted_by);
       await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
@@ -499,26 +503,47 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                       maxLength={field?.max}
                       value={field.value ? field.value : state[field.name]}
                       onChange={(e) => {
+                        if (field.onChange) {
+                          field.onChange(e.target.value);
+                          return;
+                        }
                         if (field.max && field.type == "number") {
                           if (e.target.value.length <= field.max) {
-                            const value = Math.max(0, Math.min(9999999999, Number(e.target.value)));
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: value.toString(),
-                              }))
+                            const value = Math.max(
+                              0,
+                              Math.min(9999999999, Number(e.target.value))
+                            );
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: value.toString(),
+                            }));
                           }
-                        } else if (field.type == "number" && field.name=="percentage") {
-                          const value = Math.max(0, Math.min(100.00, Number(e.target.value)));
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: value.toString(),
-                              }))
-                        }else if (field.type == "number" && field.name=="rank") {
-                          const value = Math.round(Math.max(0, Math.min(999999999, Number(e.target.value))));
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: value.toString(),
-                              }))
+                        } else if (
+                          field.type == "number" &&
+                          field.name == "percentage"
+                        ) {
+                          const value = Math.max(
+                            0,
+                            Math.min(100.0, Number(e.target.value))
+                          );
+                          setState((prev) => ({
+                            ...prev,
+                            [field.name]: value.toString(),
+                          }));
+                        } else if (
+                          field.type == "number" &&
+                          field.name == "rank"
+                        ) {
+                          const value = Math.round(
+                            Math.max(
+                              0,
+                              Math.min(999999999, Number(e.target.value))
+                            )
+                          );
+                          setState((prev) => ({
+                            ...prev,
+                            [field.name]: value.toString(),
+                          }));
                         } else if (
                           field.type == "text" &&
                           field.name == "cheque_no"
