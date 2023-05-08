@@ -581,6 +581,9 @@ export const AdmissionsSlice = createSlice({
         (value: any) => ({ ...value, ...action.payload })
       );
     },
+    updateFee(state,action){
+      state.fee = action.payload
+    }
   },
   extraReducers: {
     [fetchOverallMatrix.pending.toString()]: (state, action) => {
@@ -701,4 +704,4 @@ export const AdmissionsSlice = createSlice({
   },
 });
 
-export const { updateSelectedMatrix } = AdmissionsSlice.actions;
+export const { updateSelectedMatrix,updateFee } = AdmissionsSlice.actions;
