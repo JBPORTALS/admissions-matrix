@@ -273,6 +273,10 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "SSLC",
         },
         {
+          option: "PUC",
+          value: "PUC",
+        },
+        {
           option: "CBSE",
           value: "CBSE",
         },
