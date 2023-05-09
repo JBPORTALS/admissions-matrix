@@ -14,10 +14,12 @@ export default function Home() {
   const router = useParams();
 
   useEffect(() => {
-    dispatch(
-      fetchSearchClass({ college: router.college, branch: router.branch })
-    );
-  }, [router.college, router.branch,dispatch]);
+    router.college &&
+      router.branch &&
+      dispatch(
+        fetchSearchClass({ college: router.college, branch: router.branch })
+      );
+  }, [router.college, router.branch, dispatch]);
 
   return (
     <VStack h={"77vh"} pr={"3"} className="ag">
