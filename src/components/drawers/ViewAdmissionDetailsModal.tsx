@@ -56,15 +56,20 @@ export default function ViewAdmissionDetailsModal({
   const router = useRouter();
   const aspath = usePathname();
 
-  const fetchBranchLists = useCallback(() => {
-    selectedAdmissionDetails[0]?.college &&
-      dispatch(fetchBranchList({college:selectedAdmissionDetails[0]?.college}));
-  }, [dispatch]);
+  useEffect(() => {
+    selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      selectedAdmissionDetails[0]?.college &&
+      dispatch(fetchBranchList({college:selectedAdmissionDetails[0].college}))
+  }, [
+    dispatch,
+    selectedAdmissionDetails[0]?.admission_id,
+    selectedAdmissionDetails[0]?.college,
+    admissionno,
+  ]);
 
   const onOpen = () => {
     onModalOpen();
     dispatch(fetchSelectedMatrix({ admissionno }));
-    isOpen && fetchBranchLists()
   };
 
   const onDelete = async () => {
@@ -462,7 +467,29 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
-
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Fee Paid Date
+              </Heading>
+            </VStack>
+            <Input
+              isReadOnly
+              w={"60%"}
+              type={"date"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.paid_date}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ paid_date: e.target.value }));
+              }}
+            />
+          </Flex>
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -488,29 +515,7 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Date
-              </Heading>
-            </VStack>
-            <Input
-              isReadOnly
-              w={"60%"}
-              type={"date"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.paid_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ paid_date: e.target.value }));
-              }}
-            />
-          </Flex>
+          
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
