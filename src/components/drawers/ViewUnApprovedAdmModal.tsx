@@ -70,11 +70,18 @@ export default function ViewUnApprovedAdmModal({
   const onOpen = () => {
     onModalOpen();
     dispatch(fetchSelectedMatrix({ admissionno }));
-    selectedAdmissionDetails[0]?.college;
-    dispatch(
-      fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
-    );
   };
+
+  useEffect(() => {
+    selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      selectedAdmissionDetails[0]?.college &&
+      dispatch(fetchBranchList({college:selectedAdmissionDetails[0].college}))
+  }, [
+    dispatch,
+    selectedAdmissionDetails[0]?.admission_id,
+    selectedAdmissionDetails[0]?.college,
+    admissionno,
+  ]);
 
   const onDelete = async () => {
     setIsDeleting(true);
@@ -86,23 +93,18 @@ export default function ViewUnApprovedAdmModal({
         method: "POST",
         data: formData,
       });
-      dispatch(fetchUnApprovedAdmissions({
-        college:selectedAdmissionDetails[0].college,
-        branch:selectedAdmissionDetails[0].branch
-      }))
+      dispatch(
+        fetchUnApprovedAdmissions({
+          college: selectedAdmissionDetails[0].college,
+          branch: selectedAdmissionDetails[0].branch,
+        })
+      );
       toast.success(response.data?.msg, { position: "top-right" });
     } catch (e: any) {
       toast.error(e.response?.data?.msg, { position: "top-right" });
     }
     setIsDeleting(false);
   };
-
-  useEffect(() => {
-    selectedAdmissionDetails[0]?.college &&
-      dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
-      );
-  }, [selectedAdmissionDetails[0]?.college, dispatch]); // eslint-disable-line
 
   useEffect(() => {
     dispatch(
@@ -113,10 +115,11 @@ export default function ViewUnApprovedAdmModal({
         ).toString(),
       })
     );
-  }, [// eslint-disable-line
-    selectedAdmissionDetails[0]?.fee_fixed,// eslint-disable-line
-    selectedAdmissionDetails[0]?.fee_paid,// eslint-disable-line
-    dispatch,// eslint-disable-line
+  }, [
+    // eslint-disable-line
+    selectedAdmissionDetails[0]?.fee_fixed, // eslint-disable-line
+    selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
+    dispatch, // eslint-disable-line
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
@@ -162,7 +165,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-              Application No.
+                Application No.
               </Heading>
             </VStack>
             <Input
@@ -181,7 +184,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-              Enquiry Date
+                Enquiry Date
               </Heading>
             </VStack>
             <Input
@@ -427,7 +430,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-              Quoted by
+                Quoted by
               </Heading>
             </VStack>
             <Input
@@ -607,15 +610,19 @@ export default function ViewUnApprovedAdmModal({
               isOpen={isDeleteOpen}
               onClose={onDeleteClose}
               colorBtn="red"
-              onSubmit={()=>{
-               onDelete();
-               onDeleteClose(); 
+              onSubmit={() => {
+                onDelete();
+                onDeleteClose();
               }}
               buttonTitle="Yes"
             >
               <VStack py={"5"}>
-                <Heading size={"md"} fontWeight={"medium"}>You want to delete this record</Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>{"This action can't be undo"}</Heading>
+                <Heading size={"md"} fontWeight={"medium"}>
+                  You want to delete this record
+                </Heading>
+                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
+                  {"This action can't be undo"}
+                </Heading>
               </VStack>
             </IModal>
             <Button
