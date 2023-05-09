@@ -218,8 +218,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "fee_quoted",
       label: "Fee",
       type: "number",
+      isReadonly:true,
       value: feeOn,
-      onChange: (value) => dispatch(updateFee(value)),
     },
     {
       name: "email",

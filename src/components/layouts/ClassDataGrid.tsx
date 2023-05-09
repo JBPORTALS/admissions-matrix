@@ -12,7 +12,7 @@ function ClassDataGrid() {
     const data = useAppSelector(state=>state.admissions.search_class.data) as [];
     const Error = useAppSelector(state=>state.admissions.search_class.error) as null |string;
   return (
-    <VStack h={"100vh"} w={"100vw"}>
+    <VStack h={"80vh"} w={"100vw"}>
       { data.length > 0 ? (
         <AgGridReact
           alwaysShowHorizontalScroll
