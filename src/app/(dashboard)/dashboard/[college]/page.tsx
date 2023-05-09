@@ -48,6 +48,7 @@ export default function Home() {
                 <Th>Branch</Th>
                 <Th>Management Seats</Th>
                 <Th>Allotted Seats</Th>
+                <Th>Total Enquiries</Th>
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>
               </Tr>
@@ -63,6 +64,7 @@ export default function Home() {
                     </Td>
                     <Td>{value.total}</Td>
                     <Td>{value.allotted_seats}</Td>
+                    <Td>{value.total_enquiries}</Td>
                     <Td>{value.remaining_seats}</Td>
                     <Td position={"relative"} zIndex={"base"}>
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">

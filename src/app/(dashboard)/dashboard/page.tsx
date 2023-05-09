@@ -20,6 +20,7 @@ export default function Home() {
     filled_percentage: number;
     remaining_seats: string;
     total: number;
+    total_enquiries:string;
   }[];
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function Home() {
             <Th>College</Th>
             <Th>Management Seats</Th>
             <Th>Allotted Seats</Th>
+            <Th>Total Enquiry</Th>
             <Th>Remaining Seats</Th>
             <Th>Filled Percentage</Th>
           </Tr>
@@ -56,6 +58,7 @@ export default function Home() {
                   </Td>
                   <Td>{value.total}</Td>
                   <Td>{value.allotted_seats}</Td>
+                  <Td>{value.total_enquiries}</Td>
                   <Td>{value.remaining_seats}</Td>
                   <Td position={"relative"} zIndex={"base"}>
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">
