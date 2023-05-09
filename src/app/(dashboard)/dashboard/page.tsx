@@ -41,7 +41,7 @@ export default function Home() {
             <Th>College</Th>
             <Th>Management Seats</Th>
             <Th>Allotted Seats</Th>
-            <Th>Total Enquiry</Th>
+            <Th>Total Enquiries</Th>
             <Th>Remaining Seats</Th>
             <Th>Filled Percentage</Th>
           </Tr>
