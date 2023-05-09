@@ -2,7 +2,7 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchOverallMatrix } from "@/store/admissions.slice";
-import { Progress, Stack, Table, Tbody, Td, Th, Tr } from "@chakra-ui/react";
+import { Progress, Skeleton, Stack, Table, Tbody, Td, Th, Tr, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
@@ -22,11 +22,24 @@ export default function Home() {
     total: number;
     total_enquiries: string;
   }[];
+  const isLoading = useAppSelector(
+    (state) => state.admissions.overall_matrix.pending
+  ) as boolean;
 
   useEffect(() => {
     user?.college && dispatch(fetchOverallMatrix({ college: user?.college }));
   }, [dispatch, user?.college]);
-
+  
+  if(isLoading) return(
+    <VStack spacing={1} h={"full"} w={"full"}>
+      <Skeleton w={"full"} h={"14"}></Skeleton>
+       {
+        new Array(8).fill(0).map((_,index)=>{
+          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>
+        })
+       }
+    </VStack>
+  )
   return (
     <Stack
       h={"fit"}
@@ -44,12 +57,36 @@ export default function Home() {
       >
         <Tbody px={"5"}>
           <Tr>
-            <Th>College</Th>
-            <Th>Management Seats</Th>
-            <Th>Allotted Seats</Th>
-            <Th>Total Enquiries</Th>
-            <Th>Remaining Seats</Th>
-            <Th>Filled Percentage</Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                College
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Management Seats
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Allotted Seats
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Total Enquiries
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Remaining Seats
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Filled Percentage
+              </div>
+            </Th>
           </Tr>
           {overAllMatrix.length > 0 &&
             overAllMatrix?.map((value, index) => {
@@ -62,13 +99,27 @@ export default function Home() {
                       </div>
                     </Link>
                   </Td>
-                  <Td>{value.total}</Td>
-                  <Td>{value.allotted_seats}</Td>
-                  <Td>{value.total_enquiries}</Td>
+                  <Td className="text-center">
+                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                      {value.total}
+                    </div>
+                  </Td>
+                  <Td>
+                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                      {value.allotted_seats}
+                    </div>
+                  </Td>
+                  <Td>
+                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                      {value.total_enquiries}
+                    </div>
+                  </Td>
                   <Td className="flex justify-center">
-                    <span className="relative flex h-10 w-10">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                      <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-orange-600">{value.remaining_seats}</span>
+                    <span className="relative flex items-center justify-center h-10 w-10">
+                      <span className="animate-ping absolute inline-flex h-[72%] w-[72%] rounded-full bg-sky-400 opacity-75"></span>
+                      <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-sky-600">
+                        {value.remaining_seats}
+                      </span>
                     </span>
                   </Td>
                   <Td position={"relative"} zIndex={"base"}>

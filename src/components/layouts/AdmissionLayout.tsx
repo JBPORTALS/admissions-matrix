@@ -317,7 +317,7 @@ export default function AdmissionLayout({
             </Tab>
           </HStack>
           <HStack mr={"2"}>
-            <Menu placement="bottom-start" size={"md"}>
+            <Menu size={"md"}>
               <MenuButton position={"relative"} zIndex={"0"}>
                 <Button
                   as={"view"}
