@@ -20,7 +20,7 @@ export default function Home() {
   }, [router.college, router.branch,dispatch]);
 
   return (
-    <VStack h={"90vh"} className="ag">
+    <VStack h={"77vh"} pr={"3"} className="ag">
       <ClassDataGrid />
     </VStack>
   );

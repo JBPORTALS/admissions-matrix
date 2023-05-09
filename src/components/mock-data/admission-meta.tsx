@@ -242,14 +242,19 @@ export const columns = [
 ];
 
 export const UnAprrovedColumns = [
+  
   {
-    field: "",
+    field: "slno",
+    headerName: "Sl No.",
+    filter: true,
     pinned: "left",
-    headerName: "Approve",
+    resizable: true,
+    suppressMovable: true,
     width: "120px",
-    cellRenderer: CustomUnApproveViewButton,
-    valueGetter: (params: any) => {
-      return params.data;
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
     },
   },
   {
@@ -318,6 +323,15 @@ export const UnAprrovedColumns = [
       display: "flex",
       "align-items": "center",
       "justify-content": "center",
+    },
+  },
+  {
+    field: "",
+    headerName: "Approve",
+    width: "120px",
+    cellRenderer: CustomUnApproveViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
     },
   },
 ];
