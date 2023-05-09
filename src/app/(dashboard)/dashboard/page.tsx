@@ -11,7 +11,7 @@ import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const {user} = useSupabase()
+  const { user } = useSupabase();
   const overAllMatrix = useAppSelector(
     (state) => state.admissions.overall_matrix.data
   ) as {
@@ -20,15 +20,21 @@ export default function Home() {
     filled_percentage: number;
     remaining_seats: string;
     total: number;
-    total_enquiries:string;
+    total_enquiries: string;
   }[];
 
   useEffect(() => {
-    dispatch(fetchOverallMatrix({college:user?.college!}));
-  }, [dispatch,user?.college]);
+    user?.college && dispatch(fetchOverallMatrix({ college: user?.college }));
+  }, [dispatch, user?.college]);
 
   return (
-    <Stack h={"fit"} pb={"40"} w={"full"} justifyContent={"start"} overflowY={"scroll"}>
+    <Stack
+      h={"fit"}
+      pb={"40"}
+      w={"full"}
+      justifyContent={"start"}
+      overflowY={"scroll"}
+    >
       <Table
         px={"5"}
         variant={"simple"}
@@ -59,7 +65,12 @@ export default function Home() {
                   <Td>{value.total}</Td>
                   <Td>{value.allotted_seats}</Td>
                   <Td>{value.total_enquiries}</Td>
-                  <Td>{value.remaining_seats}</Td>
+                  <Td className="flex justify-center">
+                    <span className="relative flex h-10 w-10">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-orange-600">{value.remaining_seats}</span>
+                    </span>
+                  </Td>
                   <Td position={"relative"} zIndex={"base"}>
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">
                       {value.filled_percentage} %
