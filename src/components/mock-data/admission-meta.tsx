@@ -154,90 +154,31 @@ export const columns = [
     headerName: "Name",
     resizable: true,
     suppressMovable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "father_name",
     headerName: "Father Name",
     width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "phone_no",
     headerName: "Phone No.",
     width: "130px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "branch",
-    headerName: "Branch",
-    width: "100px",
-    resizable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "college",
-    headerName: "College",
-    resizable: true,
-    filter: true,
-    width: "120px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "fee_fixed",
     headerName: "Fixed",
-    resizable: true,
-    filter: true,
     width: "120px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "fee_paid",
     headerName: "Paid",
-    resizable: true,
-    filter: true,
     width: "120px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "remaining_amount",
     headerName: "Payable",
-    resizable: true,
-    filter: true,
     width: "120px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
 ];
 
@@ -277,53 +218,28 @@ export const UnAprrovedColumns = [
     filter: true,
     resizable: true,
     suppressMovable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "father_name",
     headerName: "Father Name",
     width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "phone_no",
     headerName: "Phone No.",
     width: "130px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "email",
     headerName: "Email",
     width: "180px",
     resizable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "enquiry_date",
     headerName: "Enquiry Date",
     filter: true,
     width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "",
