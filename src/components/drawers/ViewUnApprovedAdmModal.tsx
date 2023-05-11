@@ -75,7 +75,9 @@ export default function ViewUnApprovedAdmModal({
   useEffect(() => {
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
       selectedAdmissionDetails[0]?.college &&
-      dispatch(fetchBranchList({college:selectedAdmissionDetails[0].college}))
+      dispatch(
+        fetchBranchList({ college: selectedAdmissionDetails[0].college })
+      );
   }, [
     dispatch,
     selectedAdmissionDetails[0]?.admission_id,
@@ -412,6 +414,7 @@ export default function ViewUnApprovedAdmModal({
               </Heading>
             </VStack>
             <Input
+              isReadOnly
               w={"60%"}
               type={"number"}
               variant={"outline"}

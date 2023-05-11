@@ -390,6 +390,7 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
+              isReadOnly
               w={"60%"}
               type={"number"}
               variant={"outline"}
