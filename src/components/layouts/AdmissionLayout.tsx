@@ -18,13 +18,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
   Select,
   Tab,
   TabList,
@@ -32,11 +25,10 @@ import {
   TabPanels,
   Tabs,
   Tag,
-  Tooltip,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "@chakra-ui/next-js";
 import {
   AiOutlineArrowRight,
@@ -64,13 +56,15 @@ import {
 } from "@/store/admissions.slice";
 import { useParams } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
-import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -79,7 +73,6 @@ interface AttendanceLayoutProps {
 
 export default function AdmissionLayout({
   children,
-  showDownloadFile,
 }: AttendanceLayoutProps) {
   const router = useParams();
 
@@ -88,9 +81,12 @@ export default function AdmissionLayout({
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
   const [filterType, setFilterType] = useState<string>("");
-  const [filterState, setFilterState] = useState({
+  const [filterState, setFilterState] = useState<{
+    source: string;
+    date: Date | null;
+  }>({
     source: "",
-    date: "",
+    date: new Date(),
   });
   const [adno, setAdno] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -106,9 +102,10 @@ export default function AdmissionLayout({
     (state) => state.admissions.selectedMatrix.error
   ) as string | null;
   const dispatch = useAppDispatch();
+  const dateRef = useRef<HTMLInputElement | null>();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
-  ) as { remaining: string; intake: string,allotted:string }[];
+  ) as { remaining: string; intake: string; allotted: string }[];
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -424,15 +421,13 @@ export default function AdmissionLayout({
                           filterType == "ENQUIRY" ? (
                           <>
                             <FormLabel>Date</FormLabel>
-                            <Input
-                              value={filterState.date}
-                              onChange={(e) =>
-                                setFilterState((prev) => ({
-                                  ...prev,
-                                  date: e.target.value,
-                                }))
+                            <DatePicker
+                              className="px-3 py-2 border w-full rounded-md outline-brand"
+                              selected={filterState.date}
+                              dateFormat={"dd/MM/yyyy"}
+                              onChange={(date) =>
+                                setFilterState((prev) => ({ ...prev, date }))
                               }
-                              type={"date"}
                             />
                           </>
                         ) : null}
@@ -443,7 +438,7 @@ export default function AdmissionLayout({
                           href={`/dashboard/search/${new Date(
                             Date.now()
                           ).getTime()}/?type=${filterType}&date=${
-                            filterState.date
+                            moment(filterState.date).format("yyyy-MM-DD")
                           }&source=${filterState.source}`}
                           colorScheme={"blue"}
                           onClick={() => {
@@ -540,7 +535,8 @@ export default function AdmissionLayout({
                           whiteSpace={"nowrap"}
                           fontWeight={"medium"}
                         >
-                          {metaData[0]?.intake!} - {metaData[0]?.allotted!} = {metaData[0]?.remaining!}
+                          {metaData[0]?.intake!} - {metaData[0]?.allotted!} ={" "}
+                          {metaData[0]?.remaining!}
                         </Heading>
                       )}
                     </VStack>
