@@ -148,7 +148,7 @@ export default function AdmissionLayout({
       >
         <HStack color={"blue.600"}>
           <AiOutlineUsergroupAdd className="text-3xl" />
-          <Heading size={"md"}>Admissions Matrix</Heading>
+          <Heading size={"md"}>KSGI Admission Matrix</Heading>
         </HStack>
         <HStack>
           <Input
