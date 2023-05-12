@@ -413,7 +413,7 @@ export default function AdmissionLayout({
                                   option: "OTHERS",
                                   value: "OTHERS",
                                 },
-                              ].map((value, index) => (
+                              ].map((value, _index) => (
                                 <option key={value.value} value={value.value}>
                                   {value.option}
                                 </option>

@@ -59,7 +59,9 @@ export default function ViewAdmissionDetailsModal({
   useEffect(() => {
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
       selectedAdmissionDetails[0]?.college &&
-      dispatch(fetchBranchList({college:selectedAdmissionDetails[0].college}))
+      dispatch(
+        fetchBranchList({ college: selectedAdmissionDetails[0].college })
+      );
   }, [
     dispatch,
     selectedAdmissionDetails[0]?.admission_id,
@@ -138,7 +140,7 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-              Application No.
+                Application No.
               </Heading>
             </VStack>
             <Input
@@ -192,6 +194,26 @@ export default function ViewAdmissionDetailsModal({
               onChange={(e) => {
                 dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
               }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                School / PUC Percentage
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.percentage + "%"}
+              className={"shadow-md shadow-lightBrand"}
+              isReadOnly
             />
           </Flex>
 
@@ -516,7 +538,7 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
-          
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}

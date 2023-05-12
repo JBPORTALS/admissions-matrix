@@ -450,6 +450,7 @@ export interface SelectedMatrix extends BranchAdmission {
   status: string;
   approved_date:string;
   enquiry_date:string;
+  percentage:string;
 }
 
 export interface OverallMatrix {
