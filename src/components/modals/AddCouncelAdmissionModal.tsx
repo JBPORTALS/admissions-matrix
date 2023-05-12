@@ -331,12 +331,20 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       type: "select",
       option: [
         {
-          option: "CET/DCET",
-          value: "CET/DCET",
+          option: "CET",
+          value: "CET",
         },
         {
           option: "COMEDK",
           value: "COMEDK",
+        },
+        {
+          option: "CET AND COMEDK",
+          value: "CET AND COMEDK",
+        },
+        {
+          option: "DCET",
+          value: "DCET",
         },
         {
           option: "JEE (M)",
