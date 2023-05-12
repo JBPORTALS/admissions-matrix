@@ -1,5 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
   fetchSearchClass,
@@ -9,6 +10,7 @@ import {
   updateSelectedMatrix,
 } from "@/store/admissions.slice";
 import {
+  Box,
   Button,
   Flex,
   Heading,
@@ -19,13 +21,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
+import ReactDatePicker from "react-datepicker";
+import moment from "moment";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -55,6 +59,12 @@ export default function ViewAdmissionDetailsModal({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const aspath = usePathname();
+  const [dueDate, setDueDate] = useState(new Date());
+  const runSetDueDate = useCallback(() => {
+    console.log("redenred");
+    setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
+    console.log(dueDate);
+  }, [selectedAdmissionDetails[0]?.due_date]);
 
   useEffect(() => {
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
@@ -68,6 +78,10 @@ export default function ViewAdmissionDetailsModal({
     selectedAdmissionDetails[0]?.college,
     admissionno,
   ]);
+
+  useEffect(() => {
+    isOpen && runSetDueDate();
+  }, [isOpen]);
 
   const onOpen = () => {
     onModalOpen();
@@ -162,18 +176,17 @@ export default function ViewAdmissionDetailsModal({
                 Enquiry Date
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              isReadOnly
-              variant={"outline"}
-              bg={"white"}
-              type={"date"}
-              value={selectedAdmissionDetails[0]?.enquiry_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
-              }}
-            />
+            {selectedAdmissionDetails[0]?.enquiry_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={new Date(selectedAdmissionDetails[0]?.enquiry_date)}
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {}}
+                  readOnly
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -500,18 +513,21 @@ export default function ViewAdmissionDetailsModal({
                 Fee Paid Date
               </Heading>
             </VStack>
-            <Input
-              isReadOnly
-              w={"60%"}
-              type={"date"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.paid_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ paid_date: e.target.value }));
-              }}
-            />
+            {selectedAdmissionDetails[0]?.paid_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
+                      ? new Date()
+                      : new Date(selectedAdmissionDetails[0]?.paid_date)
+                  }
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {}}
+                  readOnly
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -544,22 +560,23 @@ export default function ViewAdmissionDetailsModal({
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <VStack flex={"1"} alignItems={"start"}>
+            <VStack flex={"1"} w={"full"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Due Date
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              type={"date"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.due_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ due_date: e.target.value }));
-              }}
-            />
+            {selectedAdmissionDetails[0]?.due_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={new Date(selectedAdmissionDetails[0]?.due_date)}
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(updateSelectedMatrix({ due_date: moment(date).format("yyyy-MM-DD") }));
+                  }}
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -591,16 +608,19 @@ export default function ViewAdmissionDetailsModal({
                 Approved Date
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              readOnly
-              variant={"outline"}
-              bg={"white"}
-              type="date"
-              value={selectedAdmissionDetails[0]?.approved_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {}}
-            />
+            {selectedAdmissionDetails[0]?.approved_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    new Date(selectedAdmissionDetails[0]?.approved_date)
+                  }
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {}}
+                  readOnly
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"
