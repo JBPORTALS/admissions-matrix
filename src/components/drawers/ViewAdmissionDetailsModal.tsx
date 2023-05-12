@@ -202,6 +202,26 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Percentage
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.percentage+"%"}
+              className={"shadow-md shadow-lightBrand"}
+              isReadOnly
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 College
               </Heading>
             </VStack>
