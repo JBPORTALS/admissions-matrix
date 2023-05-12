@@ -5,7 +5,6 @@ import {
   fetchCollegeList,
   fetchFeeQouted,
   fetchUnApprovedAdmissions,
-  updateFee,
 } from "@/store/admissions.slice";
 import {
   FormControl,
@@ -20,13 +19,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
+import ReactDatePicker from "react-datepicker";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
 }
 
 interface StateProps {
-  [key: string]: string;
+  [key: string]: string | Date | null | number;
 }
 
 interface FormDataProps {
@@ -36,7 +36,7 @@ interface FormDataProps {
   max?: number;
   isReadonly?: boolean;
   option?: { value: string; option: string }[];
-  value?: string;
+  value?: string | Date | undefined | null;
   onChange?: (e: string) => void;
 }
 
@@ -64,19 +64,19 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    state.course && dispatch(fetchCollegeList({ course: state.course }));
+    state.course && dispatch(fetchCollegeList({ course: state.course as string }));
     setState((prev) => ({ ...prev, college: "", branch: "" }));
   }, [state.course, dispatch]);
 
   useEffect(() => {
-    state.college && dispatch(fetchBranchList({ college: state.college }));
+    state.college && dispatch(fetchBranchList({ college: state.college  as string}));
   }, [state.college, dispatch]);
 
   useEffect(() => {
     state.college &&
       state.branch &&
       dispatch(
-        fetchFeeQouted({ college: state.college, branch: state.branch })
+        fetchFeeQouted({ college: state.college as string, branch: state.branch as string })
       );
   }, [state.college, state.branch, dispatch]);
 
@@ -218,7 +218,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       name: "fee_quoted",
       label: "Fee",
       type: "number",
-      isReadonly:true,
+      isReadonly: true,
       value: feeOn,
     },
     {
@@ -391,32 +391,32 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     setIsLoading(true);
     try {
       const fd = new FormData();
-      fd.append("course", state.course);
-      fd.append("reg_no", state.regno);
-      fd.append("name", state.name);
-      fd.append("gender", state.gender);
-      fd.append("fname", state.fname);
-      fd.append("father_no", state.fmobile);
-      fd.append("mother_name", state.mname);
-      fd.append("mother_no", state.mmobile);
-      fd.append("college", state.college);
-      fd.append("branch", state.branch);
-      fd.append("phone", state.phone);
-      fd.append("email", state.email);
-      fd.append("city", state.city);
-      fd.append("state", state.state);
-      fd.append("school_college", state.peducation);
-      fd.append("source", state.source);
-      fd.append("percentage", state.percentage);
-      fd.append("board", state.board);
-      fd.append("exam", state.exam);
-      fd.append("rank", state.rank);
-      fd.append("hostel", state.hostel_facility);
-      fd.append("transport", state.trasport_facility);
-      fd.append("counselled", state.counselled);
-      fd.append("category", state.category);
-      fd.append("fee_quoted", feeOn);
-      fd.append("quoted_by", state.quoted_by);
+      fd.append("course", state.course as string);
+      fd.append("reg_no", state.regno as string);
+      fd.append("name", state.name as string);
+      fd.append("gender", state.gender as string);
+      fd.append("fname", state.fname as string);
+      fd.append("father_no", state.fmobile as string);
+      fd.append("mother_name", state.mname as string);
+      fd.append("mother_no", state.mmobile as string);
+      fd.append("college", state.college as string);
+      fd.append("branch", state.branch as string);
+      fd.append("phone", state.phone as string);
+      fd.append("email", state.email as string);
+      fd.append("city", state.city as string);
+      fd.append("state", state.state as string);
+      fd.append("school_college", state.peducation as string);
+      fd.append("source", state.source as string);
+      fd.append("percentage", state.percentage as string);
+      fd.append("board", state.board as string);
+      fd.append("exam", state.exam as string);
+      fd.append("rank", state.rank as string);
+      fd.append("hostel", state.hostel_facility as string);
+      fd.append("transport", state.trasport_facility as string);
+      fd.append("counselled", state.counselled as string);
+      fd.append("category", state.category as string);
+      fd.append("fee_quoted", feeOn as string);
+      fd.append("quoted_by", state.quoted_by as string);
       await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
         {
@@ -435,8 +435,8 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       link.click();
       dispatch(
         fetchUnApprovedAdmissions({
-          college: state.college,
-          branch: state.branch,
+          college: state.college as string,
+          branch: state.branch as string,
         })
       );
       // @ts-ignore
@@ -471,7 +471,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
             {formData.map((field: FormDataProps, index) => {
               if (
                 (field.name == "exam" || field.name == "rank") &&
-                !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(state.course)
+                !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(state.course as string)
               )
                 return null;
               return (
@@ -488,7 +488,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                         boxShadow={"md"}
                         bg={"white"}
                         w={"64"}
-                        value={state[field.name]}
+                        value={state[field.name] as string}
                         onChange={(e) =>
                           setState((prev) => ({
                             ...prev,
@@ -505,6 +505,18 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                           ))}
                       </Select>
                     </>
+                  ) : field.type == "date" ? (
+                    <ReactDatePicker
+                      className="px-3 py-2 border w-full rounded-md outline-brand"
+                      selected={field.value as Date}
+                      dateFormat={"dd/MM/yyyy"}
+                      onChange={(date) =>
+                        setState((prev) => ({
+                          ...prev,
+                          [field.name]: date,
+                        }))
+                      }
+                    />
                   ) : (
                     <Input
                       isReadOnly={field?.isReadonly}
@@ -513,7 +525,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                       bg={"white"}
                       w={"64"}
                       maxLength={field?.max}
-                      value={field.value ? field.value : state[field.name]}
+                      value={field.value ? field.value as string : state[field.name] as string}
                       onChange={(e) => {
                         if (field.onChange) {
                           field.onChange(e.target.value);

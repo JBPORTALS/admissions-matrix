@@ -1,5 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
   fetchSelectedMatrix,
@@ -10,6 +11,7 @@ import {
   updateToApprove,
 } from "@/store/admissions.slice";
 import {
+  Box,
   Button,
   Center,
   Flex,
@@ -27,6 +29,8 @@ import { useSupabase } from "@/app/supabase-provider";
 import { AiOutlineDelete } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import ReactDatePicker from "react-datepicker";
+import moment from "moment";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -189,14 +193,22 @@ export default function ViewUnApprovedAdmModal({
                 Enquiry Date
               </Heading>
             </VStack>
-            <Input
-              isReadOnly
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.enquiry_date}
-              className={"shadow-md shadow-lightBrand"}
-            />
+            {
+              selectedAdmissionDetails[0]?.enquiry_date && (
+                <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={selectedAdmissionDetails[0]?.enquiry_date.toString() == "0000-00-00"
+                  ? new Date()
+                  : new Date(selectedAdmissionDetails[0]?.enquiry_date)}
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(updateSelectedMatrix({enquiry_date:date}))
+                  }}
+                  />
+                  </Box>
+              )
+            }
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -543,17 +555,22 @@ export default function ViewUnApprovedAdmModal({
                 Due Date
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              type={"date"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.due_date}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ due_date: e.target.value }));
-              }}
-            />
+            {
+              selectedAdmissionDetails[0]?.due_date && (
+                <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={selectedAdmissionDetails[0]?.due_date.toString() == "0000-00-00"
+                  ? new Date()
+                  : new Date(selectedAdmissionDetails[0]?.due_date)}
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(updateSelectedMatrix({due_date:moment(date).format("yyyy-MM-DD")}))
+                  }}
+                  />
+                  </Box>
+              )
+            }
           </Flex>
           <Flex
             className="w-full justify-between"
