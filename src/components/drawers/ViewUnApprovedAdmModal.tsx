@@ -226,7 +226,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Percentage
+                School / PUC Percentage
               </Heading>
             </VStack>
             <Input
