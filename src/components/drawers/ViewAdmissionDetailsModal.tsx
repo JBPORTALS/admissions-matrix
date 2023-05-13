@@ -657,6 +657,28 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Referred By
+              </Heading>
+            </VStack>
+            <Input
+              isReadOnly
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.referred_by}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ referred_by: e.target.value }));
+              }}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Remarks
               </Heading>
             </VStack>
