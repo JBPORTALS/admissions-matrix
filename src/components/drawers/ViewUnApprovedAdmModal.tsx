@@ -249,12 +249,18 @@ export default function ViewUnApprovedAdmModal({
                 variant={"outline"}
                 bg={"white"}
                 type="number"
-                value={parseFloat(selectedAdmissionDetails[0]?.percentage).toString()}
+                value={parseFloat(
+                  selectedAdmissionDetails[0]?.percentage
+                ).toString()}
                 onChange={(e) => {
                   dispatch(
                     updateSelectedMatrix({
                       percentage:
-                        e.target.value == "" ? 0 : parseFloat(e.target.value),
+                        e.target.value == ""
+                          ? 0
+                          : parseInt(e.target.value) > 100
+                          ? Math.trunc(100)
+                          : parseFloat(e.target.value),
                     })
                   );
                 }}

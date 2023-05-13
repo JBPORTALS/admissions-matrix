@@ -63,7 +63,7 @@ export default function ViewAdmissionDetailsModal({
   const router = useRouter();
   const aspath = usePathname();
   const [dueDate, setDueDate] = useState(new Date());
-  const {user}=useSupabase()
+  const { user } = useSupabase();
   const runSetDueDate = useCallback(() => {
     console.log("redenred");
     setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
@@ -229,12 +229,18 @@ export default function ViewAdmissionDetailsModal({
                 variant={"outline"}
                 bg={"white"}
                 type="number"
-                value={parseFloat(selectedAdmissionDetails[0]?.percentage).toString()}
+                value={parseFloat(
+                  selectedAdmissionDetails[0]?.percentage
+                ).toString()}
                 onChange={(e) => {
                   dispatch(
                     updateSelectedMatrix({
                       percentage:
-                        e.target.value == "" ? 0 : parseFloat(e.target.value),
+                        e.target.value == ""
+                          ? 0
+                          : parseInt(e.target.value) > 100
+                          ? Math.trunc(100)
+                          : parseFloat(e.target.value),
                     })
                   );
                 }}
@@ -590,7 +596,11 @@ export default function ViewAdmissionDetailsModal({
                   selected={new Date(selectedAdmissionDetails[0]?.due_date)}
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
-                    dispatch(updateSelectedMatrix({ due_date: moment(date).format("yyyy-MM-DD") }));
+                    dispatch(
+                      updateSelectedMatrix({
+                        due_date: moment(date).format("yyyy-MM-DD"),
+                      })
+                    );
                   }}
                 />
               </Box>
