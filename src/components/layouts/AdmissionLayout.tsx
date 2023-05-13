@@ -610,7 +610,7 @@ export default function AdmissionLayout({
               <VStack
                 spacing={0}
                 className={
-                  "justify-start items-start flex w-full h-full overflow-scroll"
+                  "justify-start h-[91vh] items-start flex w-full overflow-scroll"
                 }
               >
                 {/* displaying admin childrens */}
@@ -618,7 +618,7 @@ export default function AdmissionLayout({
                   <AgGridReact
                     alwaysShowHorizontalScroll
                     animateRows={true}
-                    className="w-full h-full  pb-6 ag-theme-material"
+                    className="w-full h-full  pb-20 ag-theme-material"
                     rowData={data as any}
                     columnDefs={UnAprrovedColumns as any}
                   />
