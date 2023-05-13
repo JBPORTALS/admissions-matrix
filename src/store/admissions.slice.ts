@@ -345,6 +345,7 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("approved_by", selected_Matrix[0].approved_by);
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
+      formData.append("referred_by", selected_Matrix[0].referred_by);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updateenquiry.php",
         method: "POST",
