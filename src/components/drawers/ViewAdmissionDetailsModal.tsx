@@ -30,6 +30,7 @@ import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -60,6 +61,7 @@ export default function ViewAdmissionDetailsModal({
   const router = useRouter();
   const aspath = usePathname();
   const [dueDate, setDueDate] = useState(new Date());
+  const {user}=useSupabase()
   const runSetDueDate = useCallback(() => {
     console.log("redenred");
     setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
@@ -470,6 +472,7 @@ export default function ViewAdmissionDetailsModal({
             <Input
               w={"60%"}
               type={"number"}
+              isReadOnly={!user?.can_edit}
               variant={"outline"}
               bg={"white"}
               value={selectedAdmissionDetails[0]?.fee_fixed}
@@ -493,6 +496,7 @@ export default function ViewAdmissionDetailsModal({
             <Input
               min={0}
               w={"60%"}
+              isReadOnly={!user?.can_edit}
               type={"number"}
               variant={"outline"}
               bg={"white"}
@@ -568,7 +572,8 @@ export default function ViewAdmissionDetailsModal({
             {selectedAdmissionDetails[0]?.due_date && (
               <Box w={"60%"}>
                 <ReactDatePicker
-                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  readOnly={!user?.can_edit}
+                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={new Date(selectedAdmissionDetails[0]?.due_date)}
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
