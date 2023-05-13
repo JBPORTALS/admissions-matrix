@@ -14,7 +14,8 @@ type SupabaseContext = {
     username: string | undefined;
     last_login_at: string | undefined;
     session: AuthSession | null;
-    college:string|undefined;
+    college: string | undefined;
+    can_edit: boolean;
   } | null;
 };
 
@@ -30,8 +31,9 @@ export default function SupabaseProvider({
     username: undefined | string;
     email: string | undefined;
     session: AuthSession | null;
-    last_login_at:string|undefined;
-    college:string|undefined;
+    last_login_at: string | undefined;
+    college: string | undefined;
+    can_edit: boolean;
   } | null>(null);
   const router = useRouter();
 
@@ -39,15 +41,16 @@ export default function SupabaseProvider({
     const { data } = await supabase.auth.getSession();
     const { data: User } = await supabase
       .from("profiles")
-      .select("username,last_login_at,college")
+      .select("username,last_login_at,college,can_edit")
       .eq("id", data.session?.user.id)
       .single();
     setUser({
       username: User?.username,
       email: data.session?.user.email,
-      last_login_at:User?.last_login_at,
-      college:User?.college,
+      last_login_at: User?.last_login_at,
+      college: User?.college,
       session: data.session,
+      can_edit: User?.can_edit,
     });
   }
 
@@ -62,11 +65,11 @@ export default function SupabaseProvider({
     return () => {
       subscription.unsubscribe();
     };
-  }, [router, supabase]);// eslint-disable-line
+  }, [router, supabase]); // eslint-disable-line
 
   useEffect(() => {
     getUserData();
-  }, [router, supabase]);// eslint-disable-line
+  }, [router, supabase]); // eslint-disable-line
 
   return (
     <Context.Provider value={{ supabase, user }}>
