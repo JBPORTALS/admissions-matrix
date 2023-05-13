@@ -18,6 +18,8 @@ import {
   Heading,
   HStack,
   Input,
+  InputGroup,
+  InputRightAddon,
   Select,
   useDisclosure,
   VStack,
@@ -193,22 +195,23 @@ export default function ViewUnApprovedAdmModal({
                 Enquiry Date
               </Heading>
             </VStack>
-            {
-              selectedAdmissionDetails[0]?.enquiry_date && (
-                <Box w={"60%"}>
+            {selectedAdmissionDetails[0]?.enquiry_date && (
+              <Box w={"60%"}>
                 <ReactDatePicker
                   className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={selectedAdmissionDetails[0]?.enquiry_date.toString() == "0000-00-00"
-                  ? new Date()
-                  : new Date(selectedAdmissionDetails[0]?.enquiry_date)}
+                  selected={
+                    selectedAdmissionDetails[0]?.enquiry_date.toString() ==
+                    "0000-00-00"
+                      ? new Date()
+                      : new Date(selectedAdmissionDetails[0]?.enquiry_date)
+                  }
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
-                    dispatch(updateSelectedMatrix({enquiry_date:date}))
+                    dispatch(updateSelectedMatrix({ enquiry_date: date }));
                   }}
-                  />
-                  </Box>
-              )
-            }
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -241,14 +244,25 @@ export default function ViewUnApprovedAdmModal({
                 School / PUC Percentage
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.percentage + "%"}
-              className={"shadow-md shadow-lightBrand"}
-              isReadOnly
-            />
+            <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+              <Input
+                variant={"outline"}
+                bg={"white"}
+                type="number"
+                value={parseFloat(selectedAdmissionDetails[0]?.percentage).toString()}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({
+                      percentage:
+                        e.target.value == "" ? 0 : parseFloat(e.target.value),
+                    })
+                  );
+                }}
+              />
+              <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
+                %
+              </InputRightAddon>
+            </InputGroup>
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -555,22 +569,27 @@ export default function ViewUnApprovedAdmModal({
                 Due Date
               </Heading>
             </VStack>
-            {
-              selectedAdmissionDetails[0]?.due_date && (
-                <Box w={"60%"}>
+            {selectedAdmissionDetails[0]?.due_date && (
+              <Box w={"60%"}>
                 <ReactDatePicker
                   className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={selectedAdmissionDetails[0]?.due_date.toString() == "0000-00-00"
-                  ? new Date()
-                  : new Date(selectedAdmissionDetails[0]?.due_date)}
+                  selected={
+                    selectedAdmissionDetails[0]?.due_date.toString() ==
+                    "0000-00-00"
+                      ? new Date()
+                      : new Date(selectedAdmissionDetails[0]?.due_date)
+                  }
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
-                    dispatch(updateSelectedMatrix({due_date:moment(date).format("yyyy-MM-DD")}))
+                    dispatch(
+                      updateSelectedMatrix({
+                        due_date: moment(date).format("yyyy-MM-DD"),
+                      })
+                    );
                   }}
-                  />
-                  </Box>
-              )
-            }
+                />
+              </Box>
+            )}
           </Flex>
           <Flex
             className="w-full justify-between"

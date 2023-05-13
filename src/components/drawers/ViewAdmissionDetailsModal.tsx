@@ -16,6 +16,8 @@ import {
   Heading,
   HStack,
   Input,
+  InputGroup,
+  InputRightAddon,
   Select,
   useDisclosure,
   VStack,
@@ -222,14 +224,25 @@ export default function ViewAdmissionDetailsModal({
                 School / PUC Percentage
               </Heading>
             </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.percentage + "%"}
-              className={"shadow-md shadow-lightBrand"}
-              isReadOnly
-            />
+            <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+              <Input
+                variant={"outline"}
+                bg={"white"}
+                type="number"
+                value={parseFloat(selectedAdmissionDetails[0]?.percentage).toString()}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({
+                      percentage:
+                        e.target.value == "" ? 0 : parseFloat(e.target.value),
+                    })
+                  );
+                }}
+              />
+              <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
+                %
+              </InputRightAddon>
+            </InputGroup>
           </Flex>
 
           <Flex
