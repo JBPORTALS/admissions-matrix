@@ -65,7 +65,6 @@ export default function ViewAdmissionDetailsModal({
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
   const runSetDueDate = useCallback(() => {
-    console.log("redenred");
     setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
     console.log(dueDate);
   }, [selectedAdmissionDetails[0]?.due_date]);

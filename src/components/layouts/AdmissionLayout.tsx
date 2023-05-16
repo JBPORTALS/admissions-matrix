@@ -62,8 +62,7 @@ import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import moment from "moment";
-import DatePicker from "react-datepicker";
-
+import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface AttendanceLayoutProps {
@@ -71,9 +70,7 @@ interface AttendanceLayoutProps {
   showDownloadFile?: boolean;
 }
 
-export default function AdmissionLayout({
-  children,
-}: AttendanceLayoutProps) {
+export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   const router = useParams();
 
   const { college, branch } = router;
@@ -421,13 +418,17 @@ export default function AdmissionLayout({
                           filterType == "ENQUIRY" ? (
                           <>
                             <FormLabel>Date</FormLabel>
-                            <DatePicker
-                              className="px-3 py-2 border w-full rounded-md outline-brand"
-                              selected={filterState.date}
-                              dateFormat={"dd/MM/yyyy"}
-                              onChange={(date) =>
-                                setFilterState((prev) => ({ ...prev, date }))
+                            <ReactDatePicker
+                              className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                              selected={
+                                !filterState.date
+                                  ? new Date()
+                                  : new Date(filterState.date)
                               }
+                              dateFormat={"dd/MM/yyyy"}
+                              onChange={(date) => {
+                                setFilterState((prev) => ({ ...prev, date }));
+                              }}
                             />
                           </>
                         ) : null}
@@ -437,9 +438,9 @@ export default function AdmissionLayout({
                           as={Link}
                           href={`/dashboard/search/${new Date(
                             Date.now()
-                          ).getTime()}/?type=${filterType}&date=${
-                            moment(filterState.date).format("yyyy-MM-DD")
-                          }&source=${filterState.source}`}
+                          ).getTime()}/?type=${filterType}&date=${moment(
+                            filterState.date
+                          ).format("yyyy-MM-DD")}&source=${filterState.source}`}
                           colorScheme={"blue"}
                           onClick={() => {
                             //  navigation.refresh()
@@ -579,28 +580,65 @@ export default function AdmissionLayout({
             </VStack>
           </TabPanel>
           <TabPanel p={"0"} h={"full"}>
-            <div className="w-full flex border-b py-2 space-x-3 px-5">
-              <ISelect
-                placeHolder="Select College"
-                value={ucollege}
-                onChange={(value) => setCollege(value)}
-                options={[
-                  { value: "KSIT", option: "KSIT" },
-                  { value: "KSPT", option: "KSPT" },
-                  { value: "KSPU", option: "KSPU" },
-                  { value: "KSSA", option: "KSSA" },
-                  { value: "KSSEM", option: "KSSEM" },
-                ]}
-              />
-              {ucollege ? (
+            <HStack
+              justifyContent={"space-between"}
+              className="w-full flex border-b py-2 space-x-3 px-5"
+            >
+              <HStack>
                 <ISelect
-                  placeHolder="Select Branch"
-                  value={ubranch}
-                  onChange={(value) => setBranch(value)}
-                  options={branchList}
+                  placeHolder="Select College"
+                  value={ucollege}
+                  onChange={(value) => setCollege(value)}
+                  options={[
+                    { value: "KSIT", option: "KSIT" },
+                    { value: "KSPT", option: "KSPT" },
+                    { value: "KSPU", option: "KSPU" },
+                    { value: "KSSA", option: "KSSA" },
+                    { value: "KSSEM", option: "KSSEM" },
+                  ]}
                 />
-              ) : null}
-            </div>
+                {ucollege ? (
+                  <ISelect
+                    placeHolder="Select Branch"
+                    value={ubranch}
+                    onChange={(value) => setBranch(value)}
+                    options={branchList}
+                  />
+                ) : null}
+              </HStack>
+              <HStack>
+                {/* <Button
+                  as={Link}
+                  target={"_blank"}
+                  download
+                  href={
+                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                    `downloadenquiryclassexcel.php?college=${college}&branch=${branch}`
+                  }
+                  leftIcon={<AiOutlineCloudDownload className="text-lg" />}
+                  colorScheme={"green"}
+                  variant={"outline"}
+                  size={"sm"}
+                >
+                  Download Excel
+                </Button> */}
+                <Button
+                  as={Link}
+                  target={"_blank"}
+                  download
+                  href={
+                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                    `downloadenquiryclasspdf.php?college=${college}&branch=${branch}`
+                  }
+                  leftIcon={<AiOutlineCloudDownload className="text-lg" />}
+                  colorScheme={"orange"}
+                  variant={"outline"}
+                  size={"sm"}
+                >
+                  Download PDF
+                </Button>
+              </HStack>
+            </HStack>
             <VStack className="w-full h-full" spacing={0}>
               {!ucollege ? (
                 <InfoCard message="Select College" />
@@ -618,7 +656,7 @@ export default function AdmissionLayout({
                   <AgGridReact
                     alwaysShowHorizontalScroll
                     animateRows={true}
-                    className="w-full h-full  pb-20 ag-theme-material"
+                    className="w-full h-full pb-20 ag-theme-material"
                     rowData={data as any}
                     columnDefs={UnAprrovedColumns as any}
                   />
