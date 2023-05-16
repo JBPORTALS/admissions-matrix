@@ -547,7 +547,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                       download
                       href={
                         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `dowloadclassexcel.php?college=${college}&branch=${branch}`
+                        `dowloadclassexcel.php?college=${ucollege}&branch=${ubranch}`
                       }
                       leftIcon={<AiOutlineCloudDownload className="text-lg" />}
                       colorScheme={"green"}
@@ -622,21 +622,23 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 >
                   Download Excel
                 </Button> */}
-                <Button
-                  as={Link}
-                  target={"_blank"}
-                  download
-                  href={
-                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                    `downloadenquiryclasspdf.php?college=${college}&branch=${branch}`
-                  }
-                  leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-                  colorScheme={"orange"}
-                  variant={"outline"}
-                  size={"sm"}
-                >
-                  Download PDF
-                </Button>
+                {ucollege && ubranch && (
+                  <Button
+                    as={Link}
+                    target={"_blank"}
+                    download
+                    href={
+                      process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                      `downloadenquiryclasspdf.php?college=${ucollege}&branch=${ubranch}`
+                    }
+                    leftIcon={<AiOutlineCloudDownload className="text-lg" />}
+                    colorScheme={"orange"}
+                    variant={"outline"}
+                    size={"sm"}
+                  >
+                    Download PDF
+                  </Button>
+                )}
               </HStack>
             </HStack>
             <VStack className="w-full h-full" spacing={0}>

@@ -363,7 +363,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     {
       name: "rank",
       label: "Rank",
-      type: "number",
+      type: "text",
     },
     {
       name: "category",
