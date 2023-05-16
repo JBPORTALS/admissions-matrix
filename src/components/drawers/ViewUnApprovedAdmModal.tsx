@@ -742,7 +742,7 @@ export default function ViewUnApprovedAdmModal({
                 download
                 href={
                   process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `downloadenquiry.php?regno=${selectedAdmissionDetails[0]?.admission_id}`
+                  `searchenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
                 }
                 colorScheme={"teal"}
                 w={"full"}
