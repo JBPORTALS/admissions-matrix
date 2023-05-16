@@ -3,6 +3,7 @@ import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
+  fetchFeeQouted,
   fetchSelectedMatrix,
   fetchUnApprovedAdmissions,
   SelectedMatrix,
@@ -24,15 +25,16 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineDownload } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
+import { Link } from "@chakra-ui/next-js";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -67,11 +69,75 @@ export default function ViewUnApprovedAdmModal({
   const isError = useAppSelector(
     (state) => state.admissions.update_approve.error
   ) as boolean;
+  const fee = useAppSelector((state) => state.admissions.fee) as
+    | string
+    | undefined;
   const branch_list = useAppSelector(
     (state) => state.admissions.branchlist.data
   ) as [];
   const dispatch = useAppDispatch();
   const { user } = useSupabase();
+  const prevCollegeRef = useRef(selectedAdmissionDetails[0]?.college);
+  const prevBranchRef = useRef(selectedAdmissionDetails[0]?.branch);
+  const setPrevValues = useCallback(() => {
+    prevCollegeRef.current = selectedAdmissionDetails[0]?.college;
+    prevBranchRef.current = selectedAdmissionDetails[0]?.branch;
+  }, [
+    selectedAdmissionDetails[0]?.college,
+    selectedAdmissionDetails[0]?.branch,
+  ]);
+
+  useEffect(() => {
+    isOpen && setPrevValues();
+  }, [isOpen]);
+
+  // useEffect(() => {
+  //   if (
+  //     isOpen &&
+  //     selectedAdmissionDetails[0]?.admission_id == admissionno &&
+  //     (selectedAdmissionDetails[0]?.branch !== prevBranchRef.current ||
+  //       selectedAdmissionDetails[0]?.college !== prevCollegeRef.current)
+  //   ) {
+  //     console.log("prev", prevCollegeRef.current, prevBranchRef.current);
+  //     dispatch(
+  //       fetchFeeQouted({
+  //         college: selectedAdmissionDetails[0]?.college,
+  //         branch: selectedAdmissionDetails[0]?.branch,
+  //       })
+  //     );
+  //     dispatch(updateSelectedMatrix({ fee_quoted: fee }));
+  //     dispatch(updateSelectedMatrix({ fee_fixed: fee }));
+  //   }
+  // }, [
+  //   selectedAdmissionDetails[0]?.college,
+  //   selectedAdmissionDetails[0]?.branch,
+  //   prevBranchRef.current,
+  //   selectedAdmissionDetails[0]?.admission_id == admissionno,
+  //   prevCollegeRef.current,
+  //   fee,
+  //   dispatch,
+  //   isOpen,
+  // ]);
+
+  // useEffect(() => {
+  //   if (
+  //     isOpen &&
+  //     selectedAdmissionDetails[0]?.admission_id == admissionno &&
+  //     prevCollegeRef.current !== selectedAdmissionDetails[0]?.college &&
+  //     prevBranchRef.current !== selectedAdmissionDetails[0]?.branch
+  //   ) {
+  //     console.log("set branch");
+  //     dispatch(updateSelectedMatrix({ branch: "" }));
+  //   }
+  // }, [
+  //   selectedAdmissionDetails[0]?.college,
+  //   dispatch,
+  //   isOpen,
+  //   prevCollegeRef.current,
+  //   prevBranchRef.current,
+  //   admissionno,
+  //   selectedAdmissionDetails[0]?.admission_id,
+  // ]);
 
   const onOpen = () => {
     onModalOpen();
@@ -95,7 +161,7 @@ export default function ViewUnApprovedAdmModal({
     setIsDeleting(true);
     try {
       const formData = new FormData();
-      formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
+      formData.append("admissionno", selectedAdmissionDetails[0]?.admission_id);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
         method: "POST",
@@ -290,7 +356,9 @@ export default function ViewUnApprovedAdmModal({
                 dispatch(updateSelectedMatrix({ college: e.target.value }));
               }}
             >
-              <option value={""}>Select College</option>
+              <option value={""} disabled selected>
+                Select College
+              </option>
               <option value={"KSIT"}>KSIT</option>
               <option value={"KSPT"}>KSPT</option>
               <option value={"KSPU"}>KSPU</option>
@@ -656,59 +724,75 @@ export default function ViewUnApprovedAdmModal({
               bg={"white"}
               value={selectedAdmissionDetails[0]?.status}
               className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
-              }}
             />
           </Flex>
-          <HStack
+          <VStack
             zIndex={"sticky"}
             position={"sticky"}
             bottom={"0"}
             py={"2"}
             w={"full"}
-            className={"border-t border-t-lightgray bg-primary"}
+            className={"border-t border-t-lightgray backdrop-blur-md"}
           >
-            <IModal
-              heading="Are you sure ?"
-              isOpen={isDeleteOpen}
-              onClose={onDeleteClose}
-              colorBtn="red"
-              onSubmit={() => {
-                onDelete();
-                onDeleteClose();
-              }}
-              buttonTitle="Yes"
-            >
-              <VStack py={"5"}>
-                <Heading size={"md"} fontWeight={"medium"}>
-                  You want to delete this record
-                </Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
-                  {"This action can't be undo"}
-                </Heading>
-              </VStack>
-            </IModal>
-            <Button
-              isLoading={isDeleting}
-              onClick={onDeleteOpen}
-              leftIcon={<AiOutlineDelete />}
-              colorScheme={"red"}
-              w={"full"}
-            >
-              Delete
-            </Button>
-            <Button
-              isLoading={isUpdating}
-              onClick={() =>
-                dispatch(updateEnquiry({ username: user?.username! }))
-              }
-              colorScheme={"purple"}
-              w={"full"}
-            >
-              Update Details
-            </Button>
-          </HStack>
+            <HStack w={"full"}>
+              <Button
+                isLoading={isUpdating}
+                as={Link}
+                target={"_blank"}
+                download
+                href={
+                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                  `downloadenquiry.php?regno=${selectedAdmissionDetails[0]?.admission_id}`
+                }
+                colorScheme={"teal"}
+                w={"full"}
+                leftIcon={<AiOutlineDownload className="text-xl" />}
+              >
+                Download Enquiry
+              </Button>
+            </HStack>
+            <HStack w={"full"}>
+              <IModal
+                heading="Are you sure ?"
+                isOpen={isDeleteOpen}
+                onClose={onDeleteClose}
+                colorBtn="red"
+                onSubmit={() => {
+                  onDelete();
+                  onDeleteClose();
+                }}
+                buttonTitle="Yes"
+              >
+                <VStack py={"5"}>
+                  <Heading size={"md"} fontWeight={"medium"}>
+                    You want to delete this record
+                  </Heading>
+                  <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
+                    {"This action can't be undo"}
+                  </Heading>
+                </VStack>
+              </IModal>
+              <Button
+                isLoading={isDeleting}
+                onClick={onDeleteOpen}
+                leftIcon={<AiOutlineDelete />}
+                colorScheme={"red"}
+                w={"full"}
+              >
+                Delete
+              </Button>
+              <Button
+                isLoading={isUpdating}
+                onClick={() =>
+                  dispatch(updateEnquiry({ username: user?.username! }))
+                }
+                colorScheme={"purple"}
+                w={"full"}
+              >
+                Update Details
+              </Button>
+            </HStack>
+          </VStack>
         </VStack>
       </IDrawer>
       {children({ onOpen })}

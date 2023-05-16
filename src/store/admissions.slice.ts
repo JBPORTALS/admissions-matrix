@@ -656,7 +656,7 @@ export const AdmissionsSlice = createSlice({
       state.branchlist.data = [];
     },
     [fetchFeeQouted.fulfilled.toString()]: (state, action) => {
-      state.fee = action.payload[0].fee;
+      state.fee = action.payload[0]?.fee;
     },
     [fetchFeeQouted.rejected.toString()]: (state, action) => {
       state.fee = "";
