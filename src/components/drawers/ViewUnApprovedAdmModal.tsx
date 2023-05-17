@@ -187,19 +187,24 @@ export default function ViewUnApprovedAdmModal({
   };
 
   useEffect(() => {
+    isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
     dispatch(
       updateSelectedMatrix({
         total: (
-          parseInt(selectedAdmissionDetails[0]?.fee_fixed) -
+          parseInt(state.fee_fixed) -
           parseInt(selectedAdmissionDetails[0]?.fee_paid)
         ).toString(),
       })
     );
   }, [
     // eslint-disable-line
-    selectedAdmissionDetails[0]?.fee_fixed, // eslint-disable-line
+    state.fee_fixed, // eslint-disable-line
     selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
     dispatch, // eslint-disable-line
+    selectedAdmissionDetails[0]?.admission_id,
+    admissionno,
+    isOpen
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
