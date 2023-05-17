@@ -16,12 +16,15 @@ import {
   Button,
   Center,
   Flex,
+  FormControl,
+  FormErrorMessage,
   Heading,
   HStack,
   Input,
   InputGroup,
   InputRightAddon,
   Select,
+  useCallbackRef,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -77,67 +80,70 @@ export default function ViewUnApprovedAdmModal({
   ) as [];
   const dispatch = useAppDispatch();
   const { user } = useSupabase();
-  const prevCollegeRef = useRef(selectedAdmissionDetails[0]?.college);
-  const prevBranchRef = useRef(selectedAdmissionDetails[0]?.branch);
-  const setPrevValues = useCallback(() => {
-    prevCollegeRef.current = selectedAdmissionDetails[0]?.college;
-    prevBranchRef.current = selectedAdmissionDetails[0]?.branch;
+  const [state, setState] = useState({
+    fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
+    fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
+  });
+
+  let intialRender = true;
+
+  useEffect(() => {
+    if (isOpen) {
+      console.log("triggered");
+      setState({
+        fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
+        fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
+      });
+      intialRender = false;
+    }
   }, [
-    selectedAdmissionDetails[0]?.college,
-    selectedAdmissionDetails[0]?.branch,
+    isOpen,
+    selectedAdmissionDetails[0]?.fee_fixed,
+    selectedAdmissionDetails[0]?.fee_quoted,
   ]);
 
   useEffect(() => {
-    isOpen && setPrevValues();
-  }, [isOpen]);
+    if (
+      isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      intialRender
+    ) {
+      dispatch(
+        fetchFeeQouted({
+          college: selectedAdmissionDetails[0]?.college,
+          branch: selectedAdmissionDetails[0]?.branch,
+        })
+      ).then((action) => {
+        setState({
+          fee_fixed: fee as string,
+          fee_quoted: fee as string,
+        });
+      });
+    }
+  }, [
+    selectedAdmissionDetails[0]?.college,
+    selectedAdmissionDetails[0]?.branch,
+    selectedAdmissionDetails[0]?.admission_id,
+    fee,
+    dispatch,
+    isOpen,
+    intialRender,
+  ]);
 
-  // useEffect(() => {
-  //   if (
-  //     isOpen &&
-  //     selectedAdmissionDetails[0]?.admission_id == admissionno &&
-  //     (selectedAdmissionDetails[0]?.branch !== prevBranchRef.current ||
-  //       selectedAdmissionDetails[0]?.college !== prevCollegeRef.current)
-  //   ) {
-  //     console.log("prev", prevCollegeRef.current, prevBranchRef.current);
-  //     dispatch(
-  //       fetchFeeQouted({
-  //         college: selectedAdmissionDetails[0]?.college,
-  //         branch: selectedAdmissionDetails[0]?.branch,
-  //       })
-  //     );
-  //     dispatch(updateSelectedMatrix({ fee_quoted: fee }));
-  //     dispatch(updateSelectedMatrix({ fee_fixed: fee }));
-  //   }
-  // }, [
-  //   selectedAdmissionDetails[0]?.college,
-  //   selectedAdmissionDetails[0]?.branch,
-  //   prevBranchRef.current,
-  //   selectedAdmissionDetails[0]?.admission_id == admissionno,
-  //   prevCollegeRef.current,
-  //   fee,
-  //   dispatch,
-  //   isOpen,
-  // ]);
-
-  // useEffect(() => {
-  //   if (
-  //     isOpen &&
-  //     selectedAdmissionDetails[0]?.admission_id == admissionno &&
-  //     prevCollegeRef.current !== selectedAdmissionDetails[0]?.college &&
-  //     prevBranchRef.current !== selectedAdmissionDetails[0]?.branch
-  //   ) {
-  //     console.log("set branch");
-  //     dispatch(updateSelectedMatrix({ branch: "" }));
-  //   }
-  // }, [
-  //   selectedAdmissionDetails[0]?.college,
-  //   dispatch,
-  //   isOpen,
-  //   prevCollegeRef.current,
-  //   prevBranchRef.current,
-  //   admissionno,
-  //   selectedAdmissionDetails[0]?.admission_id,
-  // ]);
+  useEffect(() => {
+    if (
+      isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      intialRender
+    ) {
+      dispatch(updateSelectedMatrix({ branch: "" }));
+    }
+  }, [
+    dispatch,
+    isOpen,
+    selectedAdmissionDetails[0]?.admission_id,
+    selectedAdmissionDetails[0]?.college,
+  ]);
 
   const onOpen = () => {
     onModalOpen();
@@ -148,7 +154,7 @@ export default function ViewUnApprovedAdmModal({
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
       selectedAdmissionDetails[0]?.college &&
       dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0].college })
+        fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
       );
   }, [
     dispatch,
@@ -197,7 +203,13 @@ export default function ViewUnApprovedAdmModal({
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
-    await dispatch(updateToApprove({ username: user?.username! }));
+    await dispatch(
+      updateToApprove({
+        username: user?.username!,
+        fee_fixed: state.fee_fixed,
+        fee_quoted: state.fee_quoted,
+      })
+    );
     if (!isError) onClose();
   };
 
@@ -376,25 +388,33 @@ export default function ViewUnApprovedAdmModal({
                 Branch
               </Heading>
             </VStack>
-            <Select
+            <FormControl
               w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.branch}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ branch: e.target.value }));
-              }}
+              isInvalid={!selectedAdmissionDetails[0]?.branch}
             >
-              <option value={""}>Select Branch</option>
-              {branch_list.map((branch: any) => {
-                return (
-                  <option key={branch.value} value={branch.value}>
-                    {branch.option}
-                  </option>
-                );
-              })}
-            </Select>
+              <Select
+                w={"full"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.branch}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ branch: e.target.value }));
+                }}
+              >
+                <option value={""}>Select Branch</option>
+                {branch_list.map((branch: any) => {
+                  return (
+                    <option key={branch.value} value={branch.value}>
+                      {branch.option}
+                    </option>
+                  );
+                })}
+              </Select>
+              {selectedAdmissionDetails[0]?.branch == "" && (
+                <FormErrorMessage>Branch is required !</FormErrorMessage>
+              )}
+            </FormControl>
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -538,10 +558,10 @@ export default function ViewUnApprovedAdmModal({
               type={"number"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_quoted}
+              value={state.fee_quoted}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
+                setState((prev) => ({ ...prev, fee_quoted: e.target.value }));
               }}
             />
           </Flex>
@@ -583,10 +603,10 @@ export default function ViewUnApprovedAdmModal({
               type={"number"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_fixed}
+              value={state.fee_fixed}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_fixed: e.target.value }));
+                setState((prev) => ({ ...prev, fee_fixed: e.target.value }));
               }}
             />
           </Flex>
@@ -736,7 +756,6 @@ export default function ViewUnApprovedAdmModal({
           >
             <HStack w={"full"}>
               <Button
-                isLoading={isUpdating}
                 as={Link}
                 target={"_blank"}
                 download
@@ -784,7 +803,13 @@ export default function ViewUnApprovedAdmModal({
               <Button
                 isLoading={isUpdating}
                 onClick={() =>
-                  dispatch(updateEnquiry({ username: user?.username! }))
+                  dispatch(
+                    updateEnquiry({
+                      username: user?.username!,
+                      fee_fixed: state.fee_fixed,
+                      fee_quoted: state.fee_quoted,
+                    })
+                  )
                 }
                 colorScheme={"purple"}
                 w={"full"}

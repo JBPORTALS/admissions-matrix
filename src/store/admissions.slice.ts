@@ -252,7 +252,10 @@ export const fetchUnApprovedAdmissions = createAsyncThunk<
 
 export const updateMatrix = createAsyncThunk<
   { msg: string },
-  void,
+  {
+    fee_fixed:string,
+    fee_quoted:string
+  },
   {
     rejectValue: {
       msg: string;
@@ -277,7 +280,8 @@ export const updateMatrix = createAsyncThunk<
       formData.append("fname", selected_Matrix[0].father_name);
       formData.append("phone", selected_Matrix[0].phone_no);
       formData.append("email", selected_Matrix[0].email);
-      formData.append("fee_fixed", selected_Matrix[0].fee_fixed);
+      formData.append("fee_fixed", payload.fee_fixed);
+      formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
       formData.append("paid_date", selected_Matrix[0].paid_date);
       formData.append("remaining", selected_Matrix[0].remaining_amount);
@@ -308,6 +312,8 @@ export const updateEnquiry = createAsyncThunk<
   { msg: string },
   {
     username: string;
+    fee_fixed:string;
+    fee_quoted:string;
   },
   {
     rejectValue: {
@@ -336,8 +342,8 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("email", selected_Matrix[0].email);
       formData.append("fee_quoted", selected_Matrix[0].fee_quoted);
       formData.append("quoted_by", name);
-      formData.append("fee_fixed", selected_Matrix[0].fee_fixed);
-      formData.append("fee_fixed", selected_Matrix[0].fee_fixed);
+      formData.append("fee_fixed", payload.fee_fixed);
+      formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
       formData.append("paid_date", selected_Matrix[0].paid_date);
       formData.append("remaining", selected_Matrix[0].remaining_amount);
@@ -367,7 +373,7 @@ export const updateEnquiry = createAsyncThunk<
 
 export const updateToApprove = createAsyncThunk<
   { msg: string },
-  { username: string },
+  { username: string,fee_fixed:string,fee_quoted:string },
   {
     rejectValue: {
       msg: string;
@@ -393,7 +399,8 @@ export const updateToApprove = createAsyncThunk<
       formData.append("fname", selected_data.father_name);
       formData.append("phone", selected_data.phone_no);
       formData.append("email", selected_data.email);
-      formData.append("fee_fixed", selected_data.fee_fixed);
+      formData.append("fee_fixed", payload.fee_fixed);
+      formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_data.fee_paid);
       formData.append("due_date", selected_data.due_date);
       formData.append("approved_by", name);

@@ -3,6 +3,7 @@ import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
+  fetchFeeQouted,
   fetchSearchClass,
   fetchSelectedMatrix,
   SelectedMatrix,
@@ -13,6 +14,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormErrorMessage,
   Heading,
   HStack,
   Input,
@@ -64,6 +67,72 @@ export default function ViewAdmissionDetailsModal({
   const aspath = usePathname();
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
+  const [state, setState] = useState({
+    fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
+    fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
+  });
+  const fee = useAppSelector((state) => state.admissions.fee) as string;
+
+  let intialRender = true;
+
+  useEffect(() => {
+    if (isOpen) {
+      console.log("triggered");
+      setState({
+        fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
+        fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
+      });
+      intialRender = false;
+    }
+  }, [
+    isOpen,
+    selectedAdmissionDetails[0]?.fee_fixed,
+    selectedAdmissionDetails[0]?.fee_quoted,
+  ]);
+
+  useEffect(() => {
+    if (
+      isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      intialRender
+    ) {
+      dispatch(
+        fetchFeeQouted({
+          college: selectedAdmissionDetails[0]?.college,
+          branch: selectedAdmissionDetails[0]?.branch,
+        })
+      ).then((action) => {
+        setState({
+          fee_fixed: fee as string,
+          fee_quoted: fee as string,
+        });
+      });
+    }
+  }, [
+    selectedAdmissionDetails[0]?.college,
+    selectedAdmissionDetails[0]?.branch,
+    selectedAdmissionDetails[0]?.admission_id,
+    fee,
+    dispatch,
+    isOpen,
+    intialRender,
+  ]);
+
+  useEffect(() => {
+    if (
+      isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      intialRender
+    ) {
+      dispatch(updateSelectedMatrix({ branch: "" }));
+    }
+  }, [
+    dispatch,
+    isOpen,
+    selectedAdmissionDetails[0]?.admission_id,
+    selectedAdmissionDetails[0]?.college,
+  ]);
+
   const runSetDueDate = useCallback(() => {
     setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
     console.log(dueDate);
@@ -132,7 +201,9 @@ export default function ViewAdmissionDetailsModal({
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
-    await dispatch(updateMatrix());
+    await dispatch(
+      updateMatrix({ fee_fixed: state.fee_fixed, fee_quoted: state.fee_quoted })
+    );
     router.replace(aspath);
   };
 
@@ -288,25 +359,33 @@ export default function ViewAdmissionDetailsModal({
                 Branch
               </Heading>
             </VStack>
-            <Select
+            <FormControl
               w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.branch}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ branch: e.target.value }));
-              }}
+              isInvalid={!selectedAdmissionDetails[0]?.branch}
             >
-              <option value={""}>Select Branch</option>
-              {branch_list.map((branch: any) => {
-                return (
-                  <option key={branch.value} value={branch.value}>
-                    {branch.option}
-                  </option>
-                );
-              })}
-            </Select>
+              <Select
+                w={"full"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.branch}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ branch: e.target.value }));
+                }}
+              >
+                <option value={""}>Select Branch</option>
+                {branch_list.map((branch: any) => {
+                  return (
+                    <option key={branch.value} value={branch.value}>
+                      {branch.option}
+                    </option>
+                  );
+                })}
+              </Select>
+              {selectedAdmissionDetails[0]?.branch == "" && (
+                <FormErrorMessage>Branch is required !</FormErrorMessage>
+              )}
+            </FormControl>
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -450,10 +529,10 @@ export default function ViewAdmissionDetailsModal({
               type={"number"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_quoted}
+              value={state.fee_quoted}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_fixed: e.target.value }));
+                setState((prev) => ({ ...prev, fee_quoted: e.target.value }));
               }}
             />
           </Flex>
@@ -493,10 +572,10 @@ export default function ViewAdmissionDetailsModal({
               isReadOnly={!user?.can_edit}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_fixed}
+              value={state.fee_fixed}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_fixed: e.target.value }));
+                setState((prev) => ({ ...prev, fee_fixed: e.target.value }));
               }}
             />
           </Flex>
