@@ -184,18 +184,22 @@ export default function ViewAdmissionDetailsModal({
   };
 
   useEffect(() => {
+    isOpen &&
+      selectedAdmissionDetails[0]?.admission_id == admissionno &&
     dispatch(
       updateSelectedMatrix({
         remaining_amount: (
-          parseInt(selectedAdmissionDetails[0]?.fee_fixed) -
+          parseInt(state.fee_fixed) -
           parseInt(selectedAdmissionDetails[0]?.fee_paid)
         ).toString(),
       })
     );
   }, [
     // eslint-disable-line
-    selectedAdmissionDetails[0]?.fee_fixed, // eslint-disable-line
+    state.fee_fixed, // eslint-disable-line
     selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
+    selectedAdmissionDetails[0]?.admission_id,
+    admissionno,
     isOpen,
     dispatch,
   ]); // eslint-disable-line
