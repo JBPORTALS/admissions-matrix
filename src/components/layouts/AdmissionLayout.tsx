@@ -123,7 +123,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   useEffect(() => {
     if (hcollege !== undefined)
       dispatch(fetchHistory({ college: hcollege }))
-  }, [ucollege, dispatch]);
+  }, [hcollege, dispatch]);
 
   useEffect(() => {
     ucollege &&
