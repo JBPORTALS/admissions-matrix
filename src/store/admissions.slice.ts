@@ -188,6 +188,37 @@ export const fetchBranchList = createAsyncThunk<
   }
 );
 
+export const fetchHistory = createAsyncThunk<
+  { msg: string },
+  {
+    college: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admissions/fetchHistory",
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      const response = await axios({
+        url:
+          process.env.NEXT_PUBLIC_ADMISSIONS_URL + "seatmatrix.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchCollegeList = createAsyncThunk<
   { msg: string },
   {
@@ -530,6 +561,11 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  seat_matrix: {
+    data: [];
+    pending: boolean;
+    error: null | string;
+  };
 }
 
 const initialState: FeesIntialState = {
@@ -578,6 +614,11 @@ const initialState: FeesIntialState = {
     error: null,
   },
   unapproved_matrix: {
+    data: [],
+    pending: false,
+    error: null,
+  },
+  seat_matrix: {
     data: [],
     pending: false,
     error: null,
@@ -651,6 +692,19 @@ export const AdmissionsSlice = createSlice({
       state.selectedMatrix.data = [];
       state.selectedMatrix.error = action.payload?.msg;
       toast.error(action.payload?.msg, { position: "top-right" });
+    },
+    [fetchHistory.pending.toString()]: (state, action) => {
+      state.seat_matrix.data = [];
+      state.seat_matrix.pending = true;
+    },
+    [fetchHistory.fulfilled.toString()]: (state, action) => {
+      state.seat_matrix.pending = false;
+      state.seat_matrix.data = action.payload;
+    },
+    [fetchHistory.rejected.toString()]: (state, action) => {
+      state.seat_matrix.pending = false;
+      state.seat_matrix.data = [];
+      state.seat_matrix.error = action.payload?.msg;
     },
     [fetchBranchList.pending.toString()]: (state, action) => {
       state.branchlist.pending = true;
