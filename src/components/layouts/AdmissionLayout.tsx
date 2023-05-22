@@ -37,6 +37,7 @@ import {
   AiOutlineCloudDownload,
   AiOutlineFieldTime,
   AiOutlineFilter,
+  AiOutlineHistory,
   AiOutlineLogout,
   AiOutlineMail,
   AiOutlinePlusCircle,
@@ -52,6 +53,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
   fetchBranchList,
+  fetchHistory,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
 import { useParams } from "next/navigation";
@@ -77,6 +79,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
+  const [hcollege, setHCollege] = useState<string | undefined>("");
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
     source: string;
@@ -95,11 +98,16 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   const Error = useAppSelector(
     (state) => state.admissions.unapproved_matrix.error
   ) as [];
+  const sdata = useAppSelector(
+    (state) => state.admissions.seat_matrix.data
+  ) as [];
+  const sError = useAppSelector(
+    (state) => state.admissions.seat_matrix.error
+  ) as [];
   const selectedMatrixError = useAppSelector(
     (state) => state.admissions.selectedMatrix.error
   ) as string | null;
   const dispatch = useAppDispatch();
-  const dateRef = useRef<HTMLInputElement | null>();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
   ) as { remaining: string; intake: string; allotted: string }[];
@@ -111,6 +119,10 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
       });
     setBranch("");
   }, [ucollege, dispatch]);
+
+  useEffect(() => {
+    if (hcollege !== undefined) dispatch(fetchHistory({ college: hcollege }));
+  }, [hcollege, dispatch]);
 
   useEffect(() => {
     ucollege &&
@@ -308,6 +320,22 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               leftIcon={<AiOutlineClockCircle className="text-lg" />}
             >
               Un-Approved
+            </Tab>
+            <Tab
+              as={Button}
+              py={"2"}
+              colorScheme="purple"
+              variant={"ghost"}
+              rounded={"none"}
+              size={"lg"}
+              _selected={{
+                color: "purple.400",
+                borderBottom: "2px",
+                borderBottomColor: "purple.400",
+              }}
+              leftIcon={<AiOutlineHistory className="text-lg" />}
+            >
+              History
             </Tab>
           </HStack>
           <HStack mr={"2"}>
@@ -663,6 +691,125 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                     columnDefs={UnAprrovedColumns as any}
                   />
                 ) : ubranch && ucollege && data.length == 0 ? (
+                  <Center h={"80%"}>
+                    <Heading size={"lg"}>{Error}</Heading>
+                  </Center>
+                ) : null}
+              </VStack>
+            </VStack>
+          </TabPanel>
+          <TabPanel p={"0"} h={"full"}>
+            <HStack
+              justifyContent={"space-between"}
+              className="w-full flex border-b py-2 space-x-3 px-5"
+            >
+              <HStack>
+                <ISelect
+                  placeHolder="Select College"
+                  value={hcollege}
+                  onChange={(value) => setHCollege(value)}
+                  options={[
+                    { value: "KSIT", option: "KSIT" },
+                    { value: "KSPT", option: "KSPT" },
+                    { value: "KSPU", option: "KSPU" },
+                    { value: "KSSA", option: "KSSA" },
+                    { value: "KSSEM", option: "KSSEM" },
+                  ]}
+                />
+              </HStack>
+            </HStack>
+            <VStack className="w-full h-full" spacing={0}>
+              {!hcollege ? <InfoCard message="Select College" /> : null}
+              <VStack
+                spacing={0}
+                px={"10"}
+                className={
+                  "justify-start h-fit items-start flex w-full overflow-scroll"
+                }
+              >
+                {/* displaying admin childrens */}
+                {hcollege && sdata.length > 0 ? (
+                  <ol className="relative border-l py-10 pb-16 border-gray-200 h-fit w-full">
+                    {sdata.map((history: any, index) => {
+                      return (
+                        <li
+                          key={history.date + index}
+                          className="mb-10 ml-6 px-5"
+                        >
+                          <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
+                            <svg
+                              aria-hidden="true"
+                              className="w-3 h-3 text-blue-800"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd"
+                              ></path>
+                            </svg>
+                          </span>
+                          <h3 className="flex pb-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
+                            Seat Matrix on{" "}
+                            {moment(history.date).format("MMM DD, YYYY")}
+                          </h3>
+                          <HStack>
+                            <div
+                              className={
+                                "bg-gradient-to-t from-purple-300 to-purple-100 w-28 h-20 border-purple-900 border rounded-md p-4 justify-center items-center flex flex-col"
+                              }
+                            >
+                              <span className="text-xl font-medium text-gray-600">
+                                Total
+                              </span>
+                              <span
+                                className={
+                                  "text-3xl font-semibold text-purple-900"
+                                }
+                              >
+                                {history.total}
+                              </span>
+                            </div>
+                            <div
+                              className={
+                                "bg-gradient-to-t from-green-300 to-green-100 w-28 h-20 border-green-900 border rounded-md p-4 justify-center items-center flex flex-col"
+                              }
+                            >
+                              <span className="text-xl font-medium text-gray-600">
+                                Alloted
+                              </span>
+                              <span
+                                className={
+                                  "text-3xl font-semibold text-green-900"
+                                }
+                              >
+                                {history.allotted_seats}
+                              </span>
+                            </div>
+                            <div
+                              className={
+                                "bg-gradient-to-t from-red-300 to-red-100 w-fit h-20 border-red-900 border rounded-md p-4 justify-center items-center flex flex-col"
+                              }
+                            >
+                              <span className="text-xl font-medium text-gray-600">
+                                Remaining
+                              </span>
+                              <span
+                                className={
+                                  "text-3xl font-semibold text-red-900"
+                                }
+                              >
+                                {history.remaining_seats}
+                              </span>
+                            </div>
+                          </HStack>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                ) : hcollege && data.length == 0 ? (
                   <Center h={"80%"}>
                     <Heading size={"lg"}>{Error}</Heading>
                   </Center>
