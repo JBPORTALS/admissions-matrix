@@ -19,6 +19,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Stat,
+  StatGroup,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  StatUpArrow,
   Tab,
   TabList,
   TabPanel,
@@ -36,6 +42,7 @@ import {
   AiOutlineClockCircle,
   AiOutlineCloudDownload,
   AiOutlineFieldTime,
+  AiOutlineFilePdf,
   AiOutlineFilter,
   AiOutlineHistory,
   AiOutlineLogout,
@@ -702,7 +709,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               justifyContent={"space-between"}
               className="w-full flex border-b py-2 space-x-3 px-5"
             >
-              <HStack>
+              <HStack justify={"space-between"} w={"full"}>
                 <ISelect
                   placeHolder="Select College"
                   value={hcollege}
@@ -716,6 +723,23 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   ]}
                 />
               </HStack>
+              {hcollege && (
+                <Button
+                  as={Link}
+                  target="_blank"
+                  href={
+                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                    "seatmatrixdownload.php?college=" +
+                    hcollege
+                  }
+                  size={"sm"}
+                  colorScheme="teal"
+                  leftIcon={<AiOutlineFilePdf className="text-2xl" />}
+                  variant={"ghost"}
+                >
+                  Download Matrix
+                </Button>
+              )}
             </HStack>
             <VStack className="w-full h-full" spacing={0}>
               {!hcollege ? <InfoCard message="Select College" /> : null}
@@ -754,56 +778,74 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                             Seat Matrix on{" "}
                             {moment(history.date).format("MMM DD, YYYY")}
                           </h3>
-                          <HStack>
-                            <div
-                              className={
-                                "bg-gradient-to-t from-purple-300 to-purple-100 w-28 h-20 border-purple-900 border rounded-md p-4 justify-center items-center flex flex-col"
-                              }
-                            >
-                              <span className="text-xl font-medium text-gray-600">
-                                Total
-                              </span>
-                              <span
-                                className={
-                                  "text-3xl font-semibold text-purple-900"
-                                }
+                          <StatGroup
+                            width={"50%"}
+                            px={"0"}
+                            className={"border-gray-300 border-b pb-8"}
+                          >
+                            <Stat size={"md"}>
+                              <StatLabel textAlign={"center"}>Total Seats</StatLabel>
+                              <StatNumber
+                                fontSize={"3xl"}
+                                textAlign={"center"}
+                                color={"purple.700"}
+                                fontWeight={"semibold"}
+                                textShadow={"lg"}
                               >
                                 {history.total}
-                              </span>
-                            </div>
-                            <div
-                              className={
-                                "bg-gradient-to-t from-green-300 to-green-100 w-28 h-20 border-green-900 border rounded-md p-4 justify-center items-center flex flex-col"
-                              }
-                            >
-                              <span className="text-xl font-medium text-gray-600">
-                                Alloted
-                              </span>
-                              <span
-                                className={
-                                  "text-3xl font-semibold text-green-900"
-                                }
+                              </StatNumber>
+                            </Stat>
+                            <Stat>
+                              <StatLabel textAlign={"center"}>
+                                Total Admissions
+                              </StatLabel>
+                              <StatNumber
+                                fontSize={"3xl"}
+                                textAlign={"center"}
+                                color={"green.500"}
+                                fontWeight={"semibold"}
+                                textShadow={"lg"}
                               >
                                 {history.allotted_seats}
-                              </span>
-                            </div>
-                            <div
-                              className={
-                                "bg-gradient-to-t from-red-300 to-red-100 w-fit h-20 border-red-900 border rounded-md p-4 justify-center items-center flex flex-col"
-                              }
-                            >
-                              <span className="text-xl font-medium text-gray-600">
-                                Remaining
-                              </span>
-                              <span
-                                className={
-                                  "text-3xl font-semibold text-red-900"
-                                }
+                              </StatNumber>
+                            </Stat>
+                            <Stat>
+                              <StatLabel textAlign={"center"}>
+                                Today Admissions
+                              </StatLabel>
+                              <StatNumber
+                                textAlign={"center"}
+                                fontSize={"3xl"}
+                                color={"teal.700"}
+                                fontWeight={"semibold"}
+                                textShadow={"lg"}
+                              >
+                                {history.today_admissions}
+                              </StatNumber>
+                              <StatHelpText textAlign={"center"}>
+                                {history.today_admissions > 0 && (
+                                  <>
+                                    <StatUpArrow type="increase" /> Got
+                                    increased
+                                  </>
+                                )}
+                              </StatHelpText>
+                            </Stat>
+                            <Stat>
+                              <StatLabel textAlign={"center"}>
+                                Remaining Seats
+                              </StatLabel>
+                              <StatNumber
+                                textAlign={"center"}
+                                fontSize={"3xl"}
+                                color={"red.600"}
+                                fontWeight={"semibold"}
+                                textShadow={"lg"}
                               >
                                 {history.remaining_seats}
-                              </span>
-                            </div>
-                          </HStack>
+                              </StatNumber>
+                            </Stat>
+                          </StatGroup>
                         </li>
                       );
                     })}
