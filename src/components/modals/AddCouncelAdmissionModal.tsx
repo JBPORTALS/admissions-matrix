@@ -64,28 +64,28 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    state.course && dispatch(fetchCollegeList({ course: state.course as string }));
+    state.course &&
+      dispatch(fetchCollegeList({ course: state.course as string }));
     setState((prev) => ({ ...prev, college: "", branch: "" }));
   }, [state.course, dispatch]);
 
   useEffect(() => {
-    state.college && dispatch(fetchBranchList({ college: state.college  as string}));
+    state.college &&
+      dispatch(fetchBranchList({ college: state.college as string }));
   }, [state.college, dispatch]);
 
   useEffect(() => {
     state.college &&
       state.branch &&
       dispatch(
-        fetchFeeQouted({ college: state.college as string, branch: state.branch as string })
+        fetchFeeQouted({
+          college: state.college as string,
+          branch: state.branch as string,
+        })
       );
   }, [state.college, state.branch, dispatch]);
 
   const formData: FormDataProps[] = [
-    {
-      name: "regno",
-      label: "Register No.",
-      type: "text",
-    },
     {
       name: "name",
       label: "Name",
@@ -263,6 +263,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       label: "Previous School/College",
       type: "text",
     },
+    
     {
       name: "board",
       label: "Board",
@@ -289,6 +290,11 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "OTHERS",
         },
       ],
+    },
+    {
+      name: "regno",
+      label: "Register No.",
+      type: "text",
     },
     {
       name: "percentage",
@@ -417,7 +423,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       fd.append("category", state.category as string);
       fd.append("fee_quoted", feeOn as string);
       fd.append("quoted_by", state.quoted_by as string);
-      await axios(
+      const res = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
         {
           data: fd,
@@ -428,7 +434,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       const link = document.createElement("a");
       link.href =
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-        `downloadenquiry.php?regno=${state.regno}`;
+        `downloadenquiry.php?id=${res.data?.id}`;
       link.setAttribute("download", "Enquiry Copy.pdf");
       link.setAttribute("target", "_blank");
       document.body.appendChild(link);
@@ -471,7 +477,9 @@ export default function AddCouncelAddmissionModel({ children }: props) {
             {formData.map((field: FormDataProps, index) => {
               if (
                 (field.name == "exam" || field.name == "rank") &&
-                !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(state.course as string)
+                !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(
+                  state.course as string
+                )
               )
                 return null;
               return (
@@ -525,7 +533,11 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                       bg={"white"}
                       w={"64"}
                       maxLength={field?.max}
-                      value={field.value ? field.value as string : state[field.name] as string}
+                      value={
+                        field.value
+                          ? (field.value as string)
+                          : (state[field.name] as string)
+                      }
                       onChange={(e) => {
                         if (field.onChange) {
                           field.onChange(e.target.value);
