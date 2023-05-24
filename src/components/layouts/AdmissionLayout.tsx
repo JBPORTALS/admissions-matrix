@@ -775,7 +775,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                             </svg>
                           </span>
                           <h3 className="flex pb-3 px-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
-                            Seat Matrix on{" "}
                             {moment(history.date).format("MMM DD, YYYY")}
                           </h3>
                           <StatGroup
