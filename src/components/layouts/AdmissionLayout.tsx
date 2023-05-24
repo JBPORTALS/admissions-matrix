@@ -137,7 +137,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const { user, supabase } = useSupabase();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  console.log(user);
 
   return (
     <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
