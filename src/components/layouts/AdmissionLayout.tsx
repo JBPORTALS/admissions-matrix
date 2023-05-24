@@ -757,7 +757,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                       return (
                         <li
                           key={history.date + index}
-                          className="mb-10 ml-6 px-5"
+                          className="mb-10 ml-6 border-gray-200 border-b pb-5"
                         >
                           <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
                             <svg
@@ -774,14 +774,13 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                               ></path>
                             </svg>
                           </span>
-                          <h3 className="flex pb-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
+                          <h3 className="flex pb-3 px-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
                             Seat Matrix on{" "}
                             {moment(history.date).format("MMM DD, YYYY")}
                           </h3>
                           <StatGroup
                             width={"50%"}
                             px={"0"}
-                            className={"border-gray-300 border-b pb-8"}
                           >
                             <Stat size={"md"}>
                               <StatLabel textAlign={"center"}>Total Seats</StatLabel>
