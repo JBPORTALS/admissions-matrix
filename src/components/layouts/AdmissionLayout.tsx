@@ -723,31 +723,29 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   ]}
                 />
               </HStack>
-              {
-                hcollege && (
-              <Heading size={"lg"} color={"gray.700"} fontWeight={"semibold"}>
-                 Seat Matrix - {hcollege}
-              </Heading>
-                )
-              }
-              <Box>
               {hcollege && (
-                <Button
-                  as={Link}
-                  target="_blank"
-                  href={
-                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                    "seatmatrixdownload.php?college=" +
-                    hcollege
-                  }
-                  size={"sm"}
-                  colorScheme="teal"
-                  leftIcon={<AiOutlineFilePdf className="text-2xl" />}
-                  variant={"ghost"}
-                >
-                  Download Matrix
-                </Button>
+                <Heading size={"lg"} color={"gray.700"} fontWeight={"semibold"}>
+                  Seat Matrix - {hcollege}
+                </Heading>
               )}
+              <Box>
+                {hcollege && (
+                  <Button
+                    as={Link}
+                    target="_blank"
+                    href={
+                      process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                      "seatmatrixdownload.php?college=" +
+                      hcollege
+                    }
+                    size={"sm"}
+                    colorScheme="teal"
+                    leftIcon={<AiOutlineFilePdf className="text-2xl" />}
+                    variant={"ghost"}
+                  >
+                    Download Matrix
+                  </Button>
+                )}
               </Box>
             </HStack>
             <VStack className="w-full h-full" spacing={0}>
@@ -786,12 +784,11 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                           <h3 className="flex pb-3 px-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
                             {moment(history.date).format("MMM DD, YYYY")}
                           </h3>
-                          <StatGroup
-                            width={"50%"}
-                            px={"0"}
-                          >
+                          <StatGroup width={"50%"} px={"0"}>
                             <Stat size={"md"}>
-                              <StatLabel textAlign={"center"}>Total Seats</StatLabel>
+                              <StatLabel textAlign={"center"}>
+                                Total Seats
+                              </StatLabel>
                               <StatNumber
                                 fontSize={"3xl"}
                                 textAlign={"center"}
