@@ -709,7 +709,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               justifyContent={"space-between"}
               className="w-full flex border-b py-2 space-x-3 px-5"
             >
-              <HStack justify={"space-between"} w={"full"}>
+              <HStack>
                 <ISelect
                   placeHolder="Select College"
                   value={hcollege}
@@ -723,6 +723,14 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   ]}
                 />
               </HStack>
+              {
+                hcollege && (
+              <Heading size={"lg"} color={"gray.700"} fontWeight={"semibold"}>
+                 Seat Matrix - {hcollege}
+              </Heading>
+                )
+              }
+              <Box>
               {hcollege && (
                 <Button
                   as={Link}
@@ -740,6 +748,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   Download Matrix
                 </Button>
               )}
+              </Box>
             </HStack>
             <VStack className="w-full h-full" spacing={0}>
               {!hcollege ? <InfoCard message="Select College" /> : null}
