@@ -597,7 +597,6 @@ export default function ViewAdmissionDetailsModal({
             <Input
               min={0}
               w={"60%"}
-              isReadOnly={!user?.can_edit}
               type={"number"}
               variant={"outline"}
               bg={"white"}
@@ -673,7 +672,6 @@ export default function ViewAdmissionDetailsModal({
             {selectedAdmissionDetails[0]?.due_date && (
               <Box w={"60%"}>
                 <ReactDatePicker
-                  readOnly={!user?.can_edit}
                   className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={new Date(selectedAdmissionDetails[0]?.due_date)}
                   dateFormat={"dd/MM/yyyy"}
