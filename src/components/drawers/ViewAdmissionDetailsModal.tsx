@@ -25,7 +25,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
@@ -72,7 +72,7 @@ export default function ViewAdmissionDetailsModal({
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
   });
   const fee = useAppSelector((state) => state.admissions.fee) as string;
-
+  const params = useParams();
   let intialRender = true;
 
   useEffect(() => {
@@ -186,14 +186,14 @@ export default function ViewAdmissionDetailsModal({
   useEffect(() => {
     isOpen &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
-    dispatch(
-      updateSelectedMatrix({
-        remaining_amount: (
-          parseInt(state.fee_fixed) -
-          parseInt(selectedAdmissionDetails[0]?.fee_paid)
-        ).toString(),
-      })
-    );
+      dispatch(
+        updateSelectedMatrix({
+          remaining_amount: (
+            parseInt(state.fee_fixed) -
+            parseInt(selectedAdmissionDetails[0]?.fee_paid)
+          ).toString(),
+        })
+      );
   }, [
     // eslint-disable-line
     state.fee_fixed, // eslint-disable-line
@@ -208,7 +208,11 @@ export default function ViewAdmissionDetailsModal({
     await dispatch(
       updateMatrix({ fee_fixed: state.fee_fixed, fee_quoted: state.fee_quoted })
     );
-    router.replace(aspath);
+    params.college &&
+      params.branch &&
+      dispatch(
+        fetchSearchClass({ college: params.college, branch: params.branch })
+      );
   };
 
   return (
@@ -565,6 +569,43 @@ export default function ViewAdmissionDetailsModal({
             justifyContent={"space-between"}
             alignItems={"center"}
           >
+            <VStack flex={"1"} w={"full"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Due Date
+              </Heading>
+            </VStack>
+            {selectedAdmissionDetails[0]?.due_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  calendarClassName="z-30 bg-blue-200"
+                  todayButton={
+                    <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
+                      Today Date
+                    </Button>
+                  }
+                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    selectedAdmissionDetails[0]?.due_date !== "Invalid date"
+                      ? new Date(selectedAdmissionDetails[0]?.due_date)
+                      : new Date()
+                  }
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(
+                      updateSelectedMatrix({
+                        due_date: moment(date).format("yyyy-MM-DD"),
+                      })
+                    );
+                  }}
+                />
+              </Box>
+            )}
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Fixed
@@ -664,33 +705,6 @@ export default function ViewAdmissionDetailsModal({
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <VStack flex={"1"} w={"full"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Due Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.due_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={new Date(selectedAdmissionDetails[0]?.due_date)}
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
-                    dispatch(
-                      updateSelectedMatrix({
-                        due_date: moment(date).format("yyyy-MM-DD"),
-                      })
-                    );
-                  }}
-                />
-              </Box>
-            )}
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Approved By
@@ -741,7 +755,6 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
