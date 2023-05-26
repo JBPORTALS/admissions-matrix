@@ -25,7 +25,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
@@ -72,7 +72,7 @@ export default function ViewAdmissionDetailsModal({
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
   });
   const fee = useAppSelector((state) => state.admissions.fee) as string;
-
+  const params = useParams();
   let intialRender = true;
 
   useEffect(() => {
@@ -208,7 +208,11 @@ export default function ViewAdmissionDetailsModal({
     await dispatch(
       updateMatrix({ fee_fixed: state.fee_fixed, fee_quoted: state.fee_quoted })
     );
-    router.replace(aspath);
+    params.college &&
+      params.branch &&
+      dispatch(
+        fetchSearchClass({ college: params.college, branch: params.branch })
+      );
   };
 
   return (
@@ -574,9 +578,17 @@ export default function ViewAdmissionDetailsModal({
               <Box w={"60%"}>
                 <ReactDatePicker
                   calendarClassName="z-30 bg-blue-200"
-                  todayButton={<Button size={"sm"} colorScheme="blue" variant={"ghost"}>Today Date</Button>}
+                  todayButton={
+                    <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
+                      Today Date
+                    </Button>
+                  }
                   className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={new Date(selectedAdmissionDetails[0]?.due_date)}
+                  selected={
+                    selectedAdmissionDetails[0]?.due_date !== "Invalid date"
+                      ? new Date(selectedAdmissionDetails[0]?.due_date)
+                      : new Date()
+                  }
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
                     dispatch(
