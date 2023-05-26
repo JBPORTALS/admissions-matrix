@@ -186,14 +186,14 @@ export default function ViewAdmissionDetailsModal({
   useEffect(() => {
     isOpen &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
-    dispatch(
-      updateSelectedMatrix({
-        remaining_amount: (
-          parseInt(state.fee_fixed) -
-          parseInt(selectedAdmissionDetails[0]?.fee_paid)
-        ).toString(),
-      })
-    );
+      dispatch(
+        updateSelectedMatrix({
+          remaining_amount: (
+            parseInt(state.fee_fixed) -
+            parseInt(selectedAdmissionDetails[0]?.fee_paid)
+          ).toString(),
+        })
+      );
   }, [
     // eslint-disable-line
     state.fee_fixed, // eslint-disable-line
@@ -565,6 +565,35 @@ export default function ViewAdmissionDetailsModal({
             justifyContent={"space-between"}
             alignItems={"center"}
           >
+            <VStack flex={"1"} w={"full"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Due Date
+              </Heading>
+            </VStack>
+            {selectedAdmissionDetails[0]?.due_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  calendarClassName="z-30 bg-blue-200"
+                  todayButton={<Button size={"sm"} colorScheme="blue" variant={"ghost"}>Today Date</Button>}
+                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={new Date(selectedAdmissionDetails[0]?.due_date)}
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(
+                      updateSelectedMatrix({
+                        due_date: moment(date).format("yyyy-MM-DD"),
+                      })
+                    );
+                  }}
+                />
+              </Box>
+            )}
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Fixed
@@ -659,33 +688,6 @@ export default function ViewAdmissionDetailsModal({
             />
           </Flex>
 
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} w={"full"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Due Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.due_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={new Date(selectedAdmissionDetails[0]?.due_date)}
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
-                    dispatch(
-                      updateSelectedMatrix({
-                        due_date: moment(date).format("yyyy-MM-DD"),
-                      })
-                    );
-                  }}
-                />
-              </Box>
-            )}
-          </Flex>
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
