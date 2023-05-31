@@ -5,8 +5,6 @@ import SupabaseProvider from "./supabase-provider";
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-material.css"
 
-const inter = Inter({ subsets: ["greek"] });
-
 export const metadata = {
   title:"Admission Matrix"
 }
