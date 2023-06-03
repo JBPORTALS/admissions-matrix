@@ -29,13 +29,14 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import { usePathname } from "next/navigation";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
+import { Link } from "@chakra-ui/next-js";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -837,15 +838,30 @@ export default function ViewAdmissionDetailsModal({
                 </Heading>
               </VStack>
             </IModal>
-            <Button
-              isLoading={isDeleting}
-              onClick={onDeleteOpen}
-              leftIcon={<AiOutlineDelete />}
-              colorScheme={"red"}
-              w={"full"}
-            >
-              Delete
-            </Button>
+            <VStack w={"full"}>
+              <Button
+                as={Link}
+                href={
+                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                  `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
+                }
+                target="_blank"
+                leftIcon={<AiOutlineFilePdf />}
+                colorScheme={"purple"}
+                w={"full"}
+              >
+                Download Approve Enquiry
+              </Button>
+              <Button
+                isLoading={isDeleting}
+                onClick={onDeleteOpen}
+                leftIcon={<AiOutlineDelete />}
+                colorScheme={"red"}
+                w={"full"}
+              >
+                Delete
+              </Button>
+            </VStack>
           </HStack>
         </VStack>
       </IDrawer>
