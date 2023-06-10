@@ -24,11 +24,10 @@ import {
   InputGroup,
   InputRightAddon,
   Select,
-  useCallbackRef,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect,  useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
@@ -844,6 +843,7 @@ export default function ViewUnApprovedAdmModal({
                       username: user?.username!,
                       fee_fixed: state.fee_fixed,
                       fee_quoted: state.fee_quoted,
+                      user_college:user?.college!
                     })
                   )
                 }
