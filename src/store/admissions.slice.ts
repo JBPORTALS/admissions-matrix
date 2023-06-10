@@ -319,6 +319,7 @@ export const updateMatrix = createAsyncThunk<
       formData.append("remaining", selected_Matrix[0].remaining_amount);
       formData.append("due_date", selected_Matrix[0].due_date);
       formData.append("approved_by", selected_Matrix[0].approved_by);
+      formData.append("referred_by", selected_Matrix[0].referred_by);
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("user_college", selected_Matrix[0].percentage);
