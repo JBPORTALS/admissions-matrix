@@ -657,6 +657,33 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Fee Paid Date
+              </Heading>
+            </VStack>
+            {selectedAdmissionDetails[0]?.paid_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
+                      ? new Date()
+                      : new Date(selectedAdmissionDetails[0]?.paid_date)
+                  }
+                  dateFormat={"yyyy-MM-dd"}
+                  onChange={(date) => {
+                    dispatch(updateSelectedMatrix({ paid_date: date }));
+                  }}
+                />
+              </Box>
+            )}
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Paid
               </Heading>
             </VStack>
@@ -672,6 +699,7 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
+          
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
