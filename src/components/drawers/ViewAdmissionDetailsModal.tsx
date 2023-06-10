@@ -166,6 +166,7 @@ export default function ViewAdmissionDetailsModal({
     try {
       const formData = new FormData();
       formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
+      formData.append("user_college", user?.college!);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
         method: "POST",
@@ -207,7 +208,11 @@ export default function ViewAdmissionDetailsModal({
 
   const onsubmit = async () => {
     await dispatch(
-      updateMatrix({ fee_fixed: state.fee_fixed, fee_quoted: state.fee_quoted })
+      updateMatrix({
+        fee_fixed: state.fee_fixed,
+        fee_quoted: state.fee_quoted,
+        user_college: user?.college!,
+      })
     );
     params.college &&
       params.branch &&
