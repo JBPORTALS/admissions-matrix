@@ -673,7 +673,7 @@ export default function ViewAdmissionDetailsModal({
                       ? new Date()
                       : new Date(selectedAdmissionDetails[0]?.paid_date)
                   }
-                  dateFormat={"dd/MM/yyyy"}
+                  dateFormat={"yyyy-MM-dd"}
                   onChange={(date) => {}}
                   readOnly
                 />

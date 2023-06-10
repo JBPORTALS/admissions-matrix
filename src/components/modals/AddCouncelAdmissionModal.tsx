@@ -289,6 +289,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           option: "OTHERS",
           value: "OTHERS",
         },
+        
       ],
     },
     {
@@ -363,6 +364,10 @@ export default function AddCouncelAddmissionModel({ children }: props) {
         {
           option: "OTHERS",
           value: "OTHERS",
+        },
+        {
+          option: "NONE",
+          value: "NONE",
         },
       ],
     },
