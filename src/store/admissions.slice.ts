@@ -381,8 +381,8 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("fee_fixed", payload.fee_fixed);
       formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
-      formData.append("paid_date", selected_Matrix[0].paid_date);
-      formData.append("remaining", moment(selected_Matrix[0].paid_date).format("YYYY-MM-dd"));
+      formData.append("paid_date", moment(selected_Matrix[0].paid_date).format("YYYY-MM-dd"));
+      formData.append("remaining", selected_Matrix[0].remaining_amount);
       formData.append("due_date", moment(selected_Matrix[0].due_date).format("YYYY-MM-dd"));
       formData.append("approved_by", selected_Matrix[0].approved_by);
       formData.append("remarks", selected_Matrix[0].remarks);
@@ -439,8 +439,8 @@ export const updateToApprove = createAsyncThunk<
       formData.append("fee_fixed", payload.fee_fixed);
       formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_data.fee_paid);
-      formData.append("paid_date", selected_data.fee_paid);
-      formData.append("due_date", selected_data.paid_date);
+      formData.append("paid_date",  moment(selected_data.paid_date).format("YYYY-MM-dd"));
+      formData.append("due_date", moment(selected_data.due_date).format("YYYY-MM-dd"));
       formData.append("approved_by", name);
       formData.append("referred_by", selected_data.referred_by);
       formData.append("remarks", selected_data.remarks);
