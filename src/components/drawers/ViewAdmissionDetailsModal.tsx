@@ -591,7 +591,9 @@ export default function ViewAdmissionDetailsModal({
                   }
                   className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={
-                    selectedAdmissionDetails[0]?.due_date !== "Invalid date"
+                    selectedAdmissionDetails[0]?.due_date !== "Invalid date" ||
+                    selectedAdmissionDetails[0]?.due_date.toString() ==
+                      "0000-00-00"
                       ? new Date(selectedAdmissionDetails[0]?.due_date)
                       : new Date()
                   }
