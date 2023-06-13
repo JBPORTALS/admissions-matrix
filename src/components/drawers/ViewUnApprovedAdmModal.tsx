@@ -670,9 +670,9 @@ export default function ViewUnApprovedAdmModal({
                       ? new Date()
                       : new Date(selectedAdmissionDetails[0]?.paid_date)
                   }
-                  dateFormat={"yyyy-MM-dd"}
+                  dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
-                    dispatch(updateSelectedMatrix({ paid_date: date }));
+                    dispatch(updateSelectedMatrix({ paid_date: moment(date).format("yyyy-MM-DD") }));
                   }}
                 />
               </Box>
