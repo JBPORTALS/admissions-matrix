@@ -614,7 +614,7 @@ export default function ViewUnApprovedAdmModal({
                       "0000-00-00" ||
                     selectedAdmissionDetails[0]?.due_date.toString() ==
                       "Invalid Date"
-                      ? new Date()
+                      ? new Date(Date.now())
                       : new Date(selectedAdmissionDetails[0]?.due_date)
                   }
                   dateFormat={"dd/MM/yyyy"}
@@ -667,12 +667,12 @@ export default function ViewUnApprovedAdmModal({
                   className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={
                     selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
-                      ? new Date()
+                      ? new Date(Date.now())
                       : new Date(selectedAdmissionDetails[0]?.paid_date)
                   }
-                  dateFormat={"yyyy-MM-dd"}
+                  dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
-                    dispatch(updateSelectedMatrix({ paid_date: date }));
+                    dispatch(updateSelectedMatrix({ paid_date: moment(date).format("yyyy-MM-DD") }));
                   }}
                 />
               </Box>

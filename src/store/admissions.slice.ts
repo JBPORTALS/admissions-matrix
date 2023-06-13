@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RootState } from ".";
+import moment from "moment";
 
 export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
@@ -206,8 +207,7 @@ export const fetchHistory = createAsyncThunk<
       const formData = new FormData();
       formData.append("college", payload.college);
       const response = await axios({
-        url:
-          process.env.NEXT_PUBLIC_ADMISSIONS_URL + "seatmatrix.php",
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "seatmatrix.php",
         method: "POST",
         data: formData,
       });
@@ -284,9 +284,9 @@ export const fetchUnApprovedAdmissions = createAsyncThunk<
 export const updateMatrix = createAsyncThunk<
   { msg: string },
   {
-    fee_fixed:string,
-    fee_quoted:string,
-    user_college:string;
+    fee_fixed: string;
+    fee_quoted: string;
+    user_college: string;
   },
   {
     rejectValue: {
@@ -346,9 +346,9 @@ export const updateEnquiry = createAsyncThunk<
   { msg: string },
   {
     username: string;
-    fee_fixed:string;
-    fee_quoted:string;
-    user_college:string;
+    fee_fixed: string;
+    fee_quoted: string;
+    user_college: string;
   },
   {
     rejectValue: {
@@ -409,7 +409,12 @@ export const updateEnquiry = createAsyncThunk<
 
 export const updateToApprove = createAsyncThunk<
   { msg: string },
-  { username: string,fee_fixed:string,fee_quoted:string,user_college:string },
+  {
+    username: string;
+    fee_fixed: string;
+    fee_quoted: string;
+    user_college: string;
+  },
   {
     rejectValue: {
       msg: string;
@@ -438,8 +443,8 @@ export const updateToApprove = createAsyncThunk<
       formData.append("fee_fixed", payload.fee_fixed);
       formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_data.fee_paid);
-      formData.append("paid_date", selected_data.fee_paid);
-      formData.append("due_date", selected_data.paid_date);
+      formData.append("paid_date", selected_data.paid_date);
+      formData.append("due_date", selected_data.due_date);
       formData.append("approved_by", name);
       formData.append("referred_by", selected_data.referred_by);
       formData.append("remarks", selected_data.remarks);
@@ -497,9 +502,9 @@ export interface SelectedMatrix extends BranchAdmission {
   fee_quoted: string;
   quoted_by: string;
   status: string;
-  approved_date:string;
-  enquiry_date:string;
-  percentage:string;
+  approved_date: string;
+  enquiry_date: string;
+  percentage: string;
 }
 
 export interface OverallMatrix {
@@ -641,9 +646,9 @@ export const AdmissionsSlice = createSlice({
         (value: any) => ({ ...value, ...action.payload })
       );
     },
-    updateFee(state,action){
-      state.fee = action.payload
-    }
+    updateFee(state, action) {
+      state.fee = action.payload;
+    },
   },
   extraReducers: {
     [fetchOverallMatrix.pending.toString()]: (state, action) => {
@@ -777,4 +782,4 @@ export const AdmissionsSlice = createSlice({
   },
 });
 
-export const { updateSelectedMatrix,updateFee } = AdmissionsSlice.actions;
+export const { updateSelectedMatrix, updateFee } = AdmissionsSlice.actions;
