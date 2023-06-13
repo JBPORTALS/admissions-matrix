@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RootState } from ".";
+import moment from "moment";
 
 export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
@@ -381,8 +382,8 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("fee_quoted", payload.fee_quoted);
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
       formData.append("paid_date", selected_Matrix[0].paid_date);
-      formData.append("remaining", selected_Matrix[0].remaining_amount);
-      formData.append("due_date", selected_Matrix[0].due_date);
+      formData.append("remaining", moment(selected_Matrix[0].paid_date).format("YYYY-MM-dd"));
+      formData.append("due_date", moment(selected_Matrix[0].due_date).format("YYYY-MM-dd"));
       formData.append("approved_by", selected_Matrix[0].approved_by);
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
