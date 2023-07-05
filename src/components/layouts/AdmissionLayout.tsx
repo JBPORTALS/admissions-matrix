@@ -605,6 +605,21 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                     >
                       Download PDF
                     </Button>
+                    <Button
+                      as={Link}
+                      target={"_blank"}
+                      download
+                      href={
+                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                        `downloadclasswithfee.php?college=${college}&branch=${branch}`
+                      }
+                      leftIcon={<AiOutlineCloudDownload className="text-lg" />}
+                      colorScheme={"purple"}
+                      variant={"outline"}
+                      size={"sm"}
+                    >
+                      Download PDF With Fee Details
+                    </Button>
                   </>
                 )}
               </HStack>
