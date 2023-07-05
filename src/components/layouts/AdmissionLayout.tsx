@@ -581,7 +581,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                       download
                       href={
                         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `dowloadclassexcel.php?college=${ucollege}&branch=${ubranch}`
+                        `dowloadclassexcel.php?college=${college}&branch=${branch}`
                       }
                       leftIcon={<AiOutlineCloudDownload className="text-lg" />}
                       colorScheme={"green"}
