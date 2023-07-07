@@ -646,7 +646,7 @@ export default function ViewAdmissionDetailsModal({
               w={"60%"}
               type={"number"}
               variant={"outline"}
-              isReadOnly={!user?.can_edit}
+              // isReadOnly={!user?.can_edit}
               bg={"white"}
               value={selectedAdmissionDetails[0]?.fee_paid}
               className={"shadow-md shadow-lightBrand"}
