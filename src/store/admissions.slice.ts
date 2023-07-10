@@ -128,6 +128,38 @@ export const fetchSearchClass = createAsyncThunk<
   }
 );
 
+export const fetchHostelSearchClass = createAsyncThunk<
+  SelectedMatrix[],
+  {
+    college: string;
+    branch: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admission/fetchHostelSearchClass",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      formData.append("branch", payload.branch);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehostelclass.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchOverallMatrix = createAsyncThunk<
   OverallMatrix[],
   { college: string },
@@ -145,6 +177,36 @@ export const fetchOverallMatrix = createAsyncThunk<
       formData.append("college", payload.college);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrieveoverallmatrix.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchOverallHostel = createAsyncThunk<
+  OverallMatrix[],
+  { college: string },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admissions/fetchOverallHostel",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehosteloverall.php",
         {
           method: "POST",
           data: formData,
@@ -323,6 +385,7 @@ export const updateMatrix = createAsyncThunk<
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("user_college", payload.user_college);
+      formData.append("hostel", selected_Matrix[0].hostel);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updatestudent.php",
         method: "POST",
@@ -387,6 +450,7 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("referred_by", selected_Matrix[0].referred_by);
+      formData.append("hostel", selected_Matrix[0].hostel);
       formData.append("user_college", payload.user_college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updateenquiry.php",
@@ -451,6 +515,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("percentage", selected_data.percentage);
       formData.append("status", "APPROVED");
       formData.append("user_college", payload.user_college);
+      formData.append("hostel",selected_data.hostel);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "approveenquiry.php",
         method: "POST",
@@ -505,6 +570,7 @@ export interface SelectedMatrix extends BranchAdmission {
   approved_date: string;
   enquiry_date: string;
   percentage: string;
+  hostel:string;
 }
 
 export interface OverallMatrix {
@@ -663,6 +729,18 @@ export const AdmissionsSlice = createSlice({
       state.overall_matrix.error = action.payload?.msg;
       toast.error(action.payload?.msg, { position: "top-right" });
     },
+    [fetchOverallHostel.pending.toString()]: (state, action) => {
+      state.overall_matrix.pending = true;
+    },
+    [fetchOverallHostel.fulfilled.toString()]: (state, action) => {
+      state.overall_matrix.pending = false;
+      state.overall_matrix.data = action.payload;
+    },
+    [fetchOverallHostel.rejected.toString()]: (state, action) => {
+      state.overall_matrix.pending = false;
+      state.overall_matrix.error = action.payload?.msg;
+      toast.error(action.payload?.msg, { position: "top-right" });
+    },
     [fetchUnApprovedAdmissions.pending.toString()]: (state, action) => {
       state.unapproved_matrix.pending = true;
       state.unapproved_matrix.error = null;
@@ -687,6 +765,20 @@ export const AdmissionsSlice = createSlice({
       state.search_class.error = null;
     },
     [fetchSearchClass.rejected.toString()]: (state, action) => {
+      state.search_class.pending = false;
+      state.search_class.data = [];
+      state.search_class.error = action.payload?.msg;
+    },
+    [fetchHostelSearchClass.pending.toString()]: (state, action) => {
+      state.search_class.pending = true;
+      state.search_class.error = null;
+    },
+    [fetchHostelSearchClass.fulfilled.toString()]: (state, action) => {
+      state.search_class.pending = false;
+      state.search_class.data = action.payload;
+      state.search_class.error = null;
+    },
+    [fetchHostelSearchClass.rejected.toString()]: (state, action) => {
       state.search_class.pending = false;
       state.search_class.data = [];
       state.search_class.error = action.payload?.msg;

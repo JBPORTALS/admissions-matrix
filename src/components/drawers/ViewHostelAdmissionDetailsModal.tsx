@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
   fetchFeeQouted,
+  fetchHostelSearchClass,
   fetchSearchClass,
   fetchSelectedMatrix,
   SelectedMatrix,
@@ -43,7 +44,7 @@ interface props {
   admissionno: string;
 }
 
-export default function ViewAdmissionDetailsModal({
+export default function ViewHostelAdmissionDetailsModal({
   children,
   admissionno,
 }: props) {
@@ -171,7 +172,7 @@ export default function ViewAdmissionDetailsModal({
         data: formData,
       });
       dispatch(
-        fetchSearchClass({
+        fetchHostelSearchClass({
           college: selectedAdmissionDetails[0].college,
           branch: selectedAdmissionDetails[0].branch,
         })
@@ -215,7 +216,10 @@ export default function ViewAdmissionDetailsModal({
     params.college &&
       params.branch &&
       dispatch(
-        fetchSearchClass({ college: params.college, branch: params.branch })
+        fetchHostelSearchClass({
+          college: params.college,
+          branch: params.branch,
+        })
       );
   };
 
@@ -848,59 +852,6 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
-          <HStack
-            zIndex={"sticky"}
-            position={"sticky"}
-            bottom={"0"}
-            py={"2"}
-            w={"full"}
-            className={"border-t border-t-lightgray bg-primary"}
-          >
-            <IModal
-              heading="Are you sure ?"
-              isOpen={isDeleteOpen}
-              onClose={onDeleteClose}
-              colorBtn="red"
-              onSubmit={() => {
-                onDelete();
-                onDeleteClose();
-              }}
-              buttonTitle="Yes"
-            >
-              <VStack py={"5"}>
-                <Heading size={"md"} fontWeight={"medium"}>
-                  You want to delete this record
-                </Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
-                  {"This action can't be undo"}
-                </Heading>
-              </VStack>
-            </IModal>
-            <VStack w={"full"}>
-              <Button
-                as={Link}
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
-                }
-                target="_blank"
-                leftIcon={<AiOutlineFilePdf />}
-                colorScheme={"purple"}
-                w={"full"}
-              >
-                Download Approve Enquiry
-              </Button>
-              <Button
-                isLoading={isDeleting}
-                onClick={onDeleteOpen}
-                leftIcon={<AiOutlineDelete />}
-                colorScheme={"red"}
-                w={"full"}
-              >
-                Delete
-              </Button>
-            </VStack>
-          </HStack>
         </VStack>
       </IDrawer>
       {children({ onOpen })}

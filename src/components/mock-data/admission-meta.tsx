@@ -8,6 +8,7 @@ import {
 } from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
+import ViewHostelAdmissionDetailsModal from "../drawers/ViewHostelAdmissionDetailsModal";
 
 const CustomViewButton = (data: any) => {
   return (
@@ -15,6 +16,16 @@ const CustomViewButton = (data: any) => {
       <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
       </ViewAdmissionDetailsModal>
+    </div>
+  );
+};
+
+const CustomHostelViewButton = (data: any) => {
+  return (
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
+      <ViewHostelAdmissionDetailsModal admissionno={data.value.admission_id}>
+        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
+      </ViewHostelAdmissionDetailsModal>
     </div>
   );
 };
@@ -182,8 +193,71 @@ export const columns = [
   },
 ];
 
+export const hostelcolumns = [
+  {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "120px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "admission_id",
+    headerName: "Application No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "180px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    filter: true,
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "father_name",
+    headerName: "Father Name",
+    width: "180px",
+  },
+  {
+    field: "phone_no",
+    headerName: "Phone No.",
+    width: "130px",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: "180px",
+    resizable: true,
+  },
+  {
+    field: "",
+    headerName: "View",
+    width: "120px",
+    cellRenderer: CustomHostelViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
+
 export const UnAprrovedColumns = [
-  
   {
     field: "slno",
     headerName: "Sl No.",
