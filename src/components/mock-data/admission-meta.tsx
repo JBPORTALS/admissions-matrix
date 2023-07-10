@@ -182,8 +182,71 @@ export const columns = [
   },
 ];
 
+export const hostelcolumns = [
+  {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "120px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "admission_id",
+    headerName: "Application No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "180px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    filter: true,
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "father_name",
+    headerName: "Father Name",
+    width: "180px",
+  },
+  {
+    field: "phone_no",
+    headerName: "Phone No.",
+    width: "130px",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: "180px",
+    resizable: true,
+  },
+  {
+    field: "",
+    headerName: "Approve",
+    width: "120px",
+    cellRenderer: CustomViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
+
 export const UnAprrovedColumns = [
-  
   {
     field: "slno",
     headerName: "Sl No.",

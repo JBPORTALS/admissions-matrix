@@ -30,7 +30,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append("college", router.college);
       const response = await axios(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebranchmatrix.php",
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehostelbranch.php",
         {
           method: "POST",
           data: formData,
@@ -84,26 +84,7 @@ export default function Home() {
                 Management Seats
               </div>
             </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Allotted Seats
-              </div>
-            </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Total Enquiries
-              </div>
-            </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Remaining Seats
-              </div>
-            </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Filled Percentage
-              </div>
-            </Th>
+            
           </Tr>
           {data.data.length > 0 &&
             data.data?.map((value: any, index) => {
@@ -111,7 +92,7 @@ export default function Home() {
                 <Tr key={index}>
                   <Td>
                     <Link
-                      href={"/dashboard/" + router.college + `/${value.branch}`}
+                      href={"/dashboard/hostel/" + router.college + `/${value.branch}`}
                     >
                       <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                         {value.branch}
@@ -120,41 +101,8 @@ export default function Home() {
                   </Td>
                   <Td>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total}
+                      {value.total_students}
                     </div>
-                  </Td>
-                  <Td>
-                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.allotted_seats}
-                    </div>
-                  </Td>
-                  <Td>
-                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total_enquiries}
-                    </div>
-                  </Td>
-                  <Td className="flex justify-center">
-                    <span className="relative flex items-center justify-center h-10 w-10">
-                      <span className="animate-ping absolute inline-flex h-[72%] w-[72%] rounded-full bg-sky-400 opacity-75"></span>
-                      <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-sky-600">
-                        {value.remaining_seats}
-                      </span>
-                    </span>
-                  </Td>
-                  <Td position={"relative"} zIndex={"base"}>
-                    <h3 className="text-brand drop-shadow-lg text-lg font-medium">
-                      {value.filled_percentage} %
-                    </h3>
-                    <Progress
-                      w={"full"}
-                      hasStripe
-                      value={value.filled_percentage}
-                      rounded={"full"}
-                      isAnimated
-                      isIndeterminate={value.filled_percentage == undefined}
-                      size="sm"
-                      colorScheme="blue"
-                    />
                   </Td>
                 </Tr>
               );

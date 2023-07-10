@@ -779,6 +779,38 @@ export default function ViewAdmissionDetailsModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Hostel
+              </Heading>
+            </VStack>
+            <FormControl
+              w={"60%"}
+              isInvalid={!selectedAdmissionDetails[0]?.hostel}
+            >
+              <Select
+                w={"full"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.hostel}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ hostel: e.target.value }));
+                }}
+              >
+                <option value={"NO"}>NO</option>
+                <option value={"YES"}>YES</option>
+              </Select>
+              {selectedAdmissionDetails[0]?.branch == "" && (
+                <FormErrorMessage>Branch is required !</FormErrorMessage>
+              )}
+            </FormControl>
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Remarks
               </Heading>
             </VStack>
