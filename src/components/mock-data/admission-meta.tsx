@@ -8,6 +8,7 @@ import {
 } from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
+import ViewHostelAdmissionDetailsModal from "../drawers/ViewHostelAdmissionDetailsModal";
 
 const CustomViewButton = (data: any) => {
   return (
@@ -15,6 +16,16 @@ const CustomViewButton = (data: any) => {
       <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
       </ViewAdmissionDetailsModal>
+    </div>
+  );
+};
+
+const CustomHostelViewButton = (data: any) => {
+  return (
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
+      <ViewHostelAdmissionDetailsModal admissionno={data.value.admission_id}>
+        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
+      </ViewHostelAdmissionDetailsModal>
     </div>
   );
 };
@@ -236,9 +247,9 @@ export const hostelcolumns = [
   },
   {
     field: "",
-    headerName: "Approve",
+    headerName: "View",
     width: "120px",
-    cellRenderer: CustomViewButton,
+    cellRenderer: CustomHostelViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },

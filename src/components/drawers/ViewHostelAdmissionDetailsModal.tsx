@@ -4,17 +4,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   fetchBranchList,
   fetchFeeQouted,
+  fetchHostelSearchClass,
+  fetchSearchClass,
   fetchSelectedMatrix,
-  fetchUnApprovedAdmissions,
   SelectedMatrix,
-  updateEnquiry,
+  updateMatrix,
   updateSelectedMatrix,
-  updateToApprove,
 } from "@/store/admissions.slice";
 import {
   Box,
   Button,
-  Center,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -27,15 +26,17 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
-import IModal from "../ui/utils/IModal";
-import { useSupabase } from "@/app/supabase-provider";
-import { AiOutlineDelete, AiOutlineDownload } from "react-icons/ai";
-import { toast } from "react-hot-toast";
+import { usePathname } from "next/navigation";
+import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
+import { useSupabase } from "@/app/supabase-provider";
 import { Link } from "@chakra-ui/next-js";
 
 interface props {
@@ -43,47 +44,35 @@ interface props {
   admissionno: string;
 }
 
-export default function ViewUnApprovedAdmModal({
+export default function ViewHostelAdmissionDetailsModal({
   children,
   admissionno,
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
     isOpen: isDeleteOpen,
     onClose: onDeleteClose,
     onOpen: onDeleteOpen,
   } = useDisclosure();
-  const {
-    isOpen: isConfirm,
-    onClose: onConfirmClose,
-    onOpen: onConfirmOpen,
-  } = useDisclosure();
+  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
-  const isUpdating = useAppSelector(
+  const isLoading = useAppSelector(
     (state) => state.admissions.selectedMatrix.pending
   ) as boolean;
-  const isLoading = useAppSelector(
-    (state) => state.admissions.update_approve.pending
-  ) as boolean;
-  const isError = useAppSelector(
-    (state) => state.admissions.update_approve.error
-  ) as boolean;
-  const fee = useAppSelector((state) => state.admissions.fee) as
-    | string
-    | undefined;
   const branch_list = useAppSelector(
     (state) => state.admissions.branchlist.data
   ) as [];
   const dispatch = useAppDispatch();
+  const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
   const [state, setState] = useState({
     fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
   });
-
+  const fee = useAppSelector((state) => state.admissions.fee) as string;
+  const params = useParams();
   let intialRender = true;
 
   useEffect(() => {
@@ -144,16 +133,16 @@ export default function ViewUnApprovedAdmModal({
     selectedAdmissionDetails[0]?.college,
   ]);
 
-  const onOpen = () => {
-    onModalOpen();
-    dispatch(fetchSelectedMatrix({ admissionno }));
-  };
+  const runSetDueDate = useCallback(() => {
+    setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
+    console.log(dueDate);
+  }, [selectedAdmissionDetails[0]?.due_date]);
 
   useEffect(() => {
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
       selectedAdmissionDetails[0]?.college &&
       dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
+        fetchBranchList({ college: selectedAdmissionDetails[0].college })
       );
   }, [
     dispatch,
@@ -162,11 +151,20 @@ export default function ViewUnApprovedAdmModal({
     admissionno,
   ]);
 
+  useEffect(() => {
+    isOpen && runSetDueDate();
+  }, [isOpen]);
+
+  const onOpen = () => {
+    onModalOpen();
+    dispatch(fetchSelectedMatrix({ admissionno }));
+  };
+
   const onDelete = async () => {
     setIsDeleting(true);
     try {
       const formData = new FormData();
-      formData.append("admissionno", selectedAdmissionDetails[0]?.admission_id);
+      formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
       formData.append("user_college", user?.college!);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
@@ -174,7 +172,7 @@ export default function ViewUnApprovedAdmModal({
         data: formData,
       });
       dispatch(
-        fetchUnApprovedAdmissions({
+        fetchHostelSearchClass({
           college: selectedAdmissionDetails[0].college,
           branch: selectedAdmissionDetails[0].branch,
         })
@@ -191,7 +189,7 @@ export default function ViewUnApprovedAdmModal({
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       dispatch(
         updateSelectedMatrix({
-          total: (
+          remaining_amount: (
             parseInt(state.fee_fixed) -
             parseInt(selectedAdmissionDetails[0]?.fee_paid)
           ).toString(),
@@ -201,22 +199,28 @@ export default function ViewUnApprovedAdmModal({
     // eslint-disable-line
     state.fee_fixed, // eslint-disable-line
     selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
-    dispatch, // eslint-disable-line
     selectedAdmissionDetails[0]?.admission_id,
     admissionno,
     isOpen,
+    dispatch,
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
     await dispatch(
-      updateToApprove({
-        username: user?.username!,
+      updateMatrix({
         fee_fixed: state.fee_fixed,
         fee_quoted: state.fee_quoted,
         user_college: user?.college!,
       })
     );
-    if (!isError) onClose();
+    params.college &&
+      params.branch &&
+      dispatch(
+        fetchHostelSearchClass({
+          college: params.college,
+          branch: params.branch,
+        })
+      );
   };
 
   return (
@@ -224,31 +228,14 @@ export default function ViewUnApprovedAdmModal({
       <IDrawer
         isLoading={isLoading}
         isDisabled={isLoading}
-        onSubmit={onConfirmOpen}
-        buttonTitle="Approve"
+        onSubmit={onsubmit}
+        buttonTitle="Save"
         onClose={() => {
           onClose();
         }}
         isOpen={isOpen}
-        heading="Approve Enquiry"
+        heading="Admission Details"
       >
-        <IModal
-          onSubmit={onsubmit}
-          buttonTitle="Yes"
-          heading="Are you sure ?"
-          isOpen={isConfirm}
-          onClose={onConfirmClose}
-        >
-          <Center py={"3"}>
-            <Heading size={"md"} fontWeight={"medium"}>
-              You want to approve the
-            </Heading>
-            <Heading size={"md"} ml={"2"}>
-              {selectedAdmissionDetails[0]?.name}(
-              {selectedAdmissionDetails[0]?.admission_id})
-            </Heading>
-          </Center>
-        </IModal>
         <VStack w={"full"} h={"full"} px={"5"} spacing={"3"} py={"5"}>
           <Flex
             className="w-full justify-between"
@@ -282,17 +269,11 @@ export default function ViewUnApprovedAdmModal({
             {selectedAdmissionDetails[0]?.enquiry_date && (
               <Box w={"60%"}>
                 <ReactDatePicker
-                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={
-                    selectedAdmissionDetails[0]?.enquiry_date.toString() ==
-                    "0000-00-00"
-                      ? new Date()
-                      : new Date(selectedAdmissionDetails[0]?.enquiry_date)
-                  }
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={new Date(selectedAdmissionDetails[0]?.enquiry_date)}
                   dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
-                    dispatch(updateSelectedMatrix({ enquiry_date: date }));
-                  }}
+                  onChange={(date) => {}}
+                  readOnly
                 />
               </Box>
             )}
@@ -314,10 +295,11 @@ export default function ViewUnApprovedAdmModal({
               value={selectedAdmissionDetails[0]?.name}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ name: e.target.value }));
+                dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
               }}
             />
           </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -354,6 +336,7 @@ export default function ViewUnApprovedAdmModal({
               </InputRightAddon>
             </InputGroup>
           </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -374,9 +357,7 @@ export default function ViewUnApprovedAdmModal({
                 dispatch(updateSelectedMatrix({ college: e.target.value }));
               }}
             >
-              <option value={""} disabled selected>
-                Select College
-              </option>
+              <option value={""}>Select College</option>
               <option value={"KSIT"}>KSIT</option>
               <option value={"KSPT"}>KSPT</option>
               <option value={"KSPU"}>KSPU</option>
@@ -585,22 +566,18 @@ export default function ViewUnApprovedAdmModal({
               w={"60%"}
               type={"text"}
               variant={"outline"}
+              isReadOnly
               bg={"white"}
-              readOnly
-              value={selectedAdmissionDetails[0]?.quoted_by || "-"}
+              value={selectedAdmissionDetails[0]?.quoted_by}
               className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
-              }}
             />
           </Flex>
-
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <VStack flex={"1"} alignItems={"start"}>
+            <VStack flex={"1"} w={"full"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Due Date
               </Heading>
@@ -608,14 +585,19 @@ export default function ViewUnApprovedAdmModal({
             {selectedAdmissionDetails[0]?.due_date && (
               <Box w={"60%"}>
                 <ReactDatePicker
-                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  calendarClassName="z-30 bg-blue-200"
+                  todayButton={
+                    <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
+                      Today Date
+                    </Button>
+                  }
+                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={
+                    selectedAdmissionDetails[0]?.due_date !== "Invalid date" ||
                     selectedAdmissionDetails[0]?.due_date.toString() ==
-                      "0000-00-00" ||
-                    selectedAdmissionDetails[0]?.due_date.toString() ==
-                      "Invalid Date"
-                      ? new Date(Date.now())
-                      : new Date(selectedAdmissionDetails[0]?.due_date)
+                      "0000-00-00"
+                      ? new Date(selectedAdmissionDetails[0]?.due_date)
+                      : new Date()
                   }
                   dateFormat={"dd/MM/yyyy"}
                   onChange={(date) => {
@@ -642,12 +624,38 @@ export default function ViewUnApprovedAdmModal({
             <Input
               w={"60%"}
               type={"number"}
+              isReadOnly={!user?.can_edit}
               variant={"outline"}
               bg={"white"}
               value={state.fee_fixed}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 setState((prev) => ({ ...prev, fee_fixed: e.target.value }));
+              }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Fee Paid
+              </Heading>
+            </VStack>
+            <Input
+              min={0}
+              w={"60%"}
+              type={"number"}
+              variant={"outline"}
+              // isReadOnly={!user?.can_edit}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.fee_paid}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
               }}
             />
           </Flex>
@@ -667,17 +675,12 @@ export default function ViewUnApprovedAdmModal({
                   className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                   selected={
                     selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
-                      ? new Date(Date.now())
+                      ? new Date()
                       : new Date(selectedAdmissionDetails[0]?.paid_date)
                   }
                   dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
-                    dispatch(
-                      updateSelectedMatrix({
-                        paid_date: moment(date).format("yyyy-MM-DD"),
-                      })
-                    );
-                  }}
+                  onChange={(date) => {}}
+                  readOnly
                 />
               </Box>
             )}
@@ -689,18 +692,21 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Paid
+                Remaining Fee
               </Heading>
             </VStack>
             <Input
               w={"60%"}
+              isReadOnly
               type={"number"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_paid}
+              value={selectedAdmissionDetails[0]?.remaining_amount}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
+                dispatch(
+                  updateSelectedMatrix({ remaining_amount: e.target.value })
+                );
               }}
             />
           </Flex>
@@ -712,16 +718,15 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Total Remaining Fee
+                Approved By
               </Heading>
             </VStack>
             <Input
-              isReadOnly
               w={"60%"}
-              type={"number"}
+              readOnly
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.total || 0}
+              value={selectedAdmissionDetails[0]?.approved_by}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {}}
             />
@@ -733,7 +738,31 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Reffered By
+                Approved Date
+              </Heading>
+            </VStack>
+            {selectedAdmissionDetails[0]?.approved_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    new Date(selectedAdmissionDetails[0]?.approved_date)
+                  }
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {}}
+                  readOnly
+                />
+              </Box>
+            )}
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Referred By
               </Heading>
             </VStack>
             <Input
@@ -800,7 +829,6 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
-
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -813,86 +841,17 @@ export default function ViewUnApprovedAdmModal({
               </Heading>
             </VStack>
             <Input
+              isReadOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
               value={selectedAdmissionDetails[0]?.status}
               className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
+              }}
             />
           </Flex>
-          <VStack
-            zIndex={"sticky"}
-            position={"sticky"}
-            bottom={"0"}
-            py={"2"}
-            w={"full"}
-            className={"border-t border-t-lightgray backdrop-blur-md"}
-          >
-            <HStack w={"full"}>
-              <Button
-                as={Link}
-                target={"_blank"}
-                download
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `searchenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
-                }
-                colorScheme={"teal"}
-                w={"full"}
-                leftIcon={<AiOutlineDownload className="text-xl" />}
-              >
-                Download Enquiry
-              </Button>
-            </HStack>
-            <HStack w={"full"}>
-              <IModal
-                heading="Are you sure ?"
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                colorBtn="red"
-                onSubmit={() => {
-                  onDelete();
-                  onDeleteClose();
-                }}
-                buttonTitle="Yes"
-              >
-                <VStack py={"5"}>
-                  <Heading size={"md"} fontWeight={"medium"}>
-                    You want to delete this record
-                  </Heading>
-                  <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
-                    {"This action can't be undo"}
-                  </Heading>
-                </VStack>
-              </IModal>
-              <Button
-                isLoading={isDeleting}
-                onClick={onDeleteOpen}
-                leftIcon={<AiOutlineDelete />}
-                colorScheme={"red"}
-                w={"full"}
-              >
-                Delete
-              </Button>
-              <Button
-                isLoading={isUpdating}
-                onClick={() =>
-                  dispatch(
-                    updateEnquiry({
-                      username: user?.username!,
-                      fee_fixed: state.fee_fixed,
-                      fee_quoted: state.fee_quoted,
-                      user_college: user?.college!,
-                    })
-                  )
-                }
-                colorScheme={"purple"}
-                w={"full"}
-              >
-                Update Details
-              </Button>
-            </HStack>
-          </VStack>
         </VStack>
       </IDrawer>
       {children({ onOpen })}

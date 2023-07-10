@@ -65,7 +65,7 @@ export default function Home() {
             
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Total Enquiries
+                Total Students
               </div>
             </Th>
           </Tr>

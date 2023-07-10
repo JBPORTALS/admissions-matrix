@@ -81,7 +81,7 @@ export default function Home() {
             </Th>
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Management Seats
+                Total Students
               </div>
             </Th>
             

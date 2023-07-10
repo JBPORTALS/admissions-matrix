@@ -385,6 +385,7 @@ export const updateMatrix = createAsyncThunk<
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("user_college", payload.user_college);
+      formData.append("hostel", selected_Matrix[0].hostel);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updatestudent.php",
         method: "POST",
@@ -449,6 +450,7 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("referred_by", selected_Matrix[0].referred_by);
+      formData.append("hostel", selected_Matrix[0].hostel);
       formData.append("user_college", payload.user_college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updateenquiry.php",
@@ -513,6 +515,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("percentage", selected_data.percentage);
       formData.append("status", "APPROVED");
       formData.append("user_college", payload.user_college);
+      formData.append("hostel",selected_data.hostel);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "approveenquiry.php",
         method: "POST",
