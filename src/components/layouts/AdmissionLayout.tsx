@@ -520,7 +520,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               borderColor={"gray.200"}
             >
               <HStack w={"full"}>
-                <Link href={"/dashboard"}>
+                <Link href={"/dashboard/approved"}>
                   <Box
                     as={Tag}
                     colorScheme="gray"
@@ -533,7 +533,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 {college && (
                   <>
                     <AiOutlineArrowRight />
-                    <Link href={"/dashboard/" + college}>
+                    <Link href={"/dashboard/approved/" + college}>
                       <Box
                         as={Tag}
                         colorScheme="gray"
