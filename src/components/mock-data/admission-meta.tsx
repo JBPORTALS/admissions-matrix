@@ -194,7 +194,7 @@ export const columns = [
   {
     field: "referred_by",
     headerName: "Referred By",
-    width: "160px",
+    width: "170px",
   },
 ];
 
