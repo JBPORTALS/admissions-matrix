@@ -191,6 +191,11 @@ export const columns = [
     headerName: "Payable",
     width: "120px",
   },
+  {
+    field: "referred_by",
+    headerName: "Referred By",
+    width: "120px",
+  },
 ];
 
 export const hostelcolumns = [
