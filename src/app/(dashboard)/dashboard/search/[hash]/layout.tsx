@@ -32,6 +32,11 @@ export default async function DashboardLayout({
                 Source: {params.get("source")}
               </Tag>
             )}
+            {params.get("type") == "QUERY" && (
+              <>
+                <Heading size={"sm"}>`{params.get("query")}`</Heading>
+              </>
+            )}
           </HStack>
         )}
       </HStack>

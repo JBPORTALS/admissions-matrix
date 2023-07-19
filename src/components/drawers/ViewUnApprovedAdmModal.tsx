@@ -43,6 +43,41 @@ interface props {
   admissionno: string;
 }
 
+export const exams = [
+  {
+    option: "CET",
+    value: "CET",
+  },
+  {
+    option: "COMEDK",
+    value: "COMEDK",
+  },
+  {
+    option: "CET AND COMEDK",
+    value: "CET AND COMEDK",
+  },
+  {
+    option: "DCET",
+    value: "DCET",
+  },
+  {
+    option: "JEE (M)",
+    value: "JEE (M)",
+  },
+  {
+    option: "NATA",
+    value: "NATA",
+  },
+  {
+    option: "OTHERS",
+    value: "OTHERS",
+  },
+  {
+    option: "NONE",
+    value: "NONE",
+  },
+];
+
 export default function ViewUnApprovedAdmModal({
   children,
   admissionno,
@@ -149,17 +184,28 @@ export default function ViewUnApprovedAdmModal({
     dispatch(fetchSelectedMatrix({ admissionno }));
   };
 
+  let render = 0;
+
   useEffect(() => {
+    render++;
     selectedAdmissionDetails[0]?.admission_id == admissionno &&
       selectedAdmissionDetails[0]?.college &&
+      intialRender &&
+      isOpen &&
       dispatch(
         fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
       );
+
+    render++;
+
+    () => render++;
   }, [
     dispatch,
     selectedAdmissionDetails[0]?.admission_id,
     selectedAdmissionDetails[0]?.college,
     admissionno,
+    isOpen,
+    intialRender,
   ]);
 
   const onDelete = async () => {
@@ -548,6 +594,59 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Exam
+              </Heading>
+            </VStack>
+            <Select
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.exam}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ exam: e.target.value }));
+              }}
+            >
+              <option value={""}>Select Exam</option>
+              {exams.map((option, key) => (
+                <option key={key + option.value} value={option.value}>
+                  {option.option}
+                </option>
+              ))}
+            </Select>
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Rank
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.rank}
+              className={"shadow-md shadow-lightBrand"}
+              type={"number"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ rank: e.target.value }));
+              }}
+            />
+          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}

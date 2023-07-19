@@ -5,6 +5,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
   fetchBranchList,
+  fetchHistory,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
 import {
@@ -27,9 +28,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineFilePdf } from "react-icons/ai";
 
 export default function UnApproved() {
-  const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
-  const [branchList, setBranchList] = useState<[]>([]);
   const dispatch = useAppDispatch();
   const sdata = useAppSelector(
     (state) => state.admissions.seat_matrix.data
@@ -39,23 +38,8 @@ export default function UnApproved() {
   ) as [];
 
   useEffect(() => {
-    if (ucollege !== undefined)
-      dispatch(fetchBranchList({ college: ucollege })).then((value: any) => {
-        setBranchList(value.payload);
-      });
-    setBranch("");
+    if (ucollege !== undefined) dispatch(fetchHistory({ college: ucollege }));
   }, [ucollege, dispatch]);
-
-  useEffect(() => {
-    ucollege &&
-      ubranch &&
-      dispatch(
-        fetchUnApprovedAdmissions({
-          college: ucollege,
-          branch: ubranch,
-        })
-      );
-  }, [ucollege, ubranch, dispatch]);
 
   return (
     <div className="h-full">

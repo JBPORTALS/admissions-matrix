@@ -6,9 +6,8 @@ import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { AiOutlineScan, AiOutlineSearch } from "react-icons/ai";
 
-export default function Page() {
+export default function SearchPage() {
   const [data, setData] = useState<[]>();
   const [isError, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,9 +15,10 @@ export default function Page() {
   const p = useParams();
 
   async function getSearchData(
-    type: "ENQUIRY" | "SOURCE" | "APPROVAL",
+    type: "ENQUIRY" | "SOURCE" | "APPROVAL" | "QUERY",
     date: string,
-    source: string
+    source: string,
+    query: string
   ) {
     setIsLoading(true);
     setData([]);
@@ -26,9 +26,16 @@ export default function Page() {
       const formData = new FormData();
       formData.append("date", date);
       formData.append("source", source);
+      formData.append("query", query);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `${type == "ENQUIRY" ? "searchbydate":type == "APPROVAL" ?"searchbyapprovaldate" : "searchbysource"}.php`,
+          `${
+            type == "ENQUIRY"
+              ? "searchbydate"
+              : type == "APPROVAL"
+              ? "searchbyapprovaldate"
+              : "searchbysource"
+          }.php`,
         {
           method: "POST",
           data: formData,
@@ -41,13 +48,23 @@ export default function Page() {
     setIsLoading(false);
   }
 
+  let render = 0;
+
   useEffect(() => {
-    getSearchData(
-      params.get("type") as "SOURCE" | "ENQUIRY" | "APPROVAL",
-      params.get("date")!,
-      params.get("source")!
-    );
-  }, [p.hash,params]);
+    render++;
+
+    if (render == 1) {
+      getSearchData(
+        params.get("type") as "SOURCE" | "ENQUIRY" | "APPROVAL" | "QUERY",
+        params.get("date")!,
+        params.get("source")!,
+        params.get("query")!
+      );
+      render++;
+    }
+
+    console.log(render);
+  }, [p.hash, params]);
 
   if (!params.has("type") || params.get("type") == "")
     return (
@@ -65,7 +82,7 @@ export default function Page() {
         spacing={0.5}
         w={"100vw"}
       >
-        {new Array(9).fill(0).map((value, index) => {
+        {new Array(16).fill(0).map((value, index) => {
           return <Skeleton w={"100%"} h={"12"} key={index} />;
         })}
       </VStack>
