@@ -10,6 +10,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Menu,
   MenuButton,
   MenuList,
@@ -66,7 +68,7 @@ import {
   fetchHistory,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { useSupabase } from "@/app/supabase-provider";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
@@ -96,12 +98,9 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
     source: "",
     date: new Date(),
   });
-  const [adno, setAdno] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  const selectedMatrixError = useAppSelector(
-    (state) => state.admissions.selectedMatrix.error
-  ) as string | null;
+
   const dispatch = useAppDispatch();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
@@ -115,6 +114,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const { user, supabase } = useSupabase();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navRouter = useRouter();
 
   return (
     <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
@@ -134,64 +134,37 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
           <Heading size={"md"}>KSGI Admission Matrix</Heading>
         </HStack>
         <HStack>
-          <Input
-            onChange={(e) => setAdno(e.target.value)}
-            value={adno}
-            size={"sm"}
-            variant={"filled"}
-            w={"72"}
-            type={"number"}
-            placeholder="Search admission no."
-          />
-          <ViewAdmissionDetailsModal admissionno={adno!}>
-            {({ onOpen }) => (
-              <ViewUnApprovedAdmModal admissionno={adno!}>
-                {({ onOpen: onUnapprovedOpen }) => (
-                  <IconButton
-                    isLoading={isLoading}
-                    onClick={async () => {
-                      setIsLoading(true);
-                      try {
-                        const formData = new FormData();
-                        formData.append("admissionno", adno);
-                        const response = await axios({
-                          url:
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            "searchbyid.php",
-                          method: "POST",
-                          data: formData,
-                        });
-
-                        const resData = response.data.status as
-                          | "APPROVED"
-                          | "NOT APPROVED";
-                        if (resData == "APPROVED" && !selectedMatrixError)
-                          onOpen();
-                        else if (
-                          resData == "NOT APPROVED" &&
-                          !selectedMatrixError
-                        )
-                          onUnapprovedOpen();
-                        else
-                          toast.error("No record found !", {
-                            position: "top-right",
-                          });
-                      } catch (e: any) {
-                        toast.error(e.response.data?.msg, {
-                          position: "top-right",
-                        });
-                      }
-                      setIsLoading(false);
-                    }}
-                    colorScheme="facebook"
-                    size={"sm"}
-                    aria-label="search"
-                    icon={<AiOutlineSearch className="text-lg" />}
-                  />
-                )}
-              </ViewUnApprovedAdmModal>
-            )}
-          </ViewAdmissionDetailsModal>
+          <InputGroup>
+            <Input
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              size={"md"}
+              w={"96"}
+              type={"text"}
+              onKeyDown={(e) => {
+                if (e.key == "Enter")
+                  navRouter.push(
+                    `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
+                  );
+              }}
+              placeholder="Search Admission no./Student Name/Phone No."
+            />
+            <InputRightElement>
+              <IconButton
+                isLoading={isLoading}
+                onClick={async () => {
+                  navRouter.push(
+                    `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
+                  );
+                }}
+                colorScheme="facebook"
+                size={"md"}
+                variant={"ghost"}
+                aria-label="search"
+                icon={<AiOutlineSearch className="text-lg" />}
+              />
+            </InputRightElement>
+          </InputGroup>
         </HStack>
 
         <HStack position={"relative"}>
@@ -266,6 +239,8 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
             ? 2
             : pathname.startsWith("/dashboard/hostel")
             ? 3
+            : pathname.startsWith("/dashboard/search")
+            ? 4
             : -1
         }
         mt={"14"}
@@ -331,7 +306,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 History
               </Tab>
             </Link>
-            <Link href={"/dashboard/hostel"}>
+            <Link href={"/dashboard/search"}>
               <Tab
                 as={Button}
                 py={"2"}
@@ -349,6 +324,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 Hostel
               </Tab>
             </Link>
+            <Tab hidden>search</Tab>
           </HStack>
           <HStack mr={"2"}>
             <Menu size={"md"}>
@@ -762,6 +738,9 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
             <VStack h={"100vh"} overflow={"scroll"} w={"full"}>
               {children}
             </VStack>
+          </TabPanel>
+          <TabPanel p={"0"} h={"full"}>
+            {children}
           </TabPanel>
         </TabPanels>
       </Tabs>

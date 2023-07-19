@@ -386,6 +386,8 @@ export const updateMatrix = createAsyncThunk<
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("user_college", payload.user_college);
       formData.append("hostel", selected_Matrix[0].hostel);
+      formData.append("exam", selected_Matrix[0].exam);
+      formData.append("rank", selected_Matrix[0].rank);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updatestudent.php",
         method: "POST",
@@ -516,6 +518,8 @@ export const updateToApprove = createAsyncThunk<
       formData.append("status", "APPROVED");
       formData.append("user_college", payload.user_college);
       formData.append("hostel",selected_data.hostel);
+      formData.append("exam", selected_data.exam);
+      formData.append("rank", selected_data.rank);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "approveenquiry.php",
         method: "POST",
@@ -571,6 +575,8 @@ export interface SelectedMatrix extends BranchAdmission {
   enquiry_date: string;
   percentage: string;
   hostel:string;
+  exam:string;
+  rank:string;
 }
 
 export interface OverallMatrix {

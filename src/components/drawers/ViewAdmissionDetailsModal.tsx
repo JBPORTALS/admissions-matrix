@@ -37,6 +37,7 @@ import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { Link } from "@chakra-ui/next-js";
+import { exams } from "./ViewUnApprovedAdmModal";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -525,6 +526,58 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Exam
+              </Heading>
+            </VStack>
+            <Select
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.exam}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ exam: e.target.value }));
+              }}
+            >
+              <option value={""}>Select Exam</option>
+              {exams.map((option, key) => (
+                <option key={key + option.value} value={option.value}>
+                  {option.option}
+                </option>
+              ))}
+            </Select>
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Rank
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.rank}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ rank: e.target.value }));
+              }}
+            />
+          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
