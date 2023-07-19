@@ -140,6 +140,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               value={query}
               size={"md"}
               w={"96"}
+              fontSize={"sm"}
               type={"text"}
               onKeyDown={(e) => {
                 if (e.key == "Enter")
