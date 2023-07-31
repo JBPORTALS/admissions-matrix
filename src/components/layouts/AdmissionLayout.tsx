@@ -78,6 +78,7 @@ import axios from "axios";
 import moment from "moment";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Image from "next/image";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -129,9 +130,18 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
         bg={"whiteAlpha.100"}
         className="border-b border-b-lightgray backdrop-blur-sm"
       >
-        <HStack color={"blue.600"}>
-          <AiOutlineUsergroupAdd className="text-3xl" />
-          <Heading size={"md"}>KSGI Admission Matrix</Heading>
+        <HStack>
+          <div className="relative flex h-8 w-28">
+            <Image
+              quality={100}
+              alt={"ismart"}
+              src={"/nexuss.png"}
+              priority
+              sizes="10vh"
+              fill
+            />
+          </div>
+            <Heading size={"md"} position={"relative"} color={"gray.600"}>| Admission Matrix</Heading>
         </HStack>
         <HStack>
           <InputGroup>

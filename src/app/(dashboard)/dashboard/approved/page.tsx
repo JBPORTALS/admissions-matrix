@@ -37,9 +37,9 @@ export default function Home() {
         new Array(8).fill(0).map((_,index)=>{
           return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>
         })
-       }
+       }   
     </VStack>
-  )
+  ) 
   return (
     <Stack
       h={"fit"}

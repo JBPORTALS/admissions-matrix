@@ -6,7 +6,7 @@ import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-material.css"
 
 export const metadata = {
-  title:"Admission Matrix"
+  title:"Nexuss | Admission Matrix"
 }
 
 export default function RootLayout({
