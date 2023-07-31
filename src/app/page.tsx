@@ -11,16 +11,12 @@ export default function Home() {
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
         w={"full"}
-        bg={"whiteAlpha.300"}
         px={"16"}
+        py={"3"}
       >
-        <Image
-          alt={"ismart"}
-          src={"/iSmartLogo.png"}
-          className={"object-scale-down aspect-auto"}
-          width={120}
-          height={70}
-        />
+        <div className="relative h-10 w-32">
+        <Image alt={"ismart"} src={"/nexuss.png"} priority sizes="10vh" fill/>
+        </div>
         <HStack>
           <AddCouncelAddmissionModel>
             {({ onOpen }) => (
