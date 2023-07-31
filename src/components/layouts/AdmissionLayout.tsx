@@ -141,7 +141,9 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               fill
             />
           </div>
-            <Heading size={"md"} position={"relative"} color={"gray.600"}>| Admission Matrix</Heading>
+          <Heading size={"md"} position={"relative"} color={"gray.600"}>
+            | Admission Matrix
+          </Heading>
         </HStack>
         <HStack>
           <InputGroup>
@@ -317,7 +319,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 History
               </Tab>
             </Link>
-            <Link href={"/dashboard/search"}>
+            <Link href={"/dashboard/hostel"}>
               <Tab
                 as={Button}
                 py={"2"}
