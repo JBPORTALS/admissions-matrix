@@ -512,7 +512,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               </HStack>
             </TabList>
             <TabPanels px={"0"} h={"full"}>
-              <TabPanel p={"0"}>
+              <TabPanel p={"0"} w={"full"}>
                 <HStack
                   className="bg-secondary"
                   px={"5"}

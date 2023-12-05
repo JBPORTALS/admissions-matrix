@@ -31,7 +31,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
-import { COLLEGES } from "@/utils/constants";
 import { AiOutlineSelect } from "react-icons/ai";
 import axios from "axios";
 import { Formik, Field, FormikValues, useFormikContext } from "formik";
@@ -47,155 +46,12 @@ let initialState = {
   remaining: "",
   college: "",
   branch: "",
-  category: "",
+  category: "REGULAR",
 };
 
 export default function MIFModal({ children }: props) {
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [college, setCollege] = useState("");
-  const [category, setCategory] = useState("REGULAR");
-  const [branch, setBranch] = useState("");
-  const [details, setDetails] = useState([]);
-
-  const colleges = useAppSelector((state) => state.admissions.colleges);
-  const branches = useAppSelector((state) => state.admissions.branchlist.data);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(fetchBaseColleges());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchBranchList({ college }));
-  }, [college, dispatch]);
-
-  const fetchDetails = useCallback(async () => {
-    try {
-      const formData = new FormData();
-      formData.append("college", college);
-      formData.append("branch", branch);
-      formData.append("category", category);
-      const response = await axios({
-        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionretrieve.php",
-        method: "POST",
-        data: formData,
-      });
-
-      setDetails(response.data);
-      initialState.alloted = response.data[0].allotted_seats ?? 0;
-      initialState.remaining = response.data[0].remaining_seats ?? 0;
-      initialState.fee = response.data[0].fee ?? 0;
-      initialState.intake = response.data[0].intake ?? 0;
-      console.log(response.data);
-    } catch (e) {}
-  }, [college, branch]);
-
-  useEffect(() => {
-    if (college && branch) fetchDetails();
-  }, [college, branch]);
-  return (
-    <>
-      <IDrawer
-        hideFooter
-        isLoading={isLoading}
-        isDisabled={isLoading}
-        onSubmit={() => {}}
-        buttonTitle="Save"
-        onClose={() => {
-          onClose();
-        }}
-        isOpen={isOpen}
-        heading="⚙️ Manage Intake & Fee Settings"
-      >
-        <Tabs
-          variant={"solid-rounded"}
-          size={"sm"}
-          lazyBehavior="unmount"
-          fill={"Background"}
-          colorScheme="gray"
-          isFitted
-        >
-          <TabList mb={0} p={"3"} px={"5"}>
-            <Tab>Regular</Tab>
-            <Tab>Lateral Entry</Tab>
-          </TabList>
-          <TabPanels px={5}>
-            <TabPanel>
-              <VStack>
-                <FormControl>
-                  <FormLabel>College</FormLabel>
-                  <Select
-                    value={college}
-                    onChange={(e) => setCollege(e.target.value)}
-                  >
-                    <option value={""}>Select</option>
-                    {colleges.map((value: any, index) => (
-                      <option value={value.value} key={value.value}>
-                        {value.option}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Branch</FormLabel>
-                  <Select
-                    value={branch}
-                    onChange={(e) => setBranch(e.target.value)}
-                  >
-                    <option value={""}>Select</option>
-                    {branches.map((value: any, index) => (
-                      <option value={value.value} key={value.value}>
-                        {value.option}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Divider size={"2"} />
-                {!branch || !college ? (
-                  <Card w={"full"} height={"40"}>
-                    <CardBody>
-                      <Center h={"full"} flexDirection={"column"}>
-                        <AiOutlineSelect className="text-3xl" />
-                        <Text size={"sm"} px={8} textAlign={"center"}>
-                          Select College & Branch to check the details
-                        </Text>
-                      </Center>
-                    </CardBody>
-                  </Card>
-                ) : (
-                  <DetailsCard {...{ college, branch, category }} />
-                )}
-              </VStack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </IDrawer>
-      {children({ onOpen })}
-    </>
-  );
-}
-
-const FormikContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const { values, setFieldValue } = useFormikContext<typeof initialState>();
-
-  useEffect(() => {
-    setFieldValue("remaining", +(+values.intake - +values.alloted));
-  }, [values.intake, values.alloted, setFieldValue]);
-
-  return <>{children}</>;
-};
-
-function DetailsCard({
-  college,
-  branch,
-  category,
-}: {
-  college: string;
-  branch: string;
-  category: string;
-}) {
   const toast = useToast();
 
   const updateDetails = useCallback<(values: FormikValues) => Promise<void>>(
@@ -206,9 +62,9 @@ function DetailsCard({
         formData.append("fee", values.fee);
         formData.append("alloted_seats", values.alloted);
         formData.append("remaining_seats", values.remaining);
-        formData.append("college", college);
-        formData.append("branch", branch);
-        formData.append("category", category);
+        formData.append("college", values.college);
+        formData.append("branch", values.branch);
+        formData.append("category", values.category);
 
         const response = await axios({
           url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionupdate.php",
@@ -241,88 +97,340 @@ function DetailsCard({
   );
 
   return (
-    <Card w={"full"}>
-      <CardHeader>
-        <Heading color={"gray.600"} size={"md"}>
-          Details
-        </Heading>
-      </CardHeader>
-      <CardBody>
-        <Formik
-          enableReinitialize
-          initialValues={initialState}
-          onSubmit={async (values) => {
-            await updateDetails(values);
-          }}
-        >
-          {({ handleSubmit, isSubmitting }) => (
-            <FormikContextProvider>
-              <VStack divider={<Divider />}>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <b>Fee</b>{" "}
-                  <FormControl w={"40"}>
-                    <InputGroup>
-                      <InputLeftAddon>₹</InputLeftAddon>
-                      <Field
-                        as={Input}
-                        name={"fee"}
-                        type="number "
-                        textAlign={"right"}
-                      />
-                    </InputGroup>
-                  </FormControl>
-                </HStack>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <b>Intake</b>
-                  <FormControl w={"40"}>
-                    <Field
-                      as={Input}
-                      name={"intake"}
-                      type="number"
-                      textAlign={"right"}
-                    />
-                  </FormControl>
-                </HStack>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <b>Alloted Seats</b>
-                  <FormControl isReadOnly w={"40"}>
-                    <Field
-                      as={Input}
-                      isReadOnly
-                      name={"alloted"}
-                      type="number"
-                      textAlign={"right"}
-                    />
-                  </FormControl>
-                </HStack>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <b>Remaining Seats</b>
-                  <FormControl isReadOnly w={"40"}>
-                    <Field
-                      as={Input}
-                      isReadOnly
-                      type="number"
-                      name="remaining"
-                      textAlign={"right"}
-                    />
-                  </FormControl>
-                </HStack>
-
-                <HStack w={"full"}>
-                  <Button
-                    isLoading={isSubmitting}
-                    onClick={() => handleSubmit()}
-                    colorScheme="facebook"
-                    w={"full"}
-                  >
-                    Update
-                  </Button>
-                </HStack>
-              </VStack>
-            </FormikContextProvider>
-          )}
-        </Formik>
-      </CardBody>
-    </Card>
+    <Formik
+      enableReinitialize
+      initialValues={initialState}
+      onSubmit={async (values) => {
+        await updateDetails(values);
+      }}
+    >
+      {() => (
+        <>
+          <IDrawer
+            hideFooter
+            isLoading={isLoading}
+            isDisabled={isLoading}
+            onSubmit={() => {}}
+            buttonTitle="Save"
+            onClose={() => {
+              onClose();
+            }}
+            isOpen={isOpen}
+            heading="⚙️ Manage Intake & Fee Settings"
+          >
+            <FormikContextProvider />
+          </IDrawer>
+          {children({ onOpen })}
+        </>
+      )}
+    </Formik>
   );
 }
+
+const FormikContextProvider = () => {
+  const {
+    values,
+    setFieldValue,
+    handleSubmit,
+    isSubmitting,
+    handleChange,
+    handleReset,
+  } = useFormikContext<typeof initialState>();
+
+  const colleges = useAppSelector((state) => state.admissions.colleges);
+  const branches = useAppSelector((state) => state.admissions.branchlist.data);
+
+  const dispatch = useAppDispatch();
+  const toast = useToast();
+
+  useEffect(() => {
+    dispatch(fetchBaseColleges());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchBranchList({ college: values.college }));
+  }, [values.college, dispatch]);
+
+  const fetchDetails = useCallback(async () => {
+    try {
+      const formData = new FormData();
+      formData.append("college", values.college);
+      formData.append("branch", values.branch);
+      formData.append("category", values.category);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionretrieve.php",
+        method: "POST",
+        data: formData,
+      });
+
+      setFieldValue("alloted", response.data[0].allotted_seats ?? 0);
+      setFieldValue("remaining", response.data[0].remaining_seats ?? 0);
+      setFieldValue("fee", response.data[0].fee ?? 0);
+      setFieldValue("intake", response.data[0].intake ?? 0);
+    } catch (e) {
+      toast({
+        title: "Something went wrong!",
+        status: "error",
+        colorScheme: "red",
+      });
+    }
+  }, [values.branch, values.college, values.category]);
+
+  useEffect(() => {
+    if (values.college && values.branch) fetchDetails();
+  }, [values.college, values.branch]);
+
+  useEffect(() => {
+    setFieldValue("remaining", +(+values.intake - +values.alloted));
+  }, [values.intake, values.alloted, setFieldValue]);
+
+  return (
+    <Tabs
+      variant={"solid-rounded"}
+      size={"sm"}
+      lazyBehavior="unmount"
+      fill={"Background"}
+      colorScheme="gray"
+      isFitted
+      index={values.category == "REGULAR" ? 0 : 1}
+      onChange={(index) => {
+        handleReset();
+        setFieldValue(
+          "category",
+          values.category == "REGULAR" ? "LATERAL_ENTRY" : "REGULAR"
+        );
+      }}
+    >
+      <TabList mb={0} p={"3"} px={"5"}>
+        <Tab>Regular</Tab>
+        <Tab>Lateral Entry</Tab>
+      </TabList>
+      <TabPanels px={5}>
+        <TabPanel>
+          {/* <pre>{JSON.stringify(values)}</pre> */}
+          <VStack>
+            <FormControl>
+              <FormLabel>College</FormLabel>
+              <Select name="college" onChange={handleChange}>
+                <option value={""}>Select</option>
+                {colleges.map((value: any, index) => (
+                  <option value={value.value} key={value.value}>
+                    {value.option}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Branch</FormLabel>
+              <Select name="branch" onChange={handleChange}>
+                <option value={""}>Select</option>
+                {branches.map((value: any, index) => (
+                  <option value={value.value} key={value.value}>
+                    {value.option}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <Divider size={"2"} />
+            {!values.branch || !values.college ? (
+              <Card w={"full"} height={"40"}>
+                <CardBody>
+                  <Center h={"full"} flexDirection={"column"}>
+                    <AiOutlineSelect className="text-3xl" />
+                    <Text size={"sm"} px={8} textAlign={"center"}>
+                      Select College & Branch to check the details
+                    </Text>
+                  </Center>
+                </CardBody>
+              </Card>
+            ) : (
+              <Card w={"full"}>
+                <CardHeader>
+                  <Heading color={"gray.600"} size={"md"}>
+                    Details
+                  </Heading>
+                </CardHeader>
+                <CardBody>
+                  <VStack divider={<Divider />}>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Fee</b>{" "}
+                      <FormControl w={"40"}>
+                        <InputGroup>
+                          <InputLeftAddon>₹</InputLeftAddon>
+                          <Field
+                            as={Input}
+                            name={"fee"}
+                            type="number "
+                            textAlign={"right"}
+                          />
+                        </InputGroup>
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Intake</b>
+                      <FormControl w={"40"}>
+                        <Field
+                          as={Input}
+                          name={"intake"}
+                          type="number"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Alloted Seats</b>
+                      <FormControl isReadOnly w={"40"}>
+                        <Field
+                          as={Input}
+                          isReadOnly
+                          name={"alloted"}
+                          type="number"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Remaining Seats</b>
+                      <FormControl isReadOnly w={"40"}>
+                        <Field
+                          as={Input}
+                          isReadOnly
+                          type="number"
+                          name="remaining"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+
+                    <HStack w={"full"}>
+                      <Button
+                        isLoading={isSubmitting}
+                        onClick={() => handleSubmit()}
+                        colorScheme="facebook"
+                        w={"full"}
+                      >
+                        Update
+                      </Button>
+                    </HStack>
+                  </VStack>
+                </CardBody>
+              </Card>
+            )}
+          </VStack>
+        </TabPanel>
+        <TabPanel>
+          {/* <pre>{JSON.stringify(values)}</pre> */}
+          <VStack>
+            <FormControl>
+              <FormLabel>College</FormLabel>
+              <Select name="college" onChange={handleChange}>
+                <option value={""}>Select</option>
+                {colleges.map((value: any, index) => (
+                  <option value={value.value} key={value.value}>
+                    {value.option}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Branch</FormLabel>
+              <Select name="branch" onChange={handleChange}>
+                <option value={""}>Select</option>
+                {branches.map((value: any, index) => (
+                  <option value={value.value} key={value.value}>
+                    {value.option}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <Divider size={"2"} />
+            {!values.branch || !values.college ? (
+              <Card w={"full"} height={"40"}>
+                <CardBody>
+                  <Center h={"full"} flexDirection={"column"}>
+                    <AiOutlineSelect className="text-3xl" />
+                    <Text size={"sm"} px={8} textAlign={"center"}>
+                      Select College & Branch to check the details
+                    </Text>
+                  </Center>
+                </CardBody>
+              </Card>
+            ) : (
+              <Card w={"full"}>
+                <CardHeader>
+                  <Heading color={"gray.600"} size={"md"}>
+                    Details
+                  </Heading>
+                </CardHeader>
+                <CardBody>
+                  <VStack divider={<Divider />}>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Fee</b>{" "}
+                      <FormControl w={"40"}>
+                        <InputGroup>
+                          <InputLeftAddon>₹</InputLeftAddon>
+                          <Field
+                            as={Input}
+                            name={"fee"}
+                            type="number "
+                            textAlign={"right"}
+                          />
+                        </InputGroup>
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Intake</b>
+                      <FormControl w={"40"}>
+                        <Field
+                          as={Input}
+                          name={"intake"}
+                          type="number"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Alloted Seats</b>
+                      <FormControl isReadOnly w={"40"}>
+                        <Field
+                          as={Input}
+                          isReadOnly
+                          name={"alloted"}
+                          type="number"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <b>Remaining Seats</b>
+                      <FormControl isReadOnly w={"40"}>
+                        <Field
+                          as={Input}
+                          isReadOnly
+                          type="number"
+                          name="remaining"
+                          textAlign={"right"}
+                        />
+                      </FormControl>
+                    </HStack>
+
+                    <HStack w={"full"}>
+                      <Button
+                        isLoading={isSubmitting}
+                        onClick={() => handleSubmit()}
+                        colorScheme="facebook"
+                        w={"full"}
+                      >
+                        Update
+                      </Button>
+                    </HStack>
+                  </VStack>
+                </CardBody>
+              </Card>
+            )}
+          </VStack>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  );
+};

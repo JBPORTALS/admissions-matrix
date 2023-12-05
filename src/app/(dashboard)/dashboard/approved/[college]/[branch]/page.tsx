@@ -19,12 +19,12 @@ export default function Home() {
       dispatch(
         fetchSearchClass({ college: router.college, branch: router.branch })
       );
-      
-      console.log(router)
+
+    console.log(router);
   }, [router.college, router.branch, dispatch]);
 
   return (
-    <VStack h={"77vh"} pr={"3"} className="ag">
+    <VStack h={"77vh"} w={"full"} pr={"3"} className="ag">
       <ClassDataGrid />
     </VStack>
   );

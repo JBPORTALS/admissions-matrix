@@ -21,6 +21,10 @@ import {
   Input,
   InputGroup,
   InputRightAddon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   useDisclosure,
   VStack,
@@ -28,8 +32,12 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
-import { usePathname } from "next/navigation";
-import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import {
+  AiOutlineArrowUp,
+  AiOutlineDelete,
+  AiOutlineFilePdf,
+} from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
@@ -67,6 +75,11 @@ export default function ViewAdmissionDetailsModal({
   const dispatch = useAppDispatch();
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
+  const {
+    isOpen: isMenuOpen,
+    onOpen: onMenuOpen,
+    onClose: onMenuClose,
+  } = useDisclosure();
   const [state, setState] = useState({
     fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
@@ -930,19 +943,47 @@ export default function ViewAdmissionDetailsModal({
               </VStack>
             </IModal>
             <VStack w={"full"}>
-              <Button
-                as={Link}
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
-                }
-                target="_blank"
-                leftIcon={<AiOutlineFilePdf />}
-                colorScheme={"purple"}
-                w={"full"}
+              <Menu
+                isOpen={isMenuOpen}
+                placement="top"
+                matchWidth
+                closeOnSelect
+                boundary={"clippingParents"}
+                onClose={onMenuClose}
+                onOpen={onMenuOpen}
               >
-                Download Approve Enquiry
-              </Button>
+                <MenuButton
+                  as={Button}
+                  rightIcon={
+                    <FaChevronUp
+                      className={`transition-all duration-100 ${
+                        isMenuOpen ? "rotate-180" : "rotate-0"
+                      }`}
+                    />
+                  }
+                  w={"full"}
+                  colorScheme="purple"
+                >
+                  Download Document
+                </MenuButton>
+                <MenuList>
+                  <MenuItem icon={<AiOutlineFilePdf />}>Invoice</MenuItem>
+                  <MenuItem
+                    icon={<AiOutlineFilePdf />}
+                    as={Link}
+                    href={
+                      process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
+                    }
+                    target="_blank"
+                    colorScheme={"purple"}
+                    w={"full"}
+                  >
+                    Approve Enquiry
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+
               <Button
                 isLoading={isDeleting}
                 onClick={onDeleteOpen}
