@@ -13,6 +13,7 @@ import {
   InputRightElement,
   Menu,
   MenuButton,
+  MenuItem,
   MenuList,
   Modal,
   ModalBody,
@@ -26,17 +27,23 @@ import {
   TabPanels,
   Tabs,
   Tag,
+  TagLabel,
+  Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
+  AiFillFilePdf,
   AiOutlineArrowRight,
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
   AiOutlineCloudDownload,
+  AiOutlineExport,
   AiOutlineFieldTime,
+  AiOutlineFileExcel,
+  AiOutlineFilePdf,
   AiOutlineFilter,
   AiOutlineHistory,
   AiOutlineLogout,
@@ -64,6 +71,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Image from "next/image";
 import MIFModal from "../drawers/MIFModal";
 import SideBar from "../ui/SideBar";
+import { FaChevronDown, FaFileDownload, FaFileExport } from "react-icons/fa";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -519,6 +527,9 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   py={"3"}
                   borderBottom={"1px"}
                   borderColor={"gray.200"}
+                  zIndex={"dropdown"}
+                  w={"full"}
+                  justifyContent={"space-between"}
                 >
                   <HStack w={"full"}>
                     <Link href={"/dashboard/approved"}>
@@ -560,82 +571,95 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                       </>
                     )}
                   </HStack>
-                  <HStack>
-                    {college && branch && (
-                      <>
-                        <VStack px={3}>
-                          <Heading
+                  {college && branch && (
+                    <>
+                      <HStack px={3} w={"full"}>
+                        <Tag gap={2} pl={0} variant={"outline"}>
+                          <Tag colorScheme="gray" variant={"solid"}>
+                            Intake
+                          </Tag>
+                          <TagLabel>{metaData[0]?.intake!}</TagLabel>
+                        </Tag>
+                        <Text>-</Text>
+                        <Tag gap={2} pl={0} variant={"outline"}>
+                          <Tag colorScheme="gray" variant={"solid"}>
+                            Alloted
+                          </Tag>
+                          <TagLabel>{metaData[0]?.allotted!}</TagLabel>
+                        </Tag>
+                        <Text>=</Text>
+                        <Tag gap={2} pl={0} variant={"outline"}>
+                          <Tag colorScheme="gray" variant={"solid"}>
+                            Remaining
+                          </Tag>
+                          <TagLabel>{metaData[0]?.remaining!}</TagLabel>
+                        </Tag>
+                      </HStack>
+                      <HStack w={"full"} justifyContent={"end"}>
+                        <Menu>
+                          <MenuButton
+                            as={Button}
+                            colorScheme="gray"
+                            variant={"ghost"}
                             size={"sm"}
-                            whiteSpace={"nowrap"}
-                            fontWeight={"medium"}
+                            leftIcon={
+                              <FaFileDownload className="text-gray-700" />
+                            }
+                            rightIcon={<FaChevronDown />}
                           >
-                            Intake - Alloted = Remaining
-                          </Heading>
-                          {metaData.length > 0 && (
-                            <Heading
-                              size={"sm"}
-                              whiteSpace={"nowrap"}
-                              fontWeight={"medium"}
+                            Export Data
+                          </MenuButton>
+                          <MenuList zIndex={"dropdown"}>
+                            <MenuItem
+                              as={Link}
+                              target={"_blank"}
+                              download
+                              command="↗️"
+                              href={
+                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                                `dowloadclassexcel.php?college=${college}&branch=${branch}`
+                              }
+                              icon={
+                                <AiOutlineFileExcel className="text-lg text-green-600" />
+                              }
                             >
-                              {metaData[0]?.intake!} - {metaData[0]?.allotted!}{" "}
-                              = {metaData[0]?.remaining!}
-                            </Heading>
-                          )}
-                        </VStack>
-                        <Button
-                          as={Link}
-                          target={"_blank"}
-                          download
-                          href={
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            `dowloadclassexcel.php?college=${college}&branch=${branch}`
-                          }
-                          leftIcon={
-                            <AiOutlineCloudDownload className="text-lg" />
-                          }
-                          colorScheme={"green"}
-                          variant={"outline"}
-                          size={"sm"}
-                        >
-                          Download Excel
-                        </Button>
-                        <Button
-                          as={Link}
-                          target={"_blank"}
-                          download
-                          href={
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            `downloadclasspdf.php?college=${college}&branch=${branch}`
-                          }
-                          leftIcon={
-                            <AiOutlineCloudDownload className="text-lg" />
-                          }
-                          colorScheme={"orange"}
-                          variant={"outline"}
-                          size={"sm"}
-                        >
-                          Download PDF
-                        </Button>
-                        <Button
-                          as={Link}
-                          target={"_blank"}
-                          download
-                          href={
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            `downloadclasswithfee.php?college=${college}&branch=${branch}`
-                          }
-                          leftIcon={
-                            <AiOutlineCloudDownload className="text-lg" />
-                          }
-                          colorScheme={"purple"}
-                          variant={"outline"}
-                          size={"sm"}
-                        >
-                          Download PDF With Fee Details
-                        </Button>
-                      </>
-                    )}
-                  </HStack>
+                              .Excel format
+                            </MenuItem>
+                            <MenuItem
+                              as={Link}
+                              target={"_blank"}
+                              download
+                              href={
+                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                                `downloadclasspdf.php?college=${college}&branch=${branch}`
+                              }
+                              command="↗️"
+                              icon={
+                                <AiOutlineFilePdf className="text-lg text-rose-600" />
+                              }
+                            >
+                              .Pdf format
+                            </MenuItem>
+                            <MenuItem
+                              as={Link}
+                              target={"_blank"}
+                              download
+                              href={
+                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                                `downloadclasswithfee.php?college=${college}&branch=${branch}`
+                              }
+                              command="↗️"
+                              icon={
+                                <AiFillFilePdf className="text-lg text-rose-700" />
+                              }
+                            >
+                              .Pdf format fith <b>Fee</b> details
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </HStack>
+                    </>
+                  )}
                 </HStack>
                 <VStack h={"100vh"} overflow={"scroll"} w={"full"}>
                   {children}
