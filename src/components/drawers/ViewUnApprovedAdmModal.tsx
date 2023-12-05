@@ -105,7 +105,7 @@ export default function ViewUnApprovedAdmModal({
   ) as boolean;
   const isError = useAppSelector(
     (state) => state.admissions.update_approve.error
-  ) as boolean;
+  );
   const fee = useAppSelector((state) => state.admissions.fee) as
     | string
     | undefined;
