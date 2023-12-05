@@ -1,6 +1,4 @@
 "use client";
-import AdmissionLayout from "@/components/layouts/AdmissionLayout";
-import { useAppDispatch } from "@/hooks";
 import {
   Progress,
   Skeleton,
@@ -111,7 +109,11 @@ export default function Home() {
                 <Tr key={index}>
                   <Td>
                     <Link
-                      href={"/dashboard/approved/" + router.college + `/${value.branch}`}
+                      href={
+                        "/dashboard/approved/" +
+                        router.college +
+                        `/${value.branch}`
+                      }
                     >
                       <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                         {value.branch}

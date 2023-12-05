@@ -8,6 +8,7 @@ import {
   fetchBranchList,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
+import { COLLEGES } from "@/utils/constants";
 import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export default function UnApproved() {
   ) as [];
   const Error = useAppSelector(
     (state) => state.admissions.unapproved_matrix.error
-  ) as [];
+  );
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -56,13 +57,7 @@ export default function UnApproved() {
             placeHolder="Select College"
             value={ucollege}
             onChange={(value) => setCollege(value)}
-            options={[
-              { value: "KSIT", option: "KSIT" },
-              { value: "KSPT", option: "KSPT" },
-              { value: "KSPU", option: "KSPU" },
-              { value: "KSSA", option: "KSSA" },
-              { value: "KSSEM", option: "KSSEM" },
-            ]}
+            options={COLLEGES}
           />
           {ucollege ? (
             <ISelect

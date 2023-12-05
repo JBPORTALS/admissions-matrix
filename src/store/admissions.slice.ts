@@ -311,6 +311,33 @@ export const fetchCollegeList = createAsyncThunk<
   }
 );
 
+export const fetchBaseColleges = createAsyncThunk<
+  { msg: string },
+  void,
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/admissions/fetchBaseColleges",
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievecollege1.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchUnApprovedAdmissions = createAsyncThunk<
   { msg: string },
   {
@@ -517,7 +544,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("percentage", selected_data.percentage);
       formData.append("status", "APPROVED");
       formData.append("user_college", payload.user_college);
-      formData.append("hostel",selected_data.hostel);
+      formData.append("hostel", selected_data.hostel);
       formData.append("exam", selected_data.exam);
       formData.append("rank", selected_data.rank);
       const response = await axios({
@@ -574,9 +601,9 @@ export interface SelectedMatrix extends BranchAdmission {
   approved_date: string;
   enquiry_date: string;
   percentage: string;
-  hostel:string;
-  exam:string;
-  rank:string;
+  hostel: string;
+  exam: string;
+  rank: string;
 }
 
 export interface OverallMatrix {
@@ -597,6 +624,7 @@ export interface BranchMatrix {
 
 interface FeesIntialState {
   fee: string;
+  colleges: [];
   branch_admissions: {
     data: [];
     pending: boolean;
@@ -654,6 +682,7 @@ interface FeesIntialState {
 
 const initialState: FeesIntialState = {
   fee: "",
+  colleges: [],
   branch_admissions: {
     data: [],
     error: null,
@@ -734,6 +763,15 @@ export const AdmissionsSlice = createSlice({
       state.overall_matrix.pending = false;
       state.overall_matrix.error = action.payload?.msg;
       toast.error(action.payload?.msg, { position: "top-right" });
+    },
+    [fetchBaseColleges.pending.toString()]: (state, action) => {
+      state.colleges = [];
+    },
+    [fetchBaseColleges.fulfilled.toString()]: (state, action) => {
+      state.colleges = action.payload;
+    },
+    [fetchBaseColleges.rejected.toString()]: (state, action) => {
+      state.colleges = [];
     },
     [fetchOverallHostel.pending.toString()]: (state, action) => {
       state.overall_matrix.pending = true;
