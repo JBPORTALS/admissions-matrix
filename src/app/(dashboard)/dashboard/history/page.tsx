@@ -33,9 +33,7 @@ export default function UnApproved() {
   const sdata = useAppSelector(
     (state) => state.admissions.seat_matrix.data
   ) as [];
-  const sError = useAppSelector(
-    (state) => state.admissions.seat_matrix.error
-  ) as [];
+  const sError = useAppSelector((state) => state.admissions.seat_matrix.error);
 
   useEffect(() => {
     if (ucollege !== undefined) dispatch(fetchHistory({ college: ucollege }));
