@@ -10,6 +10,7 @@ import {
   Center,
   Divider,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
@@ -34,10 +35,17 @@ import IDrawer from "../ui/utils/IDrawer";
 import { AiOutlineSelect } from "react-icons/ai";
 import axios from "axios";
 import { Formik, Field, FormikValues, useFormikContext } from "formik";
+import * as Yup from "yup";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
 }
+
+const Schema = Yup.object().shape({
+  fee: Yup.number().required(),
+  alloted: Yup.number(),
+  intake: Yup.number().required().min(Yup.ref("alloted")),
+});
 
 let initialState = {
   fee: "",
@@ -76,9 +84,8 @@ export default function MIFModal({ children }: props) {
           toast({
             colorScheme: "blue",
             variant: "subtle",
-            title: "Detiails Updated",
-            description:
-              "You have to refresh the page to see the updated details.",
+            title: "Seat Matrix Updated.",
+            description: "Refresh the page to view the changes.",
             position: "bottom",
           });
       } catch (e: any) {
@@ -99,6 +106,7 @@ export default function MIFModal({ children }: props) {
   return (
     <Formik
       enableReinitialize
+      validationSchema={Schema}
       initialValues={initialState}
       onSubmit={async (values) => {
         await updateDetails(values);
@@ -135,6 +143,9 @@ const FormikContextProvider = () => {
     isSubmitting,
     handleChange,
     handleReset,
+    isValid,
+    touched,
+    errors,
   } = useFormikContext<typeof initialState>();
 
   const colleges = useAppSelector((state) => state.admissions.colleges);
@@ -207,7 +218,7 @@ const FormikContextProvider = () => {
       </TabList>
       <TabPanels px={5}>
         <TabPanel>
-          {/* <pre>{JSON.stringify(values)}</pre> */}
+          {/* <pre>{JSON.stringify(errors)}</pre> */}
           <VStack>
             <FormControl>
               <FormLabel>College</FormLabel>
@@ -254,27 +265,37 @@ const FormikContextProvider = () => {
                   <VStack divider={<Divider />}>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Fee</b>{" "}
-                      <FormControl w={"40"}>
+                      <FormControl
+                        isInvalid={!!touched.fee && !!errors.fee}
+                        w={"40"}
+                      >
                         <InputGroup>
                           <InputLeftAddon>₹</InputLeftAddon>
                           <Field
+                            isInvalid={!!touched.fee && !!errors.fee}
                             as={Input}
                             name={"fee"}
                             type="number "
                             textAlign={"right"}
                           />
                         </InputGroup>
+                        <FormErrorMessage>{errors.fee}</FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Intake</b>
-                      <FormControl w={"40"}>
+                      <FormControl
+                        w={"40"}
+                        isInvalid={!!touched.intake && !!errors.intake}
+                      >
                         <Field
                           as={Input}
                           name={"intake"}
                           type="number"
                           textAlign={"right"}
+                          isInvalid={!!touched.fee && !!errors.fee}
                         />
+                        <FormErrorMessage>{errors.intake}</FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
@@ -304,6 +325,7 @@ const FormikContextProvider = () => {
 
                     <HStack w={"full"}>
                       <Button
+                        isDisabled={!isValid}
                         isLoading={isSubmitting}
                         onClick={() => handleSubmit()}
                         colorScheme="facebook"
@@ -319,7 +341,7 @@ const FormikContextProvider = () => {
           </VStack>
         </TabPanel>
         <TabPanel>
-          {/* <pre>{JSON.stringify(values)}</pre> */}
+          {/* <pre>{JSON.stringify(errors)}</pre> */}
           <VStack>
             <FormControl>
               <FormLabel>College</FormLabel>
@@ -366,27 +388,37 @@ const FormikContextProvider = () => {
                   <VStack divider={<Divider />}>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Fee</b>{" "}
-                      <FormControl w={"40"}>
+                      <FormControl
+                        isInvalid={!!touched.fee && !!errors.fee}
+                        w={"40"}
+                      >
                         <InputGroup>
                           <InputLeftAddon>₹</InputLeftAddon>
                           <Field
+                            isInvalid={!!touched.fee && !!errors.fee}
                             as={Input}
                             name={"fee"}
                             type="number "
                             textAlign={"right"}
                           />
                         </InputGroup>
+                        <FormErrorMessage>{errors.fee}</FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Intake</b>
-                      <FormControl w={"40"}>
+                      <FormControl
+                        w={"40"}
+                        isInvalid={!!touched.intake && !!errors.intake}
+                      >
                         <Field
                           as={Input}
                           name={"intake"}
                           type="number"
                           textAlign={"right"}
+                          isInvalid={!!touched.fee && !!errors.fee}
                         />
+                        <FormErrorMessage>{errors.intake}</FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
