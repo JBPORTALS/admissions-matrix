@@ -279,7 +279,9 @@ const FormikContextProvider = () => {
                             textAlign={"right"}
                           />
                         </InputGroup>
-                        <FormErrorMessage>{errors.fee}</FormErrorMessage>
+                        <FormErrorMessage fontSize={"xs"}>
+                          {errors.fee}
+                        </FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
@@ -295,7 +297,9 @@ const FormikContextProvider = () => {
                           textAlign={"right"}
                           isInvalid={!!touched.fee && !!errors.fee}
                         />
-                        <FormErrorMessage>{errors.intake}</FormErrorMessage>
+                        <FormErrorMessage fontSize={"xs"}>
+                          {errors.intake}
+                        </FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
@@ -402,7 +406,9 @@ const FormikContextProvider = () => {
                             textAlign={"right"}
                           />
                         </InputGroup>
-                        <FormErrorMessage>{errors.fee}</FormErrorMessage>
+                        <FormErrorMessage fontSize={"xs"}>
+                          {errors.fee}
+                        </FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
@@ -418,7 +424,9 @@ const FormikContextProvider = () => {
                           textAlign={"right"}
                           isInvalid={!!touched.fee && !!errors.fee}
                         />
-                        <FormErrorMessage>{errors.intake}</FormErrorMessage>
+                        <FormErrorMessage fontSize={"xs"}>
+                          {errors.intake}
+                        </FormErrorMessage>
                       </FormControl>
                     </HStack>
                     <HStack w={"full"} justifyContent={"space-between"}>
