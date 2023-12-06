@@ -272,7 +272,6 @@ const FormikContextProvider = () => {
                         <InputGroup>
                           <InputLeftAddon>₹</InputLeftAddon>
                           <Field
-                            isInvalid={!!touched.fee && !!errors.fee}
                             as={Input}
                             name={"fee"}
                             type="number "
@@ -295,7 +294,6 @@ const FormikContextProvider = () => {
                           name={"intake"}
                           type="number"
                           textAlign={"right"}
-                          isInvalid={!!touched.fee && !!errors.fee}
                         />
                         <FormErrorMessage fontSize={"xs"}>
                           {errors.intake}
@@ -399,7 +397,6 @@ const FormikContextProvider = () => {
                         <InputGroup>
                           <InputLeftAddon>₹</InputLeftAddon>
                           <Field
-                            isInvalid={!!touched.fee && !!errors.fee}
                             as={Input}
                             name={"fee"}
                             type="number "
@@ -422,7 +419,6 @@ const FormikContextProvider = () => {
                           name={"intake"}
                           type="number"
                           textAlign={"right"}
-                          isInvalid={!!touched.fee && !!errors.fee}
                         />
                         <FormErrorMessage fontSize={"xs"}>
                           {errors.intake}
