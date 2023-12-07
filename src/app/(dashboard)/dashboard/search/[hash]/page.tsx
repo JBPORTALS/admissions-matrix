@@ -1,5 +1,6 @@
 "use client";
 import { SearchColumns } from "@/components/mock-data/admission-meta";
+import { useAppSelector } from "@/store";
 import { Image } from "@chakra-ui/next-js";
 import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
@@ -13,6 +14,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const params = useSearchParams();
   const p = useParams();
+  const acadyear = useAppSelector((state) => state.admissions.acadYear);
 
   async function getSearchData(
     type: "ENQUIRY" | "SOURCE" | "APPROVAL" | "QUERY",
@@ -27,6 +29,7 @@ export default function SearchPage() {
       formData.append("date", date);
       formData.append("source", source);
       formData.append("query", query);
+      formData.append("acadyear", acadyear);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
           `${

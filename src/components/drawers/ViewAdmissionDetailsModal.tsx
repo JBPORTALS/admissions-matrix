@@ -84,7 +84,8 @@ export default function ViewAdmissionDetailsModal({
     fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
   });
-  const fee = useAppSelector((state) => state.admissions.fee) as string;
+  const fee = useAppSelector((state) => state.admissions.fee);
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const params = useParams();
   let intialRender = true;
 
@@ -179,6 +180,7 @@ export default function ViewAdmissionDetailsModal({
       const formData = new FormData();
       formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
       formData.append("user_college", user?.college!);
+      formData.append("acadyear", acadYear);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
         method: "POST",

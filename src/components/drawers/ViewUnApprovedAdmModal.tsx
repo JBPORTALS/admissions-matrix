@@ -106,6 +106,7 @@ export default function ViewUnApprovedAdmModal({
   const isError = useAppSelector(
     (state) => state.admissions.update_approve.error
   );
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const fee = useAppSelector((state) => state.admissions.fee) as
     | string
     | undefined;
@@ -214,6 +215,7 @@ export default function ViewUnApprovedAdmModal({
       const formData = new FormData();
       formData.append("admissionno", selectedAdmissionDetails[0]?.admission_id);
       formData.append("user_college", user?.college!);
+      formData.append("acadyear", acadYear);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
         method: "POST",

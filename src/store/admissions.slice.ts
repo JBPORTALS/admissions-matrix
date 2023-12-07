@@ -16,10 +16,13 @@ export const fetchSelectedMatrix = createAsyncThunk<
   }
 >(
   "/admission/fetchSelectedMatrix",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("admissionno", payload.admissionno);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchstudent.php",
@@ -46,10 +49,13 @@ export const fetchSearchByAdNo = createAsyncThunk<
   }
 >(
   "/admission/fetchSearchByAdNo",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("admissionno", payload.admissionno);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchbyid.php",
@@ -77,10 +83,13 @@ export const fetchFeeQouted = createAsyncThunk<
   }
 >(
   "/admission/fetchFeeQouted",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       formData.append("branch", payload.branch);
       const response = await axios({
@@ -109,10 +118,13 @@ export const fetchSearchClass = createAsyncThunk<
   }
 >(
   "/admission/fetchSearchClass",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       formData.append("branch", payload.branch);
       const response = await axios({
@@ -141,10 +153,13 @@ export const fetchHostelSearchClass = createAsyncThunk<
   }
 >(
   "/admission/fetchHostelSearchClass",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       formData.append("branch", payload.branch);
       const response = await axios({
@@ -170,10 +185,13 @@ export const fetchOverallMatrix = createAsyncThunk<
   }
 >(
   "/admissions/fetchoverallmatrix",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrieveoverallmatrix.php",
@@ -200,10 +218,13 @@ export const fetchOverallHostel = createAsyncThunk<
   }
 >(
   "/admissions/fetchOverallHostel",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehosteloverall.php",
@@ -236,6 +257,9 @@ export const fetchBranchList = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       const response = await axios({
         url:
@@ -267,6 +291,9 @@ export const fetchHistory = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "seatmatrix.php",
@@ -297,6 +324,9 @@ export const fetchCollegeList = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("course", payload.course);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievecollege.php",
@@ -325,6 +355,9 @@ export const fetchBaseColleges = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievecollege1.php",
         method: "POST",
@@ -351,10 +384,13 @@ export const fetchUnApprovedAdmissions = createAsyncThunk<
   }
 >(
   "/admissions/fetchUnApprovedAdmissions",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("college", payload.college);
       formData.append("branch", payload.branch);
       const response = await axios({
@@ -394,6 +430,8 @@ export const updateMatrix = createAsyncThunk<
       const state = getState() as RootState;
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
@@ -460,6 +498,8 @@ export const updateEnquiry = createAsyncThunk<
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
       const name = payload.username;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
@@ -526,6 +566,8 @@ export const updateToApprove = createAsyncThunk<
       const selected_data = state.admissions.selectedMatrix
         .data[0] as SelectedMatrix;
       const name = payload.username;
+      const acadyear = state.admissions.acadYear;
+      formData.append("acadyear", acadyear);
       formData.append("name", selected_data.name);
       formData.append("admissionno", selected_data.admission_id);
       formData.append("college", selected_data.college);
@@ -624,6 +666,7 @@ export interface BranchMatrix {
 
 interface FeesIntialState {
   fee: string;
+  acadYear: string;
   colleges: [];
   branch_admissions: {
     data: [];
@@ -682,6 +725,7 @@ interface FeesIntialState {
 
 const initialState: FeesIntialState = {
   fee: "",
+  acadYear: "",
   colleges: [],
   branch_admissions: {
     data: [],
@@ -748,6 +792,9 @@ export const AdmissionsSlice = createSlice({
       );
     },
     updateFee(state, action) {
+      state.fee = action.payload;
+    },
+    updateAcadYear(state, action) {
       state.fee = action.payload;
     },
   },

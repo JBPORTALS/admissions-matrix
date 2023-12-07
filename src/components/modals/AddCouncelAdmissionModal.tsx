@@ -42,6 +42,7 @@ interface FormDataProps {
 
 export default function AddCouncelAddmissionModel({ children }: props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const [state, setState] = useState<StateProps>({
     name: "",
     fname: "",
@@ -263,7 +264,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       label: "Previous School/College",
       type: "text",
     },
-    
+
     {
       name: "board",
       label: "Board",
@@ -289,7 +290,6 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           option: "OTHERS",
           value: "OTHERS",
         },
-        
       ],
     },
     {
@@ -402,6 +402,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     setIsLoading(true);
     try {
       const fd = new FormData();
+      fd.append("acadyear", acadYear);
       fd.append("course", state.course as string);
       fd.append("reg_no", state.regno as string);
       fd.append("name", state.name as string);

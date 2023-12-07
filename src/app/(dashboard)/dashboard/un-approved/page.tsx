@@ -26,6 +26,7 @@ export default function UnApproved() {
   const Error = useAppSelector(
     (state) => state.admissions.unapproved_matrix.error
   );
+  const acadyear = useAppSelector((state) => state.admissions.acadYear);
 
   useEffect(() => {
     if (ucollege !== undefined)
@@ -91,7 +92,7 @@ export default function UnApproved() {
               download
               href={
                 process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                `downloadenquiryclasspdf.php?college=${ucollege}&branch=${ubranch}`
+                `downloadenquiryclasspdf.php?college=${ucollege}&branch=${ubranch}&acadyear=${acadyear}`
               }
               leftIcon={<AiOutlineCloudDownload className="text-lg" />}
               colorScheme={"orange"}

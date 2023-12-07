@@ -61,6 +61,7 @@ export default function MIFModal({ children }: props) {
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onClose, onOpen } = useDisclosure();
   const toast = useToast();
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const updateDetails = useCallback<(values: FormikValues) => Promise<void>>(
     async (values) => {
@@ -73,6 +74,7 @@ export default function MIFModal({ children }: props) {
         formData.append("college", values.college);
         formData.append("branch", values.branch);
         formData.append("category", values.category);
+        formData.append("acadyear", acadYear);
 
         const response = await axios({
           url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionupdate.php",
@@ -150,6 +152,7 @@ const FormikContextProvider = () => {
 
   const colleges = useAppSelector((state) => state.admissions.colleges);
   const branches = useAppSelector((state) => state.admissions.branchlist.data);
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -168,6 +171,7 @@ const FormikContextProvider = () => {
       formData.append("college", values.college);
       formData.append("branch", values.branch);
       formData.append("category", values.category);
+      formData.append("acadyear", acadYear);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionretrieve.php",
         method: "POST",

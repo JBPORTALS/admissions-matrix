@@ -18,16 +18,19 @@ import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { useAppSelector } from "@/store";
 
 export default function Home() {
   const router = useParams();
   const [data, setData] = useState({ data: [], error: null });
   const [isLoading, setIsLoading] = useState(false);
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       const formData = new FormData();
+      formData.append("acadyear", acadYear);
       formData.append("college", router.college);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehostelbranch.php",
@@ -84,7 +87,6 @@ export default function Home() {
                 Total Students
               </div>
             </Th>
-            
           </Tr>
           {data.data.length > 0 &&
             data.data?.map((value: any, index) => {
@@ -92,7 +94,11 @@ export default function Home() {
                 <Tr key={index}>
                   <Td>
                     <Link
-                      href={"/dashboard/hostel/" + router.college + `/${value.branch}`}
+                      href={
+                        "/dashboard/hostel/" +
+                        router.college +
+                        `/${value.branch}`
+                      }
                     >
                       <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                         {value.branch}
