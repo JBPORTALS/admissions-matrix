@@ -974,7 +974,7 @@ export default function ViewAdmissionDetailsModal({
                     as={Link}
                     href={
                       process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acad_year=${acadYear}`
+                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
                     }
                     target="_blank"
                     colorScheme={"purple"}
@@ -988,7 +988,7 @@ export default function ViewAdmissionDetailsModal({
                         as={Link}
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acad_year=${acadYear}`
+                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
                         }
                         target="_blank"
                         icon={<AiOutlineFilePdf />}
