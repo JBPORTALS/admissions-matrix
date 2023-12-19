@@ -440,7 +440,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       const link = document.createElement("a");
       link.href =
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-        `downloadenquiry.php?id=${res.data?.id}`;
+        `downloadenquiry.php?id=${res.data?.id}&acadyear=${acadYear}`;
       link.setAttribute("download", "Enquiry Copy.pdf");
       link.setAttribute("target", "_blank");
       document.body.appendChild(link);
