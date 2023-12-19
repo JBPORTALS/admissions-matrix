@@ -22,7 +22,7 @@ import { IoMdClock } from "react-icons/io";
 export default function SideBar() {
   const pathname = usePathname();
   return (
-    <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1">
+    <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1 z-50">
       <FormControl>
         <Select rounded={"full"}>
           <option>2023</option>

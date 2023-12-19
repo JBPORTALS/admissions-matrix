@@ -969,20 +969,37 @@ export default function ViewAdmissionDetailsModal({
                   Download Document
                 </MenuButton>
                 <MenuList>
-                  <MenuItem icon={<AiOutlineFilePdf />}>Invoice</MenuItem>
                   <MenuItem
                     icon={<AiOutlineFilePdf />}
                     as={Link}
                     href={
                       process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}`
+                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acad_year=${acadYear}`
                     }
                     target="_blank"
                     colorScheme={"purple"}
                     w={"full"}
                   >
-                    Approve Enquiry
+                    Counselling Form
                   </MenuItem>
+                  {selectedAdmissionDetails[0]?.status === "APPROVED" && (
+                    <>
+                      <MenuItem
+                        as={Link}
+                        href={
+                          process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acad_year=${acadYear}`
+                        }
+                        target="_blank"
+                        icon={<AiOutlineFilePdf />}
+                      >
+                        Provisional
+                      </MenuItem>
+                      <MenuItem icon={<AiOutlineFilePdf />}>
+                        Fee Invoice
+                      </MenuItem>
+                    </>
+                  )}
                 </MenuList>
               </Menu>
 
