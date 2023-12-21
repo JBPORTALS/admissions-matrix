@@ -795,7 +795,7 @@ export const AdmissionsSlice = createSlice({
       state.fee = action.payload;
     },
     updateAcadYear(state, action) {
-      state.fee = action.payload;
+      state.acadYear = action.payload;
     },
   },
   extraReducers: {

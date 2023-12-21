@@ -20,7 +20,11 @@ export default function SideBar() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
-  const toast = useToast({ position: "bottom", status: "info" });
+  const toast = useToast({
+    position: "bottom",
+    status: "info",
+    variant: "subtle",
+  });
 
   return (
     <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1 z-50">
