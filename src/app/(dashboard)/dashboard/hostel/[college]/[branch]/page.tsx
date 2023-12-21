@@ -1,13 +1,15 @@
 "use client";
 import AdmissionLayout from "@/components/layouts/AdmissionLayout";
 import { useAppDispatch } from "@/hooks";
-import { fetchHostelSearchClass, fetchSearchClass } from "@/store/admissions.slice";
+import {
+  fetchHostelSearchClass,
+  fetchSearchClass,
+} from "@/store/admissions.slice";
 import { Stack, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { useParams } from "next/navigation";
-import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import HostelClassDataGrid from "@/components/layouts/HostelClassDataGrid";
 
 export default function Home() {
@@ -18,10 +20,13 @@ export default function Home() {
     router.college &&
       router.branch &&
       dispatch(
-        fetchHostelSearchClass({ college: router.college, branch: router.branch })
+        fetchHostelSearchClass({
+          college: router.college,
+          branch: router.branch,
+        })
       );
-      
-      console.log(router)
+
+    console.log(router);
   }, [router.college, router.branch, dispatch]);
 
   return (

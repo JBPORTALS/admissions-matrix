@@ -80,7 +80,7 @@ const DownloadProvisional = (data: { value: any }) => {
         as={Link}
         href={
           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `downloadprovisional.php?admissionno=${data.value.admission_id}&acadyear=${acadYear}`
+          `downloadprovisional.php?admissionno=${data.value.admission_id}&acadyear=${data.value.acadyear}`
         }
         aria-label="Download Provisional"
         variant={"ghost"}
