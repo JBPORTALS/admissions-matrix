@@ -965,4 +965,5 @@ export const AdmissionsSlice = createSlice({
   },
 });
 
-export const { updateSelectedMatrix, updateFee } = AdmissionsSlice.actions;
+export const { updateSelectedMatrix, updateFee, updateAcadYear } =
+  AdmissionsSlice.actions;

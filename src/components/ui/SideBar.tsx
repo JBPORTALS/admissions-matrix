@@ -10,16 +10,31 @@ import {
 import NavButton from "./utils/NavButton";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { FormControl, Select } from "@chakra-ui/react";
+import { FormControl, Select, useToast } from "@chakra-ui/react";
 import { IoMdClock } from "react-icons/io";
+import { useAppSelector } from "@/store";
+import { useAppDispatch } from "@/hooks";
+import { updateAcadYear } from "@/store/admissions.slice";
 
 export default function SideBar() {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const toast = useToast({ position: "bottom", status: "info" });
+
   return (
     <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1 z-50">
       <FormControl>
-        <Select rounded={"full"}>
-          <option>2023</option>
+        <Select
+          value={acadYear}
+          onChange={(e) => {
+            dispatch(updateAcadYear(e.target.value));
+            toast({ title: `Academic year changed to "${acadYear}"` });
+          }}
+          rounded={"full"}
+        >
+          <option value={"2023"}>2023</option>
+          <option value={"2024"}>2024</option>
         </Select>
       </FormControl>
       <Link href={"/dashboard/approved"}>
