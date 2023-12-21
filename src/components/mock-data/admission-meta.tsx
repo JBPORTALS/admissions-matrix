@@ -9,6 +9,7 @@ import {
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 import ViewHostelAdmissionDetailsModal from "../drawers/ViewHostelAdmissionDetailsModal";
+import { useAppSelector } from "@/store";
 
 const CustomViewButton = (data: any) => {
   return (
@@ -70,6 +71,7 @@ const CustomSearchButton = (data: any) => {
 };
 
 const DownloadProvisional = (data: { value: any }) => {
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
       <IconButton
@@ -78,7 +80,7 @@ const DownloadProvisional = (data: { value: any }) => {
         as={Link}
         href={
           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `downloadprovisional.php?admissionno=${data.value.admission_id}`
+          `downloadprovisional.php?admissionno=${data.value.admission_id}&acadyear=${acadYear}`
         }
         aria-label="Download Provisional"
         variant={"ghost"}
@@ -100,13 +102,15 @@ const PercentageView = (data: { value: any }) => {
 const StatusView = (data: { value: any }) => {
   return (
     <div className="flex justify-center items-center font-medium text-brand h-full w-full">
-      {
-        data.value == "APPROVED" ? (
-          <Tag fontWeight={"medium"} colorScheme="whatsapp" size={"lg"}>Approved</Tag>
-        ):(
-          <Tag fontWeight={"medium"} colorScheme="orange" size={"lg"}>Un-Approved</Tag>
-        )
-      }
+      {data.value == "APPROVED" ? (
+        <Tag fontWeight={"medium"} colorScheme="whatsapp" size={"lg"}>
+          Approved
+        </Tag>
+      ) : (
+        <Tag fontWeight={"medium"} colorScheme="orange" size={"lg"}>
+          Un-Approved
+        </Tag>
+      )}
     </div>
   );
 };
@@ -261,7 +265,6 @@ export const hostelcolumns = [
   },
 ];
 
-
 export const UnAprrovedColumns = [
   {
     field: "slno",
@@ -337,7 +340,7 @@ export const SearchColumns = [
     pinned: "left",
     headerName: "Actions",
     width: "120px",
-    height:"80px",
+    height: "80px",
     cellRenderer: CustomSearchButton,
     valueGetter: (params: any) => {
       return params.data;
@@ -360,7 +363,7 @@ export const SearchColumns = [
   {
     field: "admission_id",
     headerName: "Application No.",
-    height:"80px",
+    height: "80px",
     filter: true,
     pinned: "left",
     resizable: true,
@@ -374,7 +377,7 @@ export const SearchColumns = [
   },
   {
     field: "name",
-    height:"80px",
+    height: "80px",
     headerName: "Name",
     filter: true,
     resizable: true,
@@ -388,9 +391,9 @@ export const SearchColumns = [
   {
     field: "college",
     headerName: "College",
-    height:"80px",
+    height: "80px",
     filter: true,
-    width:120,
+    width: 120,
     resizable: true,
     suppressMovable: true,
     cellStyle: {
@@ -402,9 +405,9 @@ export const SearchColumns = [
   {
     field: "branch",
     headerName: "Branch",
-    width:120,
+    width: 120,
     filter: true,
-    height:"80px",
+    height: "80px",
     resizable: true,
     suppressMovable: true,
     cellStyle: {
@@ -417,7 +420,7 @@ export const SearchColumns = [
     field: "father_name",
     headerName: "Father Name",
     width: "180px",
-    height:"80px",
+    height: "80px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -428,7 +431,7 @@ export const SearchColumns = [
     field: "phone_no",
     headerName: "Phone No.",
     width: "130px",
-    height:"80px",
+    height: "80px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -439,7 +442,7 @@ export const SearchColumns = [
     field: "email",
     headerName: "Email",
     width: "180px",
-    height:"80px",
+    height: "80px",
     resizable: true,
     cellStyle: {
       display: "flex",
@@ -450,10 +453,10 @@ export const SearchColumns = [
   {
     field: "status",
     headerName: "Status",
-    height:"80px",
+    height: "80px",
     filter: true,
     width: "180px",
-    cellRenderer:StatusView
+    cellRenderer: StatusView,
   },
 ];
 
