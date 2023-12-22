@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
+import { ACADYEARS } from "@/utils/constants";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -208,6 +209,12 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       label: "College",
       type: "select",
       option: collegeList,
+    },
+    {
+      name: "acadyear",
+      label: "Academic Year",
+      type: "select",
+      option: ACADYEARS,
     },
     {
       name: "branch",
@@ -402,7 +409,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
     setIsLoading(true);
     try {
       const fd = new FormData();
-      fd.append("acadyear", acadYear);
+      fd.append("acadyear", state.acadyear as string);
       fd.append("course", state.course as string);
       fd.append("reg_no", state.regno as string);
       fd.append("name", state.name as string);

@@ -809,7 +809,6 @@ export const AdmissionsSlice = createSlice({
     [fetchOverallMatrix.rejected.toString()]: (state, action) => {
       state.overall_matrix.pending = false;
       state.overall_matrix.error = action.payload?.msg;
-      toast.error(action.payload?.msg, { position: "top-right" });
     },
     [fetchBaseColleges.pending.toString()]: (state, action) => {
       state.colleges = [];

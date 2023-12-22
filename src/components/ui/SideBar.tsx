@@ -35,8 +35,8 @@ export default function SideBar() {
           value={acadYear}
           onChange={(e) => {
             dispatch(updateAcadYear(e.target.value));
-            toast({ title: `Academic year changed to "${acadYear}"` });
-            router.refresh();
+            toast({ title: `Academic year changed to "${e.target.value}"` });
+            router.push("/dashboard");
           }}
           rounded={"full"}
         >

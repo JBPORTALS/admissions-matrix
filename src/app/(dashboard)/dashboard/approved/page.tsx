@@ -1,17 +1,21 @@
 "use client";
-import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { fetchOverallMatrix } from "@/store/admissions.slice";
-import { Progress, Skeleton, Stack, Table, Tbody, Td, Th, Tr, VStack } from "@chakra-ui/react";
-import { useEffect } from "react";
+import {
+  Progress,
+  Skeleton,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Tr,
+  VStack,
+} from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
-import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
-  const dispatch = useAppDispatch();
-  const { user } = useSupabase();
   const overAllMatrix = useAppSelector(
     (state) => state.admissions.overall_matrix.data
   ) as {
@@ -26,20 +30,15 @@ export default function Home() {
     (state) => state.admissions.overall_matrix.pending
   ) as boolean;
 
-  useEffect(() => {
-    user?.college && dispatch(fetchOverallMatrix({ college: user?.college }));
-  }, [dispatch, user?.college]);
-  
-  if(isLoading) return(
-    <VStack spacing={1} h={"full"} w={"full"}>
-      <Skeleton w={"full"} h={"14"}></Skeleton>
-       {
-        new Array(8).fill(0).map((_,index)=>{
-          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>
-        })
-       }   
-    </VStack>
-  ) 
+  if (isLoading)
+    return (
+      <VStack spacing={1} h={"full"} w={"full"}>
+        <Skeleton w={"full"} h={"14"}></Skeleton>
+        {new Array(8).fill(0).map((_, index) => {
+          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
+        })}
+      </VStack>
+    );
   return (
     <Stack
       h={"fit"}
