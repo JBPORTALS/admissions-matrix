@@ -15,9 +15,11 @@ import { IoMdClock } from "react-icons/io";
 import { useAppSelector } from "@/store";
 import { useAppDispatch } from "@/hooks";
 import { updateAcadYear } from "@/store/admissions.slice";
+import { useRouter } from "next/navigation";
 
 export default function SideBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const toast = useToast({
@@ -34,6 +36,7 @@ export default function SideBar() {
           onChange={(e) => {
             dispatch(updateAcadYear(e.target.value));
             toast({ title: `Academic year changed to "${acadYear}"` });
+            router.refresh();
           }}
           rounded={"full"}
         >
