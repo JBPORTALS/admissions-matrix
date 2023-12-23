@@ -3,10 +3,11 @@ import AddCouncelAddmissionModel from "@/components/modals/AddCouncelAdmissionMo
 import { Image } from "@chakra-ui/next-js";
 import Link from "next/link";
 import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
+import { MdOutlineAdd } from "react-icons/md";
 
 export default function Home() {
   return (
-    <Flex className="bg-gradient-to-r from-gray-50 to-gray-100 flex h-[100vh] flex-col justify-start w-full">
+    <Flex className="bg-white flex h-[100vh] flex-col justify-start w-full">
       <HStack
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
@@ -14,26 +15,36 @@ export default function Home() {
         px={"16"}
         py={"3"}
       >
-        <div className="relative h-10 w-32">
-        <Image alt={"ismart"} src={"/nexuss.png"} priority sizes="10vh" fill/>
+        <div className="relative flex h-8 w-28">
+          <Image
+            quality={100}
+            alt={"ismart"}
+            src={"/nexuss.png"}
+            priority
+            sizes="24vh"
+            fill
+          />
         </div>
-        <HStack>
+        <HStack gap={3}>
           <AddCouncelAddmissionModel>
             {({ onOpen }) => (
               <Button
-                size={"sm"}
-                variant={"outline"}
-                colorScheme="blue"
+                // as={Link}
+                // href={"/new-enquiry"}
                 onClick={onOpen}
+                size={"sm"}
+                colorScheme="facebook"
+                leftIcon={<MdOutlineAdd />}
               >
                 Add Enquiry
               </Button>
             )}
           </AddCouncelAddmissionModel>
+
           <Button
             size={"sm"}
-            variant={"ghost"}
-            colorScheme="blue"
+            variant={"outline"}
+            colorScheme="gray"
             as={Link}
             href={"/signin"}
           >
@@ -47,13 +58,13 @@ export default function Home() {
           <p className="mt-3">to manage admission process details</p>
           <Button
             mt={"4"}
-            size={"md"}
+            size={"lg"}
             variant={"outline"}
-            colorScheme="blue"
+            colorScheme="gray"
             as={Link}
             href={"/signin"}
           >
-            Signin
+            Signin To Matrix
           </Button>
         </Card>
       </Center>

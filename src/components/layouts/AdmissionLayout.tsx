@@ -125,13 +125,13 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
         className="border-b border-b-lightgray backdrop-blur-sm"
       >
         <HStack w={"full"}>
-          <div className="relative flex h-6 w-20">
+          <div className="relative flex h-8 w-28">
             <Image
               quality={100}
               alt={"ismart"}
               src={"/nexuss.png"}
               priority
-              sizes="7vh"
+              sizes="24vh"
               fill
             />
           </div>
@@ -353,7 +353,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                     </Button>
                   )}
                 </MIFModal>
-                <Menu size={"md"}>
+                <Menu size={"md"} placement="bottom-end">
                   <MenuButton
                     as={Button}
                     size={"sm"}
@@ -505,7 +505,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                     </VStack>
                   </MenuList>
                 </Menu>
-                <AddCouncelAddmissionModel>
+                {/* <AddCouncelAddmissionModel>
                   {({ onOpen }) => (
                     <Button
                       leftIcon={<AiOutlinePlusCircle className="text-lg" />}
@@ -516,7 +516,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                       Add Enquiry
                     </Button>
                   )}
-                </AddCouncelAddmissionModel>
+                </AddCouncelAddmissionModel> */}
               </HStack>
             </TabList>
             <TabPanels px={"0"} h={"full"}>

@@ -725,7 +725,7 @@ interface FeesIntialState {
 
 const initialState: FeesIntialState = {
   fee: "",
-  acadYear: "2023",
+  acadYear: "2024",
   colleges: [],
   branch_admissions: {
     data: [],

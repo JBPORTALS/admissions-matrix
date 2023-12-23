@@ -29,15 +29,11 @@ export default function NavButton({
 }: NavButtonProps) {
   return (
     <button className={ButtonStyles({ active })} {...props}>
-      <span className={cx([active ? "text-xl text-blue-600" : "text-xl"])}>
+      <span className={cx([active ? "text-xl text-blue-800" : "text-xl"])}>
         {icon}
       </span>
       <span
-        className={cx([
-          active
-            ? "font-bold bg-gradient-to-t from-blue-700 to-blue-600 bg-clip-text text-transparent"
-            : "font-normal",
-        ])}
+        className={cx([active ? "font-semibold text-blue-800" : "font-normal"])}
       >
         {children}
       </span>

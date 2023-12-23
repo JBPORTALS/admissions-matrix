@@ -3,8 +3,8 @@ import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-next
 import { headers, cookies } from "next/headers";
 
 export const metadata = {
-  title:"Admission Matrix | Signin"
-}
+  title: "Admission Matrix | Signin",
+};
 
 export default async function RootLayout({
   children,
@@ -16,8 +16,6 @@ export default async function RootLayout({
     cookies,
   });
   const { data } = await auth.getSession();
-  if (data.session !== null) redirect("/dashboard");
-  return <>
-  
-  {children}</>;
+  if (data.session) redirect("/dashboard/approved");
+  return <>{children}</>;
 }
