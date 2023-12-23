@@ -53,18 +53,24 @@ export default function Home() {
         </HStack>
       </HStack>
       <Center h={"full"}>
-        <Card border={"1px"} shadow={"md"} p={"10"}>
-          <Heading color={"blue.600"}>Admission Matrix</Heading>
-          <p className="mt-3">to manage admission process details</p>
+        <Card
+          border={"1px"}
+          borderColor={"gray.300"}
+          shadow={"md"}
+          p={"16"}
+          alignItems={"center"}
+        >
+          <Heading>Admission Matrix</Heading>
+          <p className="mt-3">To manage admission process details</p>
           <Button
             mt={"4"}
             size={"lg"}
-            variant={"outline"}
-            colorScheme="gray"
+            colorScheme="facebook"
             as={Link}
             href={"/signin"}
+            w={"full"}
           >
-            Signin To Matrix
+            Get Signin
           </Button>
         </Card>
       </Center>
