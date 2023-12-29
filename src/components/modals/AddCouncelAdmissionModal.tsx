@@ -195,6 +195,10 @@ export default function AddCouncelAddmissionModel({ children }: props) {
           value: "MBA",
         },
         {
+          option: "MTECH",
+          value: "MTECH",
+        },
+        {
           option: "ARCHITECTURE",
           value: "ARCHITECTURE",
         },
