@@ -995,7 +995,15 @@ export default function ViewAdmissionDetailsModal({
                       >
                         Provisional
                       </MenuItem>
-                      <MenuItem icon={<AiOutlineFilePdf />}>
+                      <MenuItem
+                        as={Link}
+                        icon={<AiOutlineFilePdf />}
+                        target="_blank"
+                        href={
+                          process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                          `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
+                        }
+                      >
                         Fee Invoice
                       </MenuItem>
                     </>
