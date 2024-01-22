@@ -111,6 +111,7 @@ export default function SideBar() {
             leftIcon={<MdOutlineAdd />}
             size={"md"}
             onClick={onOpen}
+            width={"full"}
           >
             New Enquiry
           </Button>
