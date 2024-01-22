@@ -69,7 +69,7 @@ export default function SideBar() {
         </NavButton>
       </Link>
 
-      <Link href={"/dashboard/hostel"}>
+      {/* <Link href={"/dashboard/hostel"}>
         <NavButton
           active={pathname.startsWith("/dashboard/hostel")}
           icon={
@@ -82,7 +82,7 @@ export default function SideBar() {
         >
           Hostel
         </NavButton>
-      </Link>
+      </Link> */}
       <Link href={"/dashboard/history"}>
         <NavButton
           active={pathname.startsWith("/dashboard/history")}
