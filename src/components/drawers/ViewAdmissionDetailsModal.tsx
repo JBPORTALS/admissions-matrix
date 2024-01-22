@@ -974,7 +974,7 @@ export default function ViewAdmissionDetailsModal({
                     as={Link}
                     href={
                       process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
+                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
                     }
                     target="_blank"
                     colorScheme={"purple"}
@@ -988,7 +988,7 @@ export default function ViewAdmissionDetailsModal({
                         as={Link}
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&acadyear=${acadYear}&college=${user?.college}`
+                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
                         }
                         target="_blank"
                         icon={<AiOutlineFilePdf />}
@@ -1001,7 +1001,7 @@ export default function ViewAdmissionDetailsModal({
                         target="_blank"
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${user?.college}`
+                          `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
                         }
                       >
                         Fee Invoice
