@@ -40,8 +40,8 @@ export default async function DashboardLayout({
           </HStack>
         )}
       </HStack>
-      <VStack h={"fit-content"}>
-      {children}
+      <VStack h={"fit-content"} w={"full"}>
+        {children}
       </VStack>
     </VStack>
   );

@@ -567,7 +567,7 @@ export const updateToApprove = createAsyncThunk<
         .data[0] as SelectedMatrix;
       const name = payload.username;
       const acadyear = state.admissions.acadYear;
-      formData.append("acadear", acadyear);
+      formData.append("acadyear", acadyear);
       formData.append("name", selected_data.name);
       formData.append("admissionno", selected_data.admission_id);
       formData.append("college", selected_data.college);

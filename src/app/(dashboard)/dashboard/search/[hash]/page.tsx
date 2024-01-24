@@ -112,7 +112,7 @@ export default function SearchPage() {
     <VStack
       h={"80vh"}
       overflow={"scroll"}
-      w={"100vw"}
+      w={"full"}
       className="ag-theme-material"
     >
       <AgGridReact
