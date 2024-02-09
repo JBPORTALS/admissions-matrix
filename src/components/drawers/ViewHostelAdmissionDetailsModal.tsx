@@ -167,7 +167,7 @@ export default function ViewHostelAdmissionDetailsModal({
       const formData = new FormData();
       formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
       formData.append("user_college", user?.college!);
-      formData.append("user_college", acadYear);
+      formData.append("acadyear", acadYear);
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "deletestudent.php",
