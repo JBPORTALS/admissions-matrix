@@ -988,7 +988,7 @@ export default function ViewAdmissionDetailsModal({
                         as={Link}
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                          `downloadprovisional.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
                         }
                         target="_blank"
                         icon={<AiOutlineFilePdf />}
