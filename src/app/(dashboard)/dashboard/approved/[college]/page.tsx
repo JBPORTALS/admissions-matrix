@@ -29,7 +29,7 @@ export default function Home() {
       setIsLoading(true);
       const formData = new FormData();
       formData.append("acadyear", acadYear);
-      formData.append("college", router.college);
+      formData.append("college", router.college as string);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebranchmatrix.php",
         {
@@ -72,6 +72,7 @@ export default function Home() {
             zIndex={"banner"}
             borderBottom={"1px"}
             borderColor={"gray.300"}
+            fontSize={"sm"}
             shadow={"sm"}
             className="backdrop-blur-sm bg-[rgba(255,255,255,0.6)] border-b-2"
           >
@@ -82,12 +83,29 @@ export default function Home() {
             </Th>
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Management Seats
+                Management
               </div>
             </Th>
+            {router.college === "KSIT" ||
+            router.college === "KSSA" ||
+            router.college === "KSEEM" ? (
+              <>
+                <Th>
+                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                    CET
+                  </div>
+                </Th>
+                <Th>
+                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                    COMEDK
+                  </div>
+                </Th>
+              </>
+            ) : null}
+
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Allotted Seats
+                Allotted
               </div>
             </Th>
             <Th>
@@ -97,7 +115,7 @@ export default function Home() {
             </Th>
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Remaining Seats
+                Remaining
               </div>
             </Th>
             <Th>
@@ -128,6 +146,23 @@ export default function Home() {
                       {value.total}
                     </div>
                   </Td>
+                  {router.college === "KSIT" ||
+                  router.college === "KSSA" ||
+                  router.college === "KSEEM" ? (
+                    <>
+                      <Td>
+                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                          {value.cet}
+                        </div>
+                      </Td>
+                      <Td>
+                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                          {value.comedk}
+                        </div>
+                      </Td>
+                    </>
+                  ) : null}
+
                   <Td>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.allotted_seats}

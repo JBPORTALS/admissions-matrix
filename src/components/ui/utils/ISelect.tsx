@@ -20,26 +20,35 @@ export default function ISelect({
 
   useEffect(() => {
     onChange(currentValue);
-  }, [currentValue,value]);// eslint-disable-line
+  }, [currentValue, value]); // eslint-disable-line
 
   return (
-    <VStack p={0} px={0} className="bg-primary w-52 relative flex flex-col px-10">
-       <Select bg={"white"} onChange={(e)=>setCurrentValue(e.target.value)} size={"sm"} shadow={"md"}>
-          <option value={""}>{placeHolder}</option>
-          {
-            options.map((value)=>{
-              return (
-                <option key={value.value} value={value.value}>{value.option}</option>
-              )
-            })
-          }
-       </Select>
+    <VStack
+      p={0}
+      px={0}
+      className="bg-background w-52 relative flex flex-col px-10"
+    >
+      <Select
+        bg={"white"}
+        onChange={(e) => setCurrentValue(e.target.value)}
+        size={"sm"}
+        shadow={"md"}
+      >
+        <option value={""}>{placeHolder}</option>
+        {options.map((value) => {
+          return (
+            <option key={value.value} value={value.value}>
+              {value.option}
+            </option>
+          );
+        })}
+      </Select>
     </VStack>
   );
 }
 
-
-{/* <VStack p={0} px={0} className="bg-primary w-fit relative border-r flex flex-col p-0 border-lightgray custom-scroll-sm overflow-y-scroll">
+{
+  /* <VStack p={0} px={0} className="bg-background w-fit relative border-r flex flex-col p-0 border-lightgray custom-scroll-sm overflow-y-scroll">
       <HStack className="border-b sticky top-0 backdrop-blur-sm  border-lightgray w-full px-2 py-2.5 justify-center">
         <Heading
           fontSize={"sm"}
@@ -82,4 +91,5 @@ export default function ISelect({
               );
             })}
       </VStack>
-    </VStack> */}
+    </VStack> */
+}

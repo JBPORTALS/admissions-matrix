@@ -111,7 +111,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   const navRouter = useRouter();
 
   return (
-    <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-background z-20 relative overflow-hidden w-full  h-full flex flex-col">
       <HStack
         w={"full"}
         position={"sticky"}
