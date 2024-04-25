@@ -49,37 +49,13 @@ interface props {
 
 const formSchema = z.object({
   reg_no: z.string().min(2, "Required").max(20, "Invalid Register Number"),
-  student_no: z.string().min(10, "Invalid Number").max(10, "Invalid Number"),
-  father_no: z.string().min(10, "Invalid Number").max(10, "Invalid Number"),
-  mother_no: z.string().min(10, "Invalid Number").max(10, "Invalid Number"),
+  student_no: z.string().optional(),
+  father_no: z.string().optional(),
+  mother_no: z.string().optional(),
 });
 
-type FormSchemaValues = z.infer<typeof formSchema>;
-
-type Steps = {
-  name: string;
-  description?: string;
-  fields: Array<keyof FormSchemaValues>;
-};
-
-// const formSteps: Steps[] = [
-//   {
-//     name: "Academic Details",
-//     description: "Confirm the student record academic details.",
-//     fields: ["reg_no", "mother_no", "father_no", "student_no"],
-//   },
-//   {
-//     name: "All Details",
-//     description: "Required details for student admission.",
-//     fields: ["gender", "mother_name", "father_name", "email"],
-//   },
-// ];
-
 export default function CheckStudentDetails({ children }: props) {
-  const [requestStatus, setRequestStatus] = useState<null | number>(null);
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const toast = useToast();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
   const {
@@ -118,22 +94,15 @@ export default function CheckStudentDetails({ children }: props) {
       const fd = new FormData();
       fd.append("acadyear", acadyear);
       fd.append("reg_no", values.reg_no);
-      fd.append("student_no", values.student_no);
-      fd.append("mother_no", values.mother_no);
-      fd.append("father_no", values.father_no);
+      fd.append("student_no", values.student_no ?? "");
+      fd.append("mother_no", values.mother_no ?? "");
+      fd.append("father_no", values.father_no ?? "");
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "verify.php",
         {
           data: fd,
           method: "POST",
         }
-      );
-      setRequestStatus(res.status);
-      router.push(
-        `${pathname}?${createQueryString(
-          "regno",
-          values.reg_no
-        )}&${createQueryString("phone", values.student_no)}`
       );
       onConfirmClose();
       onOpen();
@@ -198,7 +167,7 @@ export default function CheckStudentDetails({ children }: props) {
                 name="student_no"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Studnet Phone Number</FormLabel>
+                    <FormLabel>{"Studnet Phone Number (optional)"}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -211,7 +180,7 @@ export default function CheckStudentDetails({ children }: props) {
                 name="father_no"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Father Phone Number</FormLabel>
+                    <FormLabel>{"Father Phone Number (optional)"}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -224,7 +193,7 @@ export default function CheckStudentDetails({ children }: props) {
                 name="mother_no"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mother Phone Number</FormLabel>
+                    <FormLabel>{"Mother Phone Number (optional)"}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>

@@ -115,7 +115,7 @@ export default function SideBar() {
           New Enquiry
         </Button>
       </CheckStudentDetails>
-      <Divider />
+      {/* <Divider />
       <Heading fontSize={"xs"} color={"gray.500"} scale={0.3}>
         ACADEMIC YEAR
       </Heading>
@@ -135,7 +135,7 @@ export default function SideBar() {
             </option>
           ))}
         </Select>
-      </FormControl>
+      </FormControl> */}
     </div>
   );
 }

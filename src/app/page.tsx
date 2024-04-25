@@ -36,17 +36,17 @@ export default function Home() {
           />
         </div>
         <HStack gap={3}>
-          <AddCouncelAddmissionModel isOpen={isOpen} onClose={onClose} />
-          <Button
-            // as={Link}
-            // href={"/new-enquiry"}
-            onClick={onOpen}
-            size={"sm"}
-            colorScheme="facebook"
-            leftIcon={<MdOutlineAdd />}
-          >
-            Add Enquiry
-          </Button>
+          <CheckStudentDetails>
+            <Button
+              // as={Link}
+              // href={"/new-enquiry"}
+              size={"sm"}
+              colorScheme="facebook"
+              leftIcon={<MdOutlineAdd />}
+            >
+              Add Enquiry
+            </Button>
+          </CheckStudentDetails>
 
           <Button
             size={"sm"}
