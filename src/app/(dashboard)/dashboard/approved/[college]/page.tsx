@@ -84,7 +84,7 @@ export default function Home() {
 
             {router.college === "KSIT" ||
             router.college === "KSSA" ||
-            router.college === "KSEEM" ? (
+            router.college === "KSSEM" ? (
               <>
                 <Th>
                   <div className="flex justify-center items-center text-md hover:underline h-full w-full">
@@ -149,7 +149,7 @@ export default function Home() {
 
                   {router.college === "KSIT" ||
                   router.college === "KSSA" ||
-                  router.college === "KSEEM" ? (
+                  router.college === "KSSEM" ? (
                     <>
                       <Td>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
