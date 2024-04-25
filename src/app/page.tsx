@@ -2,11 +2,20 @@
 import AddCouncelAddmissionModel from "@/components/modals/AddCouncelAdmissionModal";
 import { Image } from "@chakra-ui/next-js";
 import Link from "next/link";
-import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  Center,
+  Flex,
+  HStack,
+  Heading,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { MdOutlineAdd } from "react-icons/md";
 import CheckStudentDetails from "@/components/modals/CheckStudentDetails";
 
 export default function Home() {
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <Flex className="bg-white flex h-[100vh] flex-col justify-start w-full">
       <HStack
@@ -27,17 +36,17 @@ export default function Home() {
           />
         </div>
         <HStack gap={3}>
-          <CheckStudentDetails>
-            <Button
-              // as={Link}
-              // href={"/new-enquiry"}
-              size={"sm"}
-              colorScheme="facebook"
-              leftIcon={<MdOutlineAdd />}
-            >
-              Add Enquiry
-            </Button>
-          </CheckStudentDetails>
+          <AddCouncelAddmissionModel isOpen={isOpen} onClose={onClose} />
+          <Button
+            // as={Link}
+            // href={"/new-enquiry"}
+            onClick={onOpen}
+            size={"sm"}
+            colorScheme="facebook"
+            leftIcon={<MdOutlineAdd />}
+          >
+            Add Enquiry
+          </Button>
 
           <Button
             size={"sm"}
