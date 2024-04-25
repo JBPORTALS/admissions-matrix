@@ -70,21 +70,21 @@ export default function UnApproved() {
           ) : null}
         </HStack>
         <HStack>
-          {/* <Button
-        as={Link}
-        target={"_blank"}
-        download
-        href={
-          process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `downloadenquiryclassexcel.php?college=${college}&branch=${branch}`
-        }
-        leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-        colorScheme={"green"}
-        variant={"outline"}
-        size={"sm"}
-      >
-        Download Excel
-      </Button> */}
+          <Button
+            as={Link}
+            target={"_blank"}
+            download
+            href={
+              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+              `downloadenquiryclassexcel.php?college=${ucollege}&branch=${ubranch}`
+            }
+            leftIcon={<AiOutlineCloudDownload className="text-lg" />}
+            colorScheme={"green"}
+            variant={"outline"}
+            size={"sm"}
+          >
+            Download Excel
+          </Button>
           {ucollege && ubranch && (
             <Button
               as={Link}
@@ -105,11 +105,11 @@ export default function UnApproved() {
         </HStack>
       </HStack>
       <VStack className="w-full h-full" spacing={0}>
-        {/* {!ucollege ? (
+        {!ucollege ? (
           <InfoCard message="Select College" />
         ) : ucollege && !ubranch ? (
           <InfoCard message="Select Branch" />
-        ) : null} */}
+        ) : null}
         <VStack
           spacing={0}
           className={
@@ -117,19 +117,19 @@ export default function UnApproved() {
           }
         >
           {/* displaying admin childrens */}
-          {/* {ubranch && ucollege && data.length > 0 ? ( */}
-          <AgGridReact
-            alwaysShowHorizontalScroll
-            animateRows={true}
-            className="w-full h-full pb-20 ag-theme-material"
-            rowData={data as any}
-            columnDefs={UnAprrovedColumns as any}
-          />
-          {/* ) : ubranch && ucollege && data.length == 0 ? (
-          <Center h={"80%"}>
-            <Heading size={"lg"}>{Error}</Heading>
-          </Center>
-          ) : null} */}
+          {ubranch && ucollege && data.length > 0 ? (
+            <AgGridReact
+              alwaysShowHorizontalScroll
+              animateRows={true}
+              className="w-full h-full pb-20 ag-theme-material"
+              rowData={data as any}
+              columnDefs={UnAprrovedColumns as any}
+            />
+          ) : ubranch && ucollege && data.length == 0 ? (
+            <Center h={"80%"}>
+              <Heading size={"lg"}>{Error}</Heading>
+            </Center>
+          ) : null}
         </VStack>
       </VStack>
     </div>

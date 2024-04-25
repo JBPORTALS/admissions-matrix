@@ -174,7 +174,6 @@ const FormikContextProvider = () => {
       values.college === "KSSA"
     )
       return <>{children}</>;
-    else return null;
   };
 
   useEffect(() => {
@@ -313,42 +312,58 @@ const FormikContextProvider = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
-                    <AddExtraFieldsRender>
-                      <HStack w={"full"} justifyContent={"space-between"}>
-                        <b>CET & SNQ</b>
-                        <FormControl
-                          w={"40"}
-                          isInvalid={!!touched.cet && !!errors.cet}
-                        >
-                          <Field
-                            as={Input}
-                            name={"cet"}
-                            type="number"
-                            textAlign={"right"}
-                          />
-                          <FormErrorMessage fontSize={"xs"}>
-                            {errors.cet}
-                          </FormErrorMessage>
-                        </FormControl>
-                      </HStack>
-                      <HStack w={"full"} justifyContent={"space-between"}>
-                        <b>COMEDK</b>
-                        <FormControl
-                          w={"40"}
-                          isInvalid={!!touched.comedk && !!errors.comedk}
-                        >
-                          <Field
-                            as={Input}
-                            name={"comedk"}
-                            type="number"
-                            textAlign={"right"}
-                          />
-                          <FormErrorMessage fontSize={"xs"}>
-                            {errors.comedk}
-                          </FormErrorMessage>
-                        </FormControl>
-                      </HStack>
-                    </AddExtraFieldsRender>
+                    {values.college === "KSIT" ||
+                    values.college === "KSSEM" ||
+                    values.college === "KSSA" ? (
+                      <>
+                        <HStack w={"full"} justifyContent={"space-between"}>
+                          <b>Total Seats</b>
+                          <FormControl isReadOnly w={"40"}>
+                            <Field
+                              as={Input}
+                              isReadOnly
+                              name={"total"}
+                              type="number"
+                              textAlign={"right"}
+                            />
+                          </FormControl>
+                        </HStack>
+                        <HStack w={"full"} justifyContent={"space-between"}>
+                          <b>CET & SNQ</b>
+                          <FormControl
+                            w={"40"}
+                            isInvalid={!!touched.cet && !!errors.cet}
+                          >
+                            <Field
+                              as={Input}
+                              name={"cet"}
+                              type="number"
+                              textAlign={"right"}
+                            />
+                            <FormErrorMessage fontSize={"xs"}>
+                              {errors.cet}
+                            </FormErrorMessage>
+                          </FormControl>
+                        </HStack>
+                        <HStack w={"full"} justifyContent={"space-between"}>
+                          <b>COMEDK</b>
+                          <FormControl
+                            w={"40"}
+                            isInvalid={!!touched.comedk && !!errors.comedk}
+                          >
+                            <Field
+                              as={Input}
+                              name={"comedk"}
+                              type="number"
+                              textAlign={"right"}
+                            />
+                            <FormErrorMessage fontSize={"xs"}>
+                              {errors.comedk}
+                            </FormErrorMessage>
+                          </FormControl>
+                        </HStack>
+                      </>
+                    ) : null}
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Management</b>
                       <FormControl
@@ -366,20 +381,6 @@ const FormikContextProvider = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
-                    <AddExtraFieldsRender>
-                      <HStack w={"full"} justifyContent={"space-between"}>
-                        <b>Total Seats</b>
-                        <FormControl isReadOnly w={"40"}>
-                          <Field
-                            as={Input}
-                            isReadOnly
-                            name={"total"}
-                            type="number"
-                            textAlign={"right"}
-                          />
-                        </FormControl>
-                      </HStack>
-                    </AddExtraFieldsRender>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Alloted Seats</b>
                       <FormControl isReadOnly w={"40"}>
