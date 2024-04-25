@@ -21,7 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={"overflow-hidden h-screen"} style={Fira.style}>
+      <body
+        className={"overflow-x-hidden overflow-y-auto h-screen"}
+        style={Fira.style}
+      >
         <SupabaseProvider>
           <Providers>{children}</Providers>
         </SupabaseProvider>

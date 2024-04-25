@@ -63,7 +63,7 @@ export default function Home() {
         variant={"simple"}
         bg={"white"}
         colorScheme="facebook"
-        size={"lg"}
+        size={"md"}
       >
         <Tbody>
           <Tr
@@ -81,18 +81,19 @@ export default function Home() {
                 Branch
               </div>
             </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Management
-              </div>
-            </Th>
+
             {router.college === "KSIT" ||
             router.college === "KSSA" ||
             router.college === "KSEEM" ? (
               <>
                 <Th>
                   <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                    CET
+                    Total Seats
+                  </div>
+                </Th>
+                <Th>
+                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                    CET & SNQ
                   </div>
                 </Th>
                 <Th>
@@ -102,7 +103,11 @@ export default function Home() {
                 </Th>
               </>
             ) : null}
-
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Management
+              </div>
+            </Th>
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Allotted
@@ -141,15 +146,16 @@ export default function Home() {
                       </div>
                     </Link>
                   </Td>
-                  <Td>
-                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total}
-                    </div>
-                  </Td>
+
                   {router.college === "KSIT" ||
                   router.college === "KSSA" ||
                   router.college === "KSEEM" ? (
                     <>
+                      <Td>
+                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                          {value.total}
+                        </div>
+                      </Td>
                       <Td>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                           {value.cet}
@@ -162,7 +168,11 @@ export default function Home() {
                       </Td>
                     </>
                   ) : null}
-
+                  <Td>
+                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                      {value.management}
+                    </div>
+                  </Td>
                   <Td>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.allotted_seats}

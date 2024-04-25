@@ -7,9 +7,17 @@ import {
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
 import {
+  Button,
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
   SimpleGrid,
   useDisclosure,
@@ -18,12 +26,17 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import { ACADYEARS } from "@/utils/constants";
+import { useSearchParams } from "next/navigation";
 
 interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
+  onClose: () => void;
+  isOpen: boolean;
+  reg_no: string;
+  father_no: string;
+  mother_no: string;
+  student_no: string;
 }
 
 interface StateProps {
@@ -41,20 +54,31 @@ interface FormDataProps {
   onChange?: (e: string) => void;
 }
 
-export default function AddCouncelAddmissionModel({ children }: props) {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+export default function AddCouncelAddmissionModel({
+  onClose,
+  isOpen,
+  father_no,
+  mother_no,
+  reg_no,
+  student_no,
+}: props) {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const searchParams = useSearchParams();
   const [state, setState] = useState<StateProps>({
     name: "",
     fname: "",
-    phone: "",
     email: "",
     college: "",
     branch: "",
     counselled: "",
     entry: "REGULAR",
     fee_quoted: "",
+    regno: "",
+    fmobile: "",
+    mmobile: "",
+    phone: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const branchList = useAppSelector(
     (state) => state.admissions.branchlist.data
@@ -87,7 +111,22 @@ export default function AddCouncelAddmissionModel({ children }: props) {
       );
   }, [state.college, state.branch, dispatch]);
 
+  useEffect(() => {
+    setState({
+      ...state,
+      regno: reg_no,
+      mmobile: mother_no,
+      fmobile: father_no,
+      phone: student_no,
+    });
+  }, [reg_no, father_no, mother_no, student_no]);
+
   const formData: FormDataProps[] = [
+    {
+      name: "regno",
+      label: "Register No.",
+      type: "text",
+    },
     {
       name: "name",
       label: "Name",
@@ -303,11 +342,7 @@ export default function AddCouncelAddmissionModel({ children }: props) {
         },
       ],
     },
-    {
-      name: "regno",
-      label: "Register No.",
-      type: "text",
-    },
+
     {
       name: "percentage",
       label: "Percentage/CGPA",
@@ -473,158 +508,160 @@ export default function AddCouncelAddmissionModel({ children }: props) {
   };
 
   return (
-    <VStack>
-      <IModal
-        size={"6xl"}
-        buttonTitle="Add"
-        heading="Add Enquiry"
-        isOpen={isOpen}
-        onClose={onClose}
-        isLoading={isLoading}
-        onSubmit={() => onSubmit()}
-      >
-        <VStack w={"full"} h={"full"}>
-          <SimpleGrid
-            columns={3}
-            spacingX={"5"}
-            spacingY={"4"}
-            w={"900px"}
-            h={"full"}
-          >
-            {formData.map((field: FormDataProps, index) => {
-              if (
-                (field.name == "exam" || field.name == "rank") &&
-                !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(
-                  state.course as string
+    <Modal isOpen={isOpen} size={"6xl"} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Student Enquiry Form</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <VStack w={"full"} h={"full"}>
+            <SimpleGrid
+              columns={3}
+              spacingX={"5"}
+              spacingY={"4"}
+              w={"900px"}
+              h={"full"}
+            >
+              {formData.map((field: FormDataProps, index) => {
+                if (
+                  (field.name == "exam" || field.name == "rank") &&
+                  !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(
+                    state.course as string
+                  )
                 )
-              )
-                return null;
-              return (
-                <FormControl
-                  key={index}
-                  display={"flex"}
-                  flexDir={"column"}
-                  w={"full"}
-                >
-                  <FormLabel>{field.label}</FormLabel>
-                  {field.type == "select" ? (
-                    <>
-                      <Select
+                  return null;
+                return (
+                  <FormControl
+                    key={index}
+                    display={"flex"}
+                    flexDir={"column"}
+                    w={"full"}
+                  >
+                    <FormLabel>{field.label}</FormLabel>
+                    {field.type == "select" ? (
+                      <>
+                        <Select
+                          boxShadow={"md"}
+                          bg={"white"}
+                          w={"64"}
+                          value={state[field.name] as string}
+                          onChange={(e) =>
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value={""}>Select {field.label}</option>
+                          {field.option &&
+                            field.option.map((opt) => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.option}
+                              </option>
+                            ))}
+                        </Select>
+                      </>
+                    ) : field.type == "date" ? (
+                      <ReactDatePicker
+                        className="px-3 py-2 border w-full rounded-md outline-brand"
+                        selected={field.value as Date}
+                        dateFormat={"dd/MM/yyyy"}
+                        onChange={(date) =>
+                          setState((prev) => ({
+                            ...prev,
+                            [field.name]: date,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <Input
+                        isReadOnly={field?.isReadonly}
+                        type={field.type}
                         boxShadow={"md"}
                         bg={"white"}
                         w={"64"}
-                        value={state[field.name] as string}
-                        onChange={(e) =>
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: e.target.value,
-                          }))
+                        maxLength={field?.max}
+                        value={
+                          field.value
+                            ? (field.value as string)
+                            : (state[field.name] as string)
                         }
-                      >
-                        <option value={""}>Select {field.label}</option>
-                        {field.option &&
-                          field.option.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.option}
-                            </option>
-                          ))}
-                      </Select>
-                    </>
-                  ) : field.type == "date" ? (
-                    <ReactDatePicker
-                      className="px-3 py-2 border w-full rounded-md outline-brand"
-                      selected={field.value as Date}
-                      dateFormat={"dd/MM/yyyy"}
-                      onChange={(date) =>
-                        setState((prev) => ({
-                          ...prev,
-                          [field.name]: date,
-                        }))
-                      }
-                    />
-                  ) : (
-                    <Input
-                      isReadOnly={field?.isReadonly}
-                      type={field.type}
-                      boxShadow={"md"}
-                      bg={"white"}
-                      w={"64"}
-                      maxLength={field?.max}
-                      value={
-                        field.value
-                          ? (field.value as string)
-                          : (state[field.name] as string)
-                      }
-                      onChange={(e) => {
-                        if (field.onChange) {
-                          field.onChange(e.target.value);
-                          return;
-                        }
-                        if (field.max && field.type == "number") {
-                          if (e.target.value.length <= field.max) {
+                        onChange={(e) => {
+                          if (field.onChange) {
+                            field.onChange(e.target.value);
+                            return;
+                          }
+                          if (field.max && field.type == "number") {
+                            if (e.target.value.length <= field.max) {
+                              const value = Math.max(
+                                0,
+                                Math.min(9999999999, Number(e.target.value))
+                              );
+                              setState((prev) => ({
+                                ...prev,
+                                [field.name]: value.toString(),
+                              }));
+                            }
+                          } else if (
+                            field.type == "number" &&
+                            field.name == "percentage"
+                          ) {
                             const value = Math.max(
                               0,
-                              Math.min(9999999999, Number(e.target.value))
+                              Math.min(100.0, Number(e.target.value))
                             );
                             setState((prev) => ({
                               ...prev,
                               [field.name]: value.toString(),
                             }));
+                          } else if (
+                            field.type == "number" &&
+                            field.name == "rank"
+                          ) {
+                            const value = Math.round(
+                              Math.max(
+                                0,
+                                Math.min(999999999, Number(e.target.value))
+                              )
+                            );
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: value.toString(),
+                            }));
+                          } else if (
+                            field.type == "text" &&
+                            field.name == "cheque_no"
+                          ) {
+                            const result = e.target.value.replace(
+                              /[^a-z0-9A-Z]/gi,
+                              ""
+                            );
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: result,
+                            }));
+                          } else {
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: e.target.value,
+                            }));
                           }
-                        } else if (
-                          field.type == "number" &&
-                          field.name == "percentage"
-                        ) {
-                          const value = Math.max(
-                            0,
-                            Math.min(100.0, Number(e.target.value))
-                          );
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: value.toString(),
-                          }));
-                        } else if (
-                          field.type == "number" &&
-                          field.name == "rank"
-                        ) {
-                          const value = Math.round(
-                            Math.max(
-                              0,
-                              Math.min(999999999, Number(e.target.value))
-                            )
-                          );
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: value.toString(),
-                          }));
-                        } else if (
-                          field.type == "text" &&
-                          field.name == "cheque_no"
-                        ) {
-                          const result = e.target.value.replace(
-                            /[^a-z0-9A-Z]/gi,
-                            ""
-                          );
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: result,
-                          }));
-                        } else {
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: e.target.value,
-                          }));
-                        }
-                      }}
-                    />
-                  )}
-                </FormControl>
-              );
-            })}
-          </SimpleGrid>
-        </VStack>
-      </IModal>
-      {children({ onOpen })}
-    </VStack>
+                        }}
+                      />
+                    )}
+                  </FormControl>
+                );
+              })}
+            </SimpleGrid>
+          </VStack>
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            Close
+          </Button>
+          <Button variant="ghost">Secondary Action</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

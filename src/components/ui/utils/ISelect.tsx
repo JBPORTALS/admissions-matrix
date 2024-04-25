@@ -35,7 +35,7 @@ export default function ISelect({
         shadow={"md"}
       >
         <option value={""}>{placeHolder}</option>
-        {options.map((value) => {
+        {options?.map((value) => {
           return (
             <option key={value.value} value={value.value}>
               {value.option}
