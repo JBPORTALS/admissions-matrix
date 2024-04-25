@@ -31,7 +31,7 @@ export default function Home() {
       setIsLoading(true);
       const formData = new FormData();
       formData.append("acadyear", acadYear);
-      formData.append("college", router.college);
+      formData.append("college", router.college as string);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievehostelbranch.php",
         {

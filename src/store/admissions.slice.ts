@@ -500,6 +500,7 @@ export const updateEnquiry = createAsyncThunk<
       const name = payload.username;
       const acadyear = state.admissions.acadYear;
       formData.append("acadyear", acadyear);
+      formData.append("reg_no", selected_Matrix[0]?.reg_no);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
@@ -646,6 +647,7 @@ export interface SelectedMatrix extends BranchAdmission {
   hostel: string;
   exam: string;
   rank: string;
+  reg_no: string;
 }
 
 export interface OverallMatrix {

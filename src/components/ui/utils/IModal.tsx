@@ -24,7 +24,7 @@ interface IDrawerProps {
   isLoading?: boolean;
   colorBtn?: "blue" | "red" | "orange";
   hideBtn?: boolean;
-  isDisabled?:boolean;
+  isDisabled?: boolean;
 }
 
 export default function IModal({
@@ -38,7 +38,7 @@ export default function IModal({
   isLoading,
   colorBtn,
   hideBtn,
-  isDisabled=false
+  isDisabled = false,
 }: IDrawerProps) {
   return (
     <Modal size={size} isOpen={isOpen} onClose={onClose}>
@@ -51,7 +51,7 @@ export default function IModal({
           {heading}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody className="w-full h-fit bg-primary flex justify-center">
+        <ModalBody className="w-full h-fit bg-background flex justify-center">
           <div className="w-full h-full">{children}</div>
         </ModalBody>
         {!hideBtn && (
@@ -66,7 +66,7 @@ export default function IModal({
               Close
             </Button>
             <Button
-            isDisabled={isDisabled}
+              isDisabled={isDisabled}
               onClick={async () => {
                 onSubmit && (await onSubmit());
               }}

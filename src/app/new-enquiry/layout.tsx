@@ -1,23 +1,23 @@
 "use client";
-import { useSupabase } from "@/app/supabase-provider";
-import { useAppDispatch } from "@/hooks";
-import { fetchOverallMatrix } from "@/store/admissions.slice";
 import { HStack, Heading, IconButton, VStack } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { MdClose, MdCloseFullscreen } from "react-icons/md";
+import { MdClose } from "react-icons/md";
 
 const NewEnquiryLayout = ({ children }: { children: React.ReactNode }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user } = useSupabase();
-  useEffect(() => {
-    user?.college && dispatch(fetchOverallMatrix({ college: user?.college }));
-  }, [dispatch, user?.college]);
+
   return (
-    <VStack height={"100%"} width={"100%"}>
+    <VStack
+      height={"100%"}
+      position={"relative"}
+      width={"100%"}
+      overflowY={"auto"}
+    >
       <HStack
+        position={"sticky"}
+        top={"0"}
         w={"100%"}
         justifyContent={"space-between"}
         px={"8"}
@@ -34,9 +34,6 @@ const NewEnquiryLayout = ({ children }: { children: React.ReactNode }) => {
             fill
           />
         </div>
-        <Heading size={"md"} position={"relative"}>
-          New Enquiry
-        </Heading>
         <IconButton
           onClick={() => {
             router.back();

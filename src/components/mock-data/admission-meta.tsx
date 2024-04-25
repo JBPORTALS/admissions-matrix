@@ -273,7 +273,7 @@ export const UnAprrovedColumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "120px",
+    width: "110px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -282,12 +282,12 @@ export const UnAprrovedColumns = [
   },
   {
     field: "admission_id",
-    headerName: "Application No.",
+    headerName: "App No.",
     filter: true,
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "180px",
+    width: "130px",
     cellStyle: {
       display: "flex",
       "align-items": "center",

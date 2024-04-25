@@ -352,6 +352,27 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Reg Number
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.reg_no}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ reg_no: e.target.value }));
+              }}
+            />
+          </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Name
               </Heading>
             </VStack>

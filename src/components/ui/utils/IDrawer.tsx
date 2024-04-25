@@ -45,7 +45,7 @@ export default function IDrawer({
       />
       <DrawerContent>
         <DrawerHeader
-          className="border-b bg-primary border-b-gray-300"
+          className="border-b bg-background border-b-gray-300"
           py={"2"}
         >
           <HStack w={"full"} justifyContent={"space-between"}>
@@ -59,13 +59,13 @@ export default function IDrawer({
             />
           </HStack>
         </DrawerHeader>
-        <DrawerBody className="px-0 bg-primary" px={"0"} py={"0"}>
+        <DrawerBody className="px-0 bg-background" px={"0"} py={"0"}>
           {children}
         </DrawerBody>
         {!hideFooter && (
           <DrawerFooter
             py={"2"}
-            className="flex space-x-4 bg-primary border-t border-t-gray-300"
+            className="flex space-x-4 bg-background border-t border-t-gray-300"
           >
             <Button colorScheme={"blue"} variant={"outline"} onClick={onClose}>
               Cancel

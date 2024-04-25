@@ -17,7 +17,10 @@ export default function Home() {
     router.college &&
       router.branch &&
       dispatch(
-        fetchSearchClass({ college: router.college, branch: router.branch })
+        fetchSearchClass({
+          college: router.college as string,
+          branch: router.branch as string,
+        })
       );
 
     console.log(router);

@@ -45,6 +45,8 @@ const Schema = Yup.object().shape({
   fee: Yup.number().required(),
   alloted: Yup.number(),
   intake: Yup.number().required().min(Yup.ref("alloted")),
+  cet: Yup.number().required(),
+  comedk: Yup.number().required(),
 });
 
 let initialState = {
@@ -55,6 +57,8 @@ let initialState = {
   college: "",
   branch: "",
   category: "REGULAR",
+  cet: "",
+  comedk: "",
 };
 
 export default function MIFModal({ children }: props) {
@@ -75,6 +79,8 @@ export default function MIFModal({ children }: props) {
         formData.append("branch", values.branch);
         formData.append("category", values.category);
         formData.append("acadyear", acadYear);
+        formData.append("comedk", values.comedk);
+        formData.append("cet", values.cet);
 
         const response = await axios({
           url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "admissionupdate.php",
@@ -157,6 +163,20 @@ const FormikContextProvider = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
 
+  const AddExtraFieldsRender = ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) => {
+    if (
+      values.college === "KSIT" ||
+      values.college === "KSSEM" ||
+      values.college === "KSSA"
+    )
+      return <>{children}</>;
+    else return null;
+  };
+
   useEffect(() => {
     dispatch(fetchBaseColleges());
   }, [dispatch]);
@@ -182,6 +202,8 @@ const FormikContextProvider = () => {
       setFieldValue("remaining", response.data[0].remaining_seats ?? 0);
       setFieldValue("fee", response.data[0].fee ?? 0);
       setFieldValue("intake", response.data[0].intake ?? 0);
+      setFieldValue("comedk", response.data[0].comedk ?? 0);
+      setFieldValue("cet", response.data[0].cet ?? 0);
     } catch (e) {
       toast({
         title: "Something went wrong!",
@@ -198,6 +220,10 @@ const FormikContextProvider = () => {
   useEffect(() => {
     setFieldValue("remaining", +(+values.intake - +values.alloted));
   }, [values.intake, values.alloted, setFieldValue]);
+
+  useEffect(() => {
+    setFieldValue("total", +(+values.intake + +values.cet + +values.comedk));
+  }, [values.intake, values.cet, values.comedk, setFieldValue]);
 
   return (
     <Tabs
@@ -266,7 +292,7 @@ const FormikContextProvider = () => {
                   </Heading>
                 </CardHeader>
                 <CardBody>
-                  <VStack divider={<Divider />}>
+                  <VStack gap={"3"}>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Fee</b>{" "}
                       <FormControl
@@ -287,8 +313,44 @@ const FormikContextProvider = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
+                    <AddExtraFieldsRender>
+                      <HStack w={"full"} justifyContent={"space-between"}>
+                        <b>CET & SNQ</b>
+                        <FormControl
+                          w={"40"}
+                          isInvalid={!!touched.cet && !!errors.cet}
+                        >
+                          <Field
+                            as={Input}
+                            name={"cet"}
+                            type="number"
+                            textAlign={"right"}
+                          />
+                          <FormErrorMessage fontSize={"xs"}>
+                            {errors.cet}
+                          </FormErrorMessage>
+                        </FormControl>
+                      </HStack>
+                      <HStack w={"full"} justifyContent={"space-between"}>
+                        <b>COMEDK</b>
+                        <FormControl
+                          w={"40"}
+                          isInvalid={!!touched.comedk && !!errors.comedk}
+                        >
+                          <Field
+                            as={Input}
+                            name={"comedk"}
+                            type="number"
+                            textAlign={"right"}
+                          />
+                          <FormErrorMessage fontSize={"xs"}>
+                            {errors.comedk}
+                          </FormErrorMessage>
+                        </FormControl>
+                      </HStack>
+                    </AddExtraFieldsRender>
                     <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Intake</b>
+                      <b>Management</b>
                       <FormControl
                         w={"40"}
                         isInvalid={!!touched.intake && !!errors.intake}
@@ -304,6 +366,20 @@ const FormikContextProvider = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
+                    <AddExtraFieldsRender>
+                      <HStack w={"full"} justifyContent={"space-between"}>
+                        <b>Total Seats</b>
+                        <FormControl isReadOnly w={"40"}>
+                          <Field
+                            as={Input}
+                            isReadOnly
+                            name={"total"}
+                            type="number"
+                            textAlign={"right"}
+                          />
+                        </FormControl>
+                      </HStack>
+                    </AddExtraFieldsRender>
                     <HStack w={"full"} justifyContent={"space-between"}>
                       <b>Alloted Seats</b>
                       <FormControl isReadOnly w={"40"}>

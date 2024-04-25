@@ -4,6 +4,7 @@ import { Image } from "@chakra-ui/next-js";
 import Link from "next/link";
 import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 import { MdOutlineAdd } from "react-icons/md";
+import CheckStudentDetails from "@/components/modals/CheckStudentDetails";
 
 export default function Home() {
   return (
@@ -26,20 +27,17 @@ export default function Home() {
           />
         </div>
         <HStack gap={3}>
-          <AddCouncelAddmissionModel>
-            {({ onOpen }) => (
-              <Button
-                // as={Link}
-                // href={"/new-enquiry"}
-                onClick={onOpen}
-                size={"sm"}
-                colorScheme="facebook"
-                leftIcon={<MdOutlineAdd />}
-              >
-                Add Enquiry
-              </Button>
-            )}
-          </AddCouncelAddmissionModel>
+          <CheckStudentDetails>
+            <Button
+              // as={Link}
+              // href={"/new-enquiry"}
+              size={"sm"}
+              colorScheme="facebook"
+              leftIcon={<MdOutlineAdd />}
+            >
+              Add Enquiry
+            </Button>
+          </CheckStudentDetails>
 
           <Button
             size={"sm"}

@@ -26,6 +26,7 @@ import { updateAcadYear } from "@/store/admissions.slice";
 import { useRouter } from "next/navigation";
 import { ACADYEARS } from "@/utils/constants";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
+import CheckStudentDetails from "../modals/CheckStudentDetails";
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -101,22 +102,19 @@ export default function SideBar() {
       <Heading fontSize={"xs"} color={"gray.500"} scale={0.3}>
         ENQUIRY
       </Heading>
-      <AddCouncelAddmissionModel>
-        {({ onOpen }) => (
-          <Button
-            // as={Link}
-            // href={"/new-enquiry"}
-            rounded={"full"}
-            colorScheme="facebook"
-            leftIcon={<MdOutlineAdd />}
-            size={"md"}
-            onClick={onOpen}
-            width={"full"}
-          >
-            New Enquiry
-          </Button>
-        )}
-      </AddCouncelAddmissionModel>
+      <CheckStudentDetails>
+        <Button
+          // as={Link}
+          // href={"/new-enquiry"}
+          rounded={"full"}
+          colorScheme="facebook"
+          leftIcon={<MdOutlineAdd />}
+          size={"md"}
+          width={"full"}
+        >
+          New Enquiry
+        </Button>
+      </CheckStudentDetails>
       <Divider />
       <Heading fontSize={"xs"} color={"gray.500"} scale={0.3}>
         ACADEMIC YEAR

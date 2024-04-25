@@ -111,7 +111,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   const navRouter = useRouter();
 
   return (
-    <div className="bg-primary z-20 relative overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-background z-20 relative overflow-hidden w-full  h-full flex flex-col">
       <HStack
         w={"full"}
         position={"sticky"}
@@ -341,18 +341,21 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 <Tab hidden>search</Tab>
               </HStack>
               <HStack mr={"2"}>
-                <MIFModal>
-                  {({ onOpen }) => (
-                    <Button
-                      onClick={onOpen}
-                      size={"sm"}
-                      variant={"ghost"}
-                      leftIcon={<AiOutlineSetting className="text-xl" />}
-                    >
-                      Manage Intake & Fee
-                    </Button>
-                  )}
-                </MIFModal>
+                {user?.college === "MANAGEMENT" ? (
+                  <MIFModal>
+                    {({ onOpen }) => (
+                      <Button
+                        onClick={onOpen}
+                        size={"sm"}
+                        variant={"ghost"}
+                        leftIcon={<AiOutlineSetting className="text-xl" />}
+                      >
+                        Manage Intake & Fee
+                      </Button>
+                    )}
+                  </MIFModal>
+                ) : null}
+
                 <Menu size={"md"} placement="bottom-end">
                   <MenuButton
                     as={Button}

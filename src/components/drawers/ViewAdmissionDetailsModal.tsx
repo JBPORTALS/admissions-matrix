@@ -231,7 +231,10 @@ export default function ViewAdmissionDetailsModal({
     params.college &&
       params.branch &&
       dispatch(
-        fetchSearchClass({ college: params.college, branch: params.branch })
+        fetchSearchClass({
+          college: params.college as string,
+          branch: params.branch as string,
+        })
       );
   };
 
@@ -922,7 +925,7 @@ export default function ViewAdmissionDetailsModal({
             bottom={"0"}
             py={"2"}
             w={"full"}
-            className={"border-t border-t-lightgray bg-primary"}
+            className={"border-t border-t-lightgray bg-background"}
           >
             <IModal
               heading="Are you sure ?"
