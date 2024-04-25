@@ -220,8 +220,8 @@ export default function ViewHostelAdmissionDetailsModal({
       params.branch &&
       dispatch(
         fetchHostelSearchClass({
-          college: params.college,
-          branch: params.branch,
+          college: params.college as string,
+          branch: params.branch as string,
         })
       );
   };

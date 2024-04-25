@@ -21,8 +21,8 @@ export default function Home() {
       router.branch &&
       dispatch(
         fetchHostelSearchClass({
-          college: router.college,
-          branch: router.branch,
+          college: router.college as string,
+          branch: router.branch as string,
         })
       );
 
