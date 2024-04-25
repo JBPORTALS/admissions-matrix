@@ -352,7 +352,7 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Reg Number
+                Register Number
               </Heading>
             </VStack>
             <Input
@@ -387,6 +387,28 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Student Phone No.
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.phone_no}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ phone_no: e.target.value }));
+              }}
+            />
+          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -575,27 +597,7 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Student Phone No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.phone_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ phone_no: e.target.value }));
-              }}
-            />
-          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -724,40 +726,6 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Due Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.due_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={
-                    selectedAdmissionDetails[0]?.due_date.toString() ==
-                      "0000-00-00" ||
-                    selectedAdmissionDetails[0]?.due_date.toString() ==
-                      "Invalid Date"
-                      ? new Date(Date.now())
-                      : new Date(selectedAdmissionDetails[0]?.due_date)
-                  }
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
-                    dispatch(
-                      updateSelectedMatrix({
-                        due_date: moment(date).format("yyyy-MM-DD"),
-                      })
-                    );
-                  }}
-                />
-              </Box>
-            )}
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 Fee Fixed
               </Heading>
             </VStack>
@@ -773,6 +741,30 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Fee Paid
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              type={"number"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.fee_paid}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
+              }}
+            />
+          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -804,6 +796,7 @@ export default function ViewUnApprovedAdmModal({
               </Box>
             )}
           </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -811,18 +804,17 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Paid
+                Mode / Remarks
               </Heading>
             </VStack>
             <Input
               w={"60%"}
-              type={"number"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_paid}
+              value={selectedAdmissionDetails[0]?.remarks}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
+                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
               }}
             />
           </Flex>
@@ -848,6 +840,42 @@ export default function ViewUnApprovedAdmModal({
               onChange={(e) => {}}
             />
           </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Due Date
+              </Heading>
+            </VStack>
+            {selectedAdmissionDetails[0]?.due_date && (
+              <Box w={"60%"}>
+                <ReactDatePicker
+                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                  selected={
+                    selectedAdmissionDetails[0]?.due_date.toString() ==
+                      "0000-00-00" ||
+                    selectedAdmissionDetails[0]?.due_date.toString() ==
+                      "Invalid Date"
+                      ? new Date(Date.now())
+                      : new Date(selectedAdmissionDetails[0]?.due_date)
+                  }
+                  dateFormat={"dd/MM/yyyy"}
+                  onChange={(date) => {
+                    dispatch(
+                      updateSelectedMatrix({
+                        due_date: moment(date).format("yyyy-MM-DD"),
+                      })
+                    );
+                  }}
+                />
+              </Box>
+            )}
+          </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -869,6 +897,7 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
+
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -901,27 +930,6 @@ export default function ViewUnApprovedAdmModal({
               )}
             </FormControl>
           </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Remarks
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.remarks}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
-              }}
-            />
-          </Flex>
 
           <Flex
             className="w-full justify-between"
@@ -942,6 +950,7 @@ export default function ViewUnApprovedAdmModal({
               className={"shadow-md shadow-lightBrand"}
             />
           </Flex>
+
           <VStack
             zIndex={"sticky"}
             position={"sticky"}
