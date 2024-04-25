@@ -200,6 +200,11 @@ export const columns = [
     headerName: "Referred By",
     width: "170px",
   },
+  {
+    field: "approved_by",
+    headerName: "Approved By",
+    width: "170px",
+  },
 ];
 
 export const hostelcolumns = [

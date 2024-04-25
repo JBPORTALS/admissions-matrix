@@ -113,11 +113,7 @@ export default function Home() {
                 Allotted
               </div>
             </Th>
-            <Th>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Total Enquiries
-              </div>
-            </Th>
+
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Remaining
@@ -126,6 +122,11 @@ export default function Home() {
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Filled Percentage
+              </div>
+            </Th>
+            <Th>
+              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                Total Enquiries
               </div>
             </Th>
           </Tr>
@@ -178,11 +179,7 @@ export default function Home() {
                       {value.allotted_seats}
                     </div>
                   </Td>
-                  <Td>
-                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total_enquiries}
-                    </div>
-                  </Td>
+
                   <Td className="flex justify-center">
                     <span className="relative flex items-center justify-center h-10 w-10">
                       <span className="animate-ping absolute inline-flex h-[72%] w-[72%] rounded-full bg-sky-400 opacity-75"></span>
@@ -205,6 +202,11 @@ export default function Home() {
                       size="sm"
                       colorScheme="blue"
                     />
+                  </Td>
+                  <Td>
+                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                      {value.total_enquiries}
+                    </div>
                   </Td>
                 </Tr>
               );

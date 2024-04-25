@@ -254,12 +254,6 @@ export default function AddCouncelAddmissionModel({
       option: collegeList,
     },
     {
-      name: "acadyear",
-      label: "Academic Year",
-      type: "select",
-      option: ACADYEARS,
-    },
-    {
       name: "branch",
       label: "Branch",
       type: "select",
@@ -659,7 +653,7 @@ export default function AddCouncelAddmissionModel({
           <Button colorScheme="blue" variant={"ghost"} mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button variant="solid" onClick={onSubmit}>
+          <Button colorScheme="facebook" variant="solid" onClick={onSubmit}>
             Submit
           </Button>
         </ModalFooter>
