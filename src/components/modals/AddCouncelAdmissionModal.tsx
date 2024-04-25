@@ -33,10 +33,10 @@ import { useSearchParams } from "next/navigation";
 interface props {
   onClose: () => void;
   isOpen: boolean;
-  reg_no: string;
-  father_no: string;
-  mother_no: string;
-  student_no: string;
+  reg_no?: string;
+  father_no?: string;
+  mother_no?: string;
+  student_no?: string;
 }
 
 interface StateProps {
@@ -114,10 +114,10 @@ export default function AddCouncelAddmissionModel({
   useEffect(() => {
     setState({
       ...state,
-      regno: reg_no,
-      mmobile: mother_no,
-      fmobile: father_no,
-      phone: student_no,
+      regno: reg_no ?? "",
+      mmobile: mother_no ?? "",
+      fmobile: father_no ?? "",
+      phone: student_no ?? "",
     });
   }, [reg_no, father_no, mother_no, student_no]);
 

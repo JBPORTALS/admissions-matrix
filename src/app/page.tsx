@@ -27,7 +27,7 @@ export default function Home() {
           />
         </div>
         <HStack gap={3}>
-          <CheckStudentDetails>
+          <AddCouncelAddmissionModel>
             <Button
               // as={Link}
               // href={"/new-enquiry"}
@@ -37,7 +37,7 @@ export default function Home() {
             >
               Add Enquiry
             </Button>
-          </CheckStudentDetails>
+          </AddCouncelAddmissionModel>
 
           <Button
             size={"sm"}
