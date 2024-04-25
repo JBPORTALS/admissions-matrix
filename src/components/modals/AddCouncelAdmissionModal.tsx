@@ -656,10 +656,12 @@ export default function AddCouncelAddmissionModel({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button colorScheme="blue" variant={"ghost"} mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button variant="ghost">Secondary Action</Button>
+          <Button variant="solid" onClick={onSubmit}>
+            Submit
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
