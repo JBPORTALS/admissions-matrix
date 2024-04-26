@@ -225,329 +225,178 @@ const FormikContextProvider = () => {
   }, [values.intake, values.cet, values.comedk, setFieldValue]);
 
   return (
-    <Tabs
-      variant={"solid-rounded"}
-      size={"sm"}
-      lazyBehavior="unmount"
-      fill={"Background"}
-      colorScheme="gray"
-      isFitted
-      index={values.category == "REGULAR" ? 0 : 1}
-      onChange={(index) => {
-        handleReset();
-        setFieldValue(
-          "category",
-          values.category == "REGULAR" ? "LATERAL_ENTRY" : "REGULAR"
-        );
-      }}
-    >
-      <TabList mb={0} p={"3"} px={"5"}>
-        <Tab>Regular</Tab>
-        <Tab>Lateral Entry</Tab>
-      </TabList>
-      <TabPanels px={5}>
-        <TabPanel>
-          {/* <pre>{JSON.stringify(errors)}</pre> */}
-          <VStack>
-            <FormControl>
-              <FormLabel>College</FormLabel>
-              <Select name="college" onChange={handleChange}>
-                <option value={""}>Select</option>
-                {colleges.map((value: any, index) => (
-                  <option value={value.value} key={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Branch</FormLabel>
-              <Select name="branch" onChange={handleChange}>
-                <option value={""}>Select</option>
-                {branches.map((value: any, index) => (
-                  <option value={value.value} key={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <Divider size={"2"} />
-            {!values.branch || !values.college ? (
-              <Card w={"full"} height={"40"}>
-                <CardBody>
-                  <Center h={"full"} flexDirection={"column"}>
-                    <AiOutlineSelect className="text-3xl" />
-                    <Text size={"sm"} px={8} textAlign={"center"}>
-                      Select College & Branch to check the details
-                    </Text>
-                  </Center>
-                </CardBody>
-              </Card>
-            ) : (
-              <Card w={"full"}>
-                <CardHeader>
-                  <Heading color={"gray.600"} size={"md"}>
-                    Details
-                  </Heading>
-                </CardHeader>
-                <CardBody>
-                  <VStack gap={"3"}>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Fee</b>{" "}
-                      <FormControl
-                        isInvalid={!!touched.fee && !!errors.fee}
-                        w={"40"}
-                      >
-                        <InputGroup>
-                          <InputLeftAddon>₹</InputLeftAddon>
-                          <Field
-                            as={Input}
-                            name={"fee"}
-                            type="number "
-                            textAlign={"right"}
-                          />
-                        </InputGroup>
-                        <FormErrorMessage fontSize={"xs"}>
-                          {errors.fee}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </HStack>
-                    {values.college === "KSIT" ||
-                    values.college === "KSSEM" ||
-                    values.college === "KSSA" ? (
-                      <>
-                        <HStack w={"full"} justifyContent={"space-between"}>
-                          <b>Total Seats</b>
-                          <FormControl isReadOnly w={"40"}>
-                            <Field
-                              as={Input}
-                              isReadOnly
-                              name={"total"}
-                              type="number"
-                              textAlign={"right"}
-                            />
-                          </FormControl>
-                        </HStack>
-                        <HStack w={"full"} justifyContent={"space-between"}>
-                          <b>CET & SNQ</b>
-                          <FormControl
-                            w={"40"}
-                            isInvalid={!!touched.cet && !!errors.cet}
-                          >
-                            <Field
-                              as={Input}
-                              name={"cet"}
-                              type="number"
-                              textAlign={"right"}
-                            />
-                            <FormErrorMessage fontSize={"xs"}>
-                              {errors.cet}
-                            </FormErrorMessage>
-                          </FormControl>
-                        </HStack>
-                        <HStack w={"full"} justifyContent={"space-between"}>
-                          <b>COMEDK</b>
-                          <FormControl
-                            w={"40"}
-                            isInvalid={!!touched.comedk && !!errors.comedk}
-                          >
-                            <Field
-                              as={Input}
-                              name={"comedk"}
-                              type="number"
-                              textAlign={"right"}
-                            />
-                            <FormErrorMessage fontSize={"xs"}>
-                              {errors.comedk}
-                            </FormErrorMessage>
-                          </FormControl>
-                        </HStack>
-                      </>
-                    ) : null}
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Management</b>
-                      <FormControl
-                        w={"40"}
-                        isInvalid={!!touched.intake && !!errors.intake}
-                      >
-                        <Field
-                          as={Input}
-                          name={"intake"}
-                          type="number"
-                          textAlign={"right"}
-                        />
-                        <FormErrorMessage fontSize={"xs"}>
-                          {errors.intake}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </HStack>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Alloted Seats</b>
-                      <FormControl isReadOnly w={"40"}>
-                        <Field
-                          as={Input}
-                          isReadOnly
-                          name={"alloted"}
-                          type="number"
-                          textAlign={"right"}
-                        />
-                      </FormControl>
-                    </HStack>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Remaining Seats</b>
-                      <FormControl isReadOnly w={"40"}>
-                        <Field
-                          as={Input}
-                          isReadOnly
-                          type="number"
-                          name="remaining"
-                          textAlign={"right"}
-                        />
-                      </FormControl>
-                    </HStack>
+    <VStack p={"5"}>
+      {/* <pre>{JSON.stringify(errors)}</pre> */}
 
-                    <HStack w={"full"}>
-                      <Button
-                        isDisabled={!isValid}
-                        isLoading={isSubmitting}
-                        onClick={() => handleSubmit()}
-                        colorScheme="facebook"
-                        w={"full"}
-                      >
-                        Update
-                      </Button>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-              </Card>
-            )}
-          </VStack>
-        </TabPanel>
-        <TabPanel>
-          {/* <pre>{JSON.stringify(errors)}</pre> */}
-          <VStack>
-            <FormControl>
-              <FormLabel>College</FormLabel>
-              <Select name="college" onChange={handleChange}>
-                <option value={""}>Select</option>
-                {colleges.map((value: any, index) => (
-                  <option value={value.value} key={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Branch</FormLabel>
-              <Select name="branch" onChange={handleChange}>
-                <option value={""}>Select</option>
-                {branches.map((value: any, index) => (
-                  <option value={value.value} key={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <Divider size={"2"} />
-            {!values.branch || !values.college ? (
-              <Card w={"full"} height={"40"}>
-                <CardBody>
-                  <Center h={"full"} flexDirection={"column"}>
-                    <AiOutlineSelect className="text-3xl" />
-                    <Text size={"sm"} px={8} textAlign={"center"}>
-                      Select College & Branch to check the details
-                    </Text>
-                  </Center>
-                </CardBody>
-              </Card>
-            ) : (
-              <Card w={"full"}>
-                <CardHeader>
-                  <Heading color={"gray.600"} size={"md"}>
-                    Details
-                  </Heading>
-                </CardHeader>
-                <CardBody>
-                  <VStack divider={<Divider />}>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Fee</b>{" "}
-                      <FormControl
-                        isInvalid={!!touched.fee && !!errors.fee}
-                        w={"40"}
-                      >
-                        <InputGroup>
-                          <InputLeftAddon>₹</InputLeftAddon>
-                          <Field
-                            as={Input}
-                            name={"fee"}
-                            type="number "
-                            textAlign={"right"}
-                          />
-                        </InputGroup>
-                        <FormErrorMessage fontSize={"xs"}>
-                          {errors.fee}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </HStack>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Intake</b>
-                      <FormControl
-                        w={"40"}
-                        isInvalid={!!touched.intake && !!errors.intake}
-                      >
-                        <Field
-                          as={Input}
-                          name={"intake"}
-                          type="number"
-                          textAlign={"right"}
-                        />
-                        <FormErrorMessage fontSize={"xs"}>
-                          {errors.intake}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </HStack>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Alloted Seats</b>
-                      <FormControl isReadOnly w={"40"}>
-                        <Field
-                          as={Input}
-                          isReadOnly
-                          name={"alloted"}
-                          type="number"
-                          textAlign={"right"}
-                        />
-                      </FormControl>
-                    </HStack>
-                    <HStack w={"full"} justifyContent={"space-between"}>
-                      <b>Remaining Seats</b>
-                      <FormControl isReadOnly w={"40"}>
-                        <Field
-                          as={Input}
-                          isReadOnly
-                          type="number"
-                          name="remaining"
-                          textAlign={"right"}
-                        />
-                      </FormControl>
-                    </HStack>
+      <FormControl>
+        <FormLabel>College</FormLabel>
+        <Select name="college" onChange={handleChange}>
+          <option value={""}>Select</option>
+          {colleges.map((value: any, index) => (
+            <option value={value.value} key={value.value}>
+              {value.option}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Branch</FormLabel>
+        <Select name="branch" onChange={handleChange}>
+          <option value={""}>Select</option>
+          {branches.map((value: any, index) => (
+            <option value={value.value} key={value.value}>
+              {value.option}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+      <Divider size={"2"} />
+      {!values.branch || !values.college ? (
+        <Card w={"full"} height={"40"}>
+          <CardBody>
+            <Center h={"full"} flexDirection={"column"}>
+              <AiOutlineSelect className="text-3xl" />
+              <Text size={"sm"} px={8} textAlign={"center"}>
+                Select College & Branch to check the details
+              </Text>
+            </Center>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card w={"full"}>
+          <CardHeader>
+            <Heading color={"gray.600"} size={"md"}>
+              Details
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <VStack gap={"3"}>
+              <HStack w={"full"} justifyContent={"space-between"}>
+                <b>Fee</b>{" "}
+                <FormControl isInvalid={!!touched.fee && !!errors.fee} w={"40"}>
+                  <InputGroup>
+                    <InputLeftAddon>₹</InputLeftAddon>
+                    <Field
+                      as={Input}
+                      name={"fee"}
+                      type="number "
+                      textAlign={"right"}
+                    />
+                  </InputGroup>
+                  <FormErrorMessage fontSize={"xs"}>
+                    {errors.fee}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
+              {values.college === "KSIT" ||
+              values.college === "KSSEM" ||
+              values.college === "KSSA" ? (
+                <>
+                  <HStack w={"full"} justifyContent={"space-between"}>
+                    <b>Total Seats</b>
+                    <FormControl isReadOnly w={"40"}>
+                      <Field
+                        as={Input}
+                        isReadOnly
+                        name={"total"}
+                        type="number"
+                        textAlign={"right"}
+                      />
+                    </FormControl>
+                  </HStack>
+                  <HStack w={"full"} justifyContent={"space-between"}>
+                    <b>CET & SNQ</b>
+                    <FormControl
+                      w={"40"}
+                      isInvalid={!!touched.cet && !!errors.cet}
+                    >
+                      <Field
+                        as={Input}
+                        name={"cet"}
+                        type="number"
+                        textAlign={"right"}
+                      />
+                      <FormErrorMessage fontSize={"xs"}>
+                        {errors.cet}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </HStack>
+                  <HStack w={"full"} justifyContent={"space-between"}>
+                    <b>COMEDK</b>
+                    <FormControl
+                      w={"40"}
+                      isInvalid={!!touched.comedk && !!errors.comedk}
+                    >
+                      <Field
+                        as={Input}
+                        name={"comedk"}
+                        type="number"
+                        textAlign={"right"}
+                      />
+                      <FormErrorMessage fontSize={"xs"}>
+                        {errors.comedk}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </HStack>
+                </>
+              ) : null}
+              <HStack w={"full"} justifyContent={"space-between"}>
+                <b>Management</b>
+                <FormControl
+                  w={"40"}
+                  isInvalid={!!touched.intake && !!errors.intake}
+                >
+                  <Field
+                    as={Input}
+                    name={"intake"}
+                    type="number"
+                    textAlign={"right"}
+                  />
+                  <FormErrorMessage fontSize={"xs"}>
+                    {errors.intake}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
+              <HStack w={"full"} justifyContent={"space-between"}>
+                <b>Alloted Seats</b>
+                <FormControl isReadOnly w={"40"}>
+                  <Field
+                    as={Input}
+                    isReadOnly
+                    name={"alloted"}
+                    type="number"
+                    textAlign={"right"}
+                  />
+                </FormControl>
+              </HStack>
+              <HStack w={"full"} justifyContent={"space-between"}>
+                <b>Remaining Seats</b>
+                <FormControl isReadOnly w={"40"}>
+                  <Field
+                    as={Input}
+                    isReadOnly
+                    type="number"
+                    name="remaining"
+                    textAlign={"right"}
+                  />
+                </FormControl>
+              </HStack>
 
-                    <HStack w={"full"}>
-                      <Button
-                        isLoading={isSubmitting}
-                        onClick={() => handleSubmit()}
-                        colorScheme="facebook"
-                        w={"full"}
-                      >
-                        Update
-                      </Button>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-              </Card>
-            )}
-          </VStack>
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+              <HStack w={"full"}>
+                <Button
+                  isDisabled={!isValid}
+                  isLoading={isSubmitting}
+                  onClick={() => handleSubmit()}
+                  colorScheme="facebook"
+                  w={"full"}
+                >
+                  Update
+                </Button>
+              </HStack>
+            </VStack>
+          </CardBody>
+        </Card>
+      )}
+    </VStack>
   );
 };
