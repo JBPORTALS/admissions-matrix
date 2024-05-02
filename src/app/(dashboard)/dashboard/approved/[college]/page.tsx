@@ -17,34 +17,16 @@ import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { useAppSelector } from "@/store";
+import { trpc } from "@/utils/trpc-cleint";
 
 export default function Home() {
   const router = useParams();
-  const [data, setData] = useState({ data: [], error: null });
+  const acadyear = useAppSelector((state) => state.admissions.acadYear);
+  const { data, error } = trpc.retreiveBranchMatrix.useQuery({
+    acadyear,
+    college: router.college as string,
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const acadYear = useAppSelector((state) => state.admissions.acadYear);
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("acadyear", acadYear);
-      formData.append("college", router.college as string);
-      const response = await axios(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebranchmatrix.php",
-        {
-          method: "POST",
-          data: formData,
-        }
-      );
-      if (response.status == 402)
-        setData({ data: [], error: response.data?.msg });
-      else setData({ data: response.data, error: null });
-      setIsLoading(false);
-    }
-
-    fetchData();
-  }, [router.college]);
 
   if (isLoading)
     return (
@@ -130,8 +112,9 @@ export default function Home() {
               </div>
             </Th>
           </Tr>
-          {data.data.length > 0 &&
-            data.data?.map((value: any, index) => {
+          {data &&
+            data.length > 0 &&
+            data?.map((value, index) => {
               return (
                 <Tr key={index}>
                   <Td>
