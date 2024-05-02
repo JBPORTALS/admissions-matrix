@@ -10,12 +10,11 @@ import {
   Tr,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
-import axios from "axios";
 import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
 

@@ -1,8 +1,5 @@
 "use client";
-import AdmissionLayout from "@/components/layouts/AdmissionLayout";
-import { useAppDispatch } from "@/hooks";
 import {
-  Progress,
   Skeleton,
   Stack,
   Table,

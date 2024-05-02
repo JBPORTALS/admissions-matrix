@@ -4,16 +4,13 @@ import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  fetchBranchList,
-  fetchUnApprovedAdmissions,
-} from "@/store/admissions.slice";
+import { fetchUnApprovedAdmissions } from "@/store/admissions.slice";
 import { COLLEGES } from "@/utils/constants";
 import { trpc } from "@/utils/trpc-cleint";
 import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 
 export default function UnApproved() {

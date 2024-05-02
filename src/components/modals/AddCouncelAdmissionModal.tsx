@@ -20,14 +20,12 @@ import {
   ModalOverlay,
   Select,
   SimpleGrid,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ReactDatePicker from "react-datepicker";
-import { ACADYEARS } from "@/utils/constants";
 import { useSearchParams } from "next/navigation";
 
 interface props {

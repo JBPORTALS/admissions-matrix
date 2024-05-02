@@ -1,13 +1,7 @@
 "use client";
 import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
-import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  fetchBranchList,
-  fetchHistory,
-  fetchUnApprovedAdmissions,
-} from "@/store/admissions.slice";
 import { trpc } from "@/utils/trpc-cleint";
 import {
   Box,
@@ -25,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineFilePdf } from "react-icons/ai";
 
 export default function UnApproved() {

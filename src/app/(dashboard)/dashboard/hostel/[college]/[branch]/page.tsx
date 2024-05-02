@@ -1,11 +1,7 @@
 "use client";
-import AdmissionLayout from "@/components/layouts/AdmissionLayout";
 import { useAppDispatch } from "@/hooks";
-import {
-  fetchHostelSearchClass,
-  fetchSearchClass,
-} from "@/store/admissions.slice";
-import { Stack, VStack } from "@chakra-ui/react";
+import { fetchHostelSearchClass } from "@/store/admissions.slice";
+import { VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
