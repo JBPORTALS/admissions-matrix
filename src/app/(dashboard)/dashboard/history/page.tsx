@@ -8,6 +8,7 @@ import {
   fetchHistory,
   fetchUnApprovedAdmissions,
 } from "@/store/admissions.slice";
+import { trpc } from "@/utils/trpc-cleint";
 import {
   Box,
   Button,
@@ -29,15 +30,12 @@ import { AiOutlineFilePdf } from "react-icons/ai";
 
 export default function UnApproved() {
   const [ucollege, setCollege] = useState<string | undefined>("");
-  const dispatch = useAppDispatch();
-  const sdata = useAppSelector(
-    (state) => state.admissions.seat_matrix.data
-  ) as [];
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const { data: sdata } = trpc.seatMatrix.useQuery(
+    { college: ucollege ?? "", acadYear },
+    { enabled: !!ucollege }
+  );
   const sError = useAppSelector((state) => state.admissions.seat_matrix.error);
-
-  useEffect(() => {
-    if (ucollege !== undefined) dispatch(fetchHistory({ college: ucollege }));
-  }, [ucollege, dispatch]);
 
   return (
     <div className="h-full">
@@ -94,7 +92,7 @@ export default function UnApproved() {
           }
         >
           {/* displaying admin childrens */}
-          {ucollege && sdata.length > 0 ? (
+          {ucollege && sdata && sdata.length > 0 ? (
             <ol className="relative border-l py-10 pb-16 border-gray-200 h-fit w-full">
               {sdata.map((history: any, index) => {
                 return (
@@ -187,7 +185,7 @@ export default function UnApproved() {
                 );
               })}
             </ol>
-          ) : ucollege && sdata.length == 0 ? (
+          ) : ucollege && sdata && sdata.length == 0 ? (
             <Center h={"80%"}>
               <Heading size={"lg"}>{sError}</Heading>
             </Center>

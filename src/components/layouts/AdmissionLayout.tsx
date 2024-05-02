@@ -83,7 +83,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const { college, branch } = router;
 
-  const [hcollege, setHCollege] = useState<string | undefined>("");
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
     source: string;
@@ -93,18 +92,12 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
     date: new Date(),
   });
   const [query, setQuery] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
   ) as { remaining: string; intake: string; allotted: string }[];
 
   const pathname = usePathname();
-
-  useEffect(() => {
-    if (hcollege !== undefined) dispatch(fetchHistory({ college: hcollege }));
-  }, [hcollege, dispatch]);
 
   const { user, supabase } = useSupabase();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -157,7 +150,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
             />
             <InputRightElement>
               <IconButton
-                isLoading={isLoading}
                 onClick={async () => {
                   navRouter.push(
                     `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
