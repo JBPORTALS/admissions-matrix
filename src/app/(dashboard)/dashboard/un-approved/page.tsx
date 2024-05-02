@@ -4,21 +4,27 @@ import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  fetchBranchList,
-  fetchUnApprovedAdmissions,
-} from "@/store/admissions.slice";
+import { fetchUnApprovedAdmissions } from "@/store/admissions.slice";
 import { COLLEGES } from "@/utils/constants";
+import { trpc } from "@/utils/trpc-cleint";
 import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 
 export default function UnApproved() {
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
-  const [branchList, setBranchList] = useState<[]>([]);
+  const acadyear = useAppSelector(
+    (state) => state.admissions.acadYear
+  ) as string;
+  const { data: branchList } = trpc.retrieveBranchList.useQuery(
+    { college: ucollege ?? "", acadYear: acadyear },
+    {
+      enabled: !!ucollege,
+    }
+  );
   const dispatch = useAppDispatch();
   const data = useAppSelector(
     (state) => state.admissions.unapproved_matrix.data
@@ -26,15 +32,6 @@ export default function UnApproved() {
   const Error = useAppSelector(
     (state) => state.admissions.unapproved_matrix.error
   );
-  const acadyear = useAppSelector((state) => state.admissions.acadYear);
-
-  useEffect(() => {
-    if (ucollege !== undefined)
-      dispatch(fetchBranchList({ college: ucollege })).then((value: any) => {
-        setBranchList(value.payload);
-      });
-    setBranch("");
-  }, [ucollege, dispatch]);
 
   useEffect(() => {
     ucollege &&
@@ -65,7 +62,7 @@ export default function UnApproved() {
               placeHolder="Select Branch"
               value={ubranch}
               onChange={(value) => setBranch(value)}
-              options={branchList}
+              options={branchList ? branchList : []}
             />
           ) : null}
         </HStack>

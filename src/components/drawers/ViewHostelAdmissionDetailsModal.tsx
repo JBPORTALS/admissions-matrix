@@ -5,7 +5,6 @@ import {
   fetchBranchList,
   fetchFeeQouted,
   fetchHostelSearchClass,
-  fetchSearchClass,
   fetchSelectedMatrix,
   SelectedMatrix,
   updateMatrix,
@@ -18,7 +17,6 @@ import {
   FormControl,
   FormErrorMessage,
   Heading,
-  HStack,
   Input,
   InputGroup,
   InputRightAddon,
@@ -26,18 +24,14 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState, useCallback } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
-import { usePathname } from "next/navigation";
-import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
-import { Link } from "@chakra-ui/next-js";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;

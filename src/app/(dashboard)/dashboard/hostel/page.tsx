@@ -1,8 +1,17 @@
 "use client";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { fetchOverallHostel, fetchOverallMatrix } from "@/store/admissions.slice";
-import { Progress, Skeleton, Stack, Table, Tbody, Td, Th, Tr, VStack } from "@chakra-ui/react";
+import { fetchOverallHostel } from "@/store/admissions.slice";
+import {
+  Skeleton,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Tr,
+  VStack,
+} from "@chakra-ui/react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
@@ -29,17 +38,16 @@ export default function Home() {
   useEffect(() => {
     user?.college && dispatch(fetchOverallHostel({ college: user?.college }));
   }, [dispatch, user?.college]);
-  
-  if(isLoading) return(
-    <VStack spacing={1} h={"full"} w={"full"}>
-      <Skeleton w={"full"} h={"14"}></Skeleton>
-       {
-        new Array(8).fill(0).map((_,index)=>{
-          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>
-        })
-       }
-    </VStack>
-  )
+
+  if (isLoading)
+    return (
+      <VStack spacing={1} h={"full"} w={"full"}>
+        <Skeleton w={"full"} h={"14"}></Skeleton>
+        {new Array(8).fill(0).map((_, index) => {
+          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
+        })}
+      </VStack>
+    );
   return (
     <Stack
       h={"fit"}
@@ -62,7 +70,7 @@ export default function Home() {
                 College
               </div>
             </Th>
-            
+
             <Th>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Total Students
@@ -70,7 +78,7 @@ export default function Home() {
             </Th>
           </Tr>
           {overAllMatrix.length > 0 &&
-            overAllMatrix?.map((value:any, index) => {
+            overAllMatrix?.map((value: any, index) => {
               return (
                 <Tr key={index}>
                   <Td>

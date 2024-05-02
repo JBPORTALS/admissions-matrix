@@ -32,46 +32,35 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   AiFillFilePdf,
   AiOutlineArrowRight,
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
-  AiOutlineCloudDownload,
-  AiOutlineExport,
   AiOutlineFieldTime,
   AiOutlineFileExcel,
   AiOutlineFilePdf,
-  AiOutlineFilter,
   AiOutlineHistory,
   AiOutlineLogout,
   AiOutlineMail,
-  AiOutlinePlusCircle,
   AiOutlineSearch,
   AiOutlineSetting,
   AiOutlineUser,
 } from "react-icons/ai";
 import { HiBuildingOffice } from "react-icons/hi2";
-import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  fetchBranchList,
-  fetchHistory,
-  fetchUnApprovedAdmissions,
-} from "@/store/admissions.slice";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
-import { BsFilter, BsFilterCircle } from "react-icons/bs";
+import { BsFilter } from "react-icons/bs";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Image from "next/image";
 import MIFModal from "../drawers/MIFModal";
 import SideBar from "../ui/SideBar";
-import { FaChevronDown, FaFileDownload, FaFileExport } from "react-icons/fa";
+import { FaChevronDown, FaFileDownload } from "react-icons/fa";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -83,7 +72,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const { college, branch } = router;
 
-  const [hcollege, setHCollege] = useState<string | undefined>("");
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
     source: string;
@@ -93,18 +81,12 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
     date: new Date(),
   });
   const [query, setQuery] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
   const metaData = useAppSelector(
     (state) => state.admissions.search_class.data
   ) as { remaining: string; intake: string; allotted: string }[];
 
   const pathname = usePathname();
-
-  useEffect(() => {
-    if (hcollege !== undefined) dispatch(fetchHistory({ college: hcollege }));
-  }, [hcollege, dispatch]);
 
   const { user, supabase } = useSupabase();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -157,7 +139,6 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
             />
             <InputRightElement>
               <IconButton
-                isLoading={isLoading}
                 onClick={async () => {
                   navRouter.push(
                     `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`

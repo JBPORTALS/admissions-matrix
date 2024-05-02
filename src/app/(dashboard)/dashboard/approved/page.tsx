@@ -1,5 +1,4 @@
 "use client";
-import { useAppSelector } from "@/store";
 import {
   Progress,
   Skeleton,
@@ -14,21 +13,15 @@ import {
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
+import { trpc } from "@/utils/trpc-cleint";
+import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
-  const overAllMatrix = useAppSelector(
-    (state) => state.admissions.overall_matrix.data
-  ) as {
-    allotted_seats: string;
-    college: string;
-    filled_percentage: number;
-    remaining_seats: string;
-    total: number;
-    total_enquiries: string;
-  }[];
-  const isLoading = useAppSelector(
-    (state) => state.admissions.overall_matrix.pending
-  ) as boolean;
+  const { user } = useSupabase();
+  const { isLoading, data } = trpc.getOverallMatrix.useQuery({
+    acadyear: "2024",
+    college: user?.college ?? "",
+  });
 
   if (isLoading)
     return (
@@ -87,8 +80,9 @@ export default function Home() {
               </div>
             </Th>
           </Tr>
-          {overAllMatrix.length > 0 &&
-            overAllMatrix?.map((value, index) => {
+          {data &&
+            data.length > 0 &&
+            data?.map((value, index) => {
               return (
                 <Tr key={index}>
                   <Td>
