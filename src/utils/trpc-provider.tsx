@@ -4,6 +4,13 @@ import { trpc } from "./trpc-cleint";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 
+function getBaseUrl() {
+  const url =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : process.env.VERCEL_URL ?? "";
+  return url;
+}
 export default function TRPCProvider({
   children,
 }: {
@@ -14,7 +21,7 @@ export default function TRPCProvider({
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/api/trpc",
+          url: `${getBaseUrl()}/api/trpc`,
         }),
       ],
     })
