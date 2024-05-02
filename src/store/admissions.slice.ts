@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RootState } from ".";
-import moment from "moment";
 
 export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
@@ -447,6 +446,10 @@ export const updateMatrix = createAsyncThunk<
       formData.append("due_date", selected_Matrix[0].due_date);
       formData.append("approved_by", selected_Matrix[0].approved_by);
       formData.append("referred_by", selected_Matrix[0].referred_by);
+      formData.append(
+        "counselled_quoted_by",
+        selected_Matrix[0].counselled_quoted_by
+      );
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("user_college", payload.user_college);
@@ -517,6 +520,10 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("remaining", selected_Matrix[0].remaining_amount);
       formData.append("due_date", selected_Matrix[0].due_date);
       formData.append("approved_by", selected_Matrix[0].approved_by);
+      formData.append(
+        "counselled_quoted_by",
+        selected_Matrix[0].counselled_quoted_by
+      );
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
       formData.append("referred_by", selected_Matrix[0].referred_by);
@@ -583,6 +590,11 @@ export const updateToApprove = createAsyncThunk<
       formData.append("due_date", selected_data.due_date);
       formData.append("approved_by", name);
       formData.append("referred_by", selected_data.referred_by);
+      formData.append("quoted_by", selected_data.quoted_by);
+      formData.append(
+        "counselled_quoted_by",
+        selected_data.counselled_quoted_by
+      );
       formData.append("remarks", selected_data.remarks);
       formData.append("percentage", selected_data.percentage);
       formData.append("status", "APPROVED");
@@ -648,6 +660,7 @@ export interface SelectedMatrix extends BranchAdmission {
   exam: string;
   rank: string;
   reg_no: string;
+  counselled_quoted_by: string;
 }
 
 export interface OverallMatrix {

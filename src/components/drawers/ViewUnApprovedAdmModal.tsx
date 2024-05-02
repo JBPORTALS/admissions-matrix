@@ -936,28 +936,28 @@ export default function ViewUnApprovedAdmModal({
             />
           </Flex>
 
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"start"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} className="w-3/4" fontWeight={"medium"}>
-                Counselled & Quoted By
-              </Heading>
-            </VStack>
+          <VStack w={"full"}>
+            <Heading
+              fontSize={"sm"}
+              w={"full"}
+              className="w-3/4"
+              fontWeight={"medium"}
+            >
+              Counselled & Quoted By
+            </Heading>
             <Textarea
-              w={"60%"}
+              w={"full"}
               variant={"outline"}
               bg={"white"}
-              readOnly
-              value={selectedAdmissionDetails[0]?.quoted_by || "-"}
+              value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
+                dispatch(
+                  updateSelectedMatrix({ counselled_quoted_by: e.target.value })
+                );
               }}
             />
-          </Flex>
+          </VStack>
 
           <VStack
             zIndex={"sticky"}

@@ -26,6 +26,7 @@ import {
   MenuItem,
   MenuList,
   Select,
+  Textarea,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -46,6 +47,7 @@ import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { Link } from "@chakra-ui/next-js";
 import { exams } from "./ViewUnApprovedAdmModal";
+import { trpc } from "@/utils/trpc-cleint";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -69,9 +71,13 @@ export default function ViewAdmissionDetailsModal({
   const isLoading = useAppSelector(
     (state) => state.admissions.selectedMatrix.pending
   ) as boolean;
-  const branch_list = useAppSelector(
-    (state) => state.admissions.branchlist.data
-  ) as [];
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const { data: branch_list } = trpc.retrieveBranchList.useQuery(
+    { acadYear, college: selectedAdmissionDetails[0]?.college },
+    {
+      enabled: isOpen && !!selectedAdmissionDetails[0]?.college,
+    }
+  );
   const dispatch = useAppDispatch();
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
@@ -85,7 +91,6 @@ export default function ViewAdmissionDetailsModal({
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
   });
   const fee = useAppSelector((state) => state.admissions.fee);
-  const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const params = useParams();
   let intialRender = true;
 
@@ -151,19 +156,6 @@ export default function ViewAdmissionDetailsModal({
     setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
     console.log(dueDate);
   }, [selectedAdmissionDetails[0]?.due_date]);
-
-  useEffect(() => {
-    selectedAdmissionDetails[0]?.admission_id == admissionno &&
-      selectedAdmissionDetails[0]?.college &&
-      dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0].college })
-      );
-  }, [
-    dispatch,
-    selectedAdmissionDetails[0]?.admission_id,
-    selectedAdmissionDetails[0]?.college,
-    admissionno,
-  ]);
 
   useEffect(() => {
     isOpen && runSetDueDate();
@@ -446,13 +438,14 @@ export default function ViewAdmissionDetailsModal({
                 }}
               >
                 <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any) => {
-                  return (
-                    <option key={branch.value} value={branch.value}>
-                      {branch.option}
-                    </option>
-                  );
-                })}
+                {branch_list &&
+                  branch_list.map((branch: any) => {
+                    return (
+                      <option key={branch.value} value={branch.value}>
+                        {branch.option}
+                      </option>
+                    );
+                  })}
               </Select>
               {selectedAdmissionDetails[0]?.branch == "" && (
                 <FormErrorMessage>Branch is required !</FormErrorMessage>
@@ -638,26 +631,6 @@ export default function ViewAdmissionDetailsModal({
               onChange={(e) => {
                 setState((prev) => ({ ...prev, fee_quoted: e.target.value }));
               }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Quoted by
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              type={"text"}
-              variant={"outline"}
-              isReadOnly
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.quoted_by}
-              className={"shadow-md shadow-lightBrand"}
             />
           </Flex>
 
@@ -949,6 +922,28 @@ export default function ViewAdmissionDetailsModal({
               }}
             />
           </Flex>
+          <VStack w={"full"}>
+            <Heading
+              fontSize={"sm"}
+              w={"full"}
+              className="w-3/4"
+              fontWeight={"medium"}
+            >
+              Counselled & Quoted By
+            </Heading>
+            <Textarea
+              w={"full"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(
+                  updateSelectedMatrix({ counselled_quoted_by: e.target.value })
+                );
+              }}
+            />
+          </VStack>
 
           <HStack
             zIndex={"sticky"}
