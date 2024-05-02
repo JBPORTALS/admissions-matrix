@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 interface Matrix {
   allotted_seats: string;
@@ -57,6 +58,33 @@ export const appRouter = router({
       // console.log(response);
       const data = await response.json();
       return data as BranchMatrix[];
+    }),
+  searchClass: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        college: z.string(),
+        branch: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college);
+      formData.append("branch", input.branch);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchclass.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as [] | any,
+        ok: response.ok,
+      };
     }),
 });
 
