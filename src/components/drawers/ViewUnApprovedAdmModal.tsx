@@ -24,6 +24,7 @@ import {
   InputGroup,
   InputRightAddon,
   Select,
+  Textarea,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -37,6 +38,7 @@ import axios from "axios";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { Link } from "@chakra-ui/next-js";
+import { trpc } from "@/utils/trpc-cleint";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -110,9 +112,15 @@ export default function ViewUnApprovedAdmModal({
   const fee = useAppSelector((state) => state.admissions.fee) as
     | string
     | undefined;
-  const branch_list = useAppSelector(
-    (state) => state.admissions.branchlist.data
-  ) as [];
+  const { data: branch_list } = trpc.retrieveBranchList.useQuery(
+    {
+      college: selectedAdmissionDetails[0]?.college,
+      acadYear,
+    },
+    {
+      enabled: isOpen && !!selectedAdmissionDetails[0]?.college,
+    }
+  );
   const dispatch = useAppDispatch();
   const { user } = useSupabase();
   const [state, setState] = useState({
@@ -187,27 +195,27 @@ export default function ViewUnApprovedAdmModal({
 
   let render = 0;
 
-  useEffect(() => {
-    render++;
-    selectedAdmissionDetails[0]?.admission_id == admissionno &&
-      selectedAdmissionDetails[0]?.college &&
-      intialRender &&
-      isOpen &&
-      dispatch(
-        fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
-      );
+  // useEffect(() => {
+  //   render++;
+  //   selectedAdmissionDetails[0]?.admission_id == admissionno &&
+  //     selectedAdmissionDetails[0]?.college &&
+  //     intialRender &&
+  //     isOpen &&
+  //     dispatch(
+  //       fetchBranchList({ college: selectedAdmissionDetails[0]?.college })
+  //     );
 
-    render++;
+  //   render++;
 
-    () => render++;
-  }, [
-    dispatch,
-    selectedAdmissionDetails[0]?.admission_id,
-    selectedAdmissionDetails[0]?.college,
-    admissionno,
-    isOpen,
-    intialRender,
-  ]);
+  //   () => render++;
+  // }, [
+  //   dispatch,
+  //   selectedAdmissionDetails[0]?.admission_id,
+  //   selectedAdmissionDetails[0]?.college,
+  //   admissionno,
+  //   isOpen,
+  //   intialRender,
+  // ]);
 
   const onDelete = async () => {
     setIsDeleting(true);
@@ -500,13 +508,14 @@ export default function ViewUnApprovedAdmModal({
                 }}
               >
                 <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any) => {
-                  return (
-                    <option key={branch.value} value={branch.value}>
-                      {branch.option}
-                    </option>
-                  );
-                })}
+                {branch_list &&
+                  branch_list.map((branch: any) => {
+                    return (
+                      <option key={branch.value} value={branch.value}>
+                        {branch.option}
+                      </option>
+                    );
+                  })}
               </Select>
               {selectedAdmissionDetails[0]?.branch == "" && (
                 <FormErrorMessage>Branch is required !</FormErrorMessage>
@@ -692,29 +701,6 @@ export default function ViewUnApprovedAdmModal({
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 setState((prev) => ({ ...prev, fee_quoted: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Quoted by
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              type={"text"}
-              variant={"outline"}
-              bg={"white"}
-              readOnly
-              value={selectedAdmissionDetails[0]?.quoted_by || "-"}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
               }}
             />
           </Flex>
@@ -948,6 +934,29 @@ export default function ViewUnApprovedAdmModal({
               bg={"white"}
               value={selectedAdmissionDetails[0]?.status}
               className={"shadow-md shadow-lightBrand"}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"start"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} className="w-3/4" fontWeight={"medium"}>
+                Counselled & Quoted By
+              </Heading>
+            </VStack>
+            <Textarea
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              readOnly
+              value={selectedAdmissionDetails[0]?.quoted_by || "-"}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ fee_quoted: e.target.value }));
+              }}
             />
           </Flex>
 

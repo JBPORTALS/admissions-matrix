@@ -86,6 +86,28 @@ export const appRouter = router({
         ok: response.ok,
       };
     }),
+  retrieveBranchList: procedure
+    .input(
+      z.object({
+        college: z.string(),
+        acadYear: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadYear);
+      formData.append("college", input.college);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebrancheslist.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return data as [];
+    }),
 });
 
 // export type definition of API
