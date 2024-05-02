@@ -14,23 +14,21 @@ import { columns } from "@/components/mock-data/admission-meta";
 
 export default function Home() {
   const router = useParams();
-  const { data, error } = trpc.searchClass.useQuery({
+  const { data } = trpc.searchClass.useQuery({
     acadyear: "2024",
     branch: router.branch as string,
     college: router.college as string,
   });
 
-  console.log(data);
-
   return (
     <VStack h={"77vh"} w={"full"} pr={"3"} className="ag">
       <VStack h={"80vh"} w={"100%"}>
-        {data && data.data.length > 0 ? (
+        {data?.data && data.data.length > 0 ? (
           <AgGridReact
             alwaysShowHorizontalScroll
             animateRows={true}
             className="w-full h-full  pb-6 ag-theme-material"
-            rowData={data as any}
+            rowData={data.data as any}
             columnDefs={columns as any}
           />
         ) : data && !data.ok ? (
