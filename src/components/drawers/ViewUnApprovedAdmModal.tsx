@@ -949,10 +949,12 @@ export default function ViewUnApprovedAdmModal({
               w={"full"}
               variant={"outline"}
               bg={"white"}
-              value={selectedAdmissionDetails[0]?.quoted_by ?? ""}
+              value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
-                dispatch(updateSelectedMatrix({ quoted_by: e.target.value }));
+                dispatch(
+                  updateSelectedMatrix({ counselled_quoted_by: e.target.value })
+                );
               }}
             />
           </VStack>
