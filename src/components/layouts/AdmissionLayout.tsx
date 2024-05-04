@@ -321,38 +321,19 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 </Tab>
                 <Tab hidden>search</Tab>
               </HStack>
-              <HStack mr={"2"}>
-                {user?.college === "MANAGEMENT" ? (
-                  <MIFModal>
-                    {({ onOpen }) => (
-                      <Button
-                        onClick={onOpen}
-                        size={"sm"}
-                        variant={"ghost"}
-                        leftIcon={<AiOutlineSetting className="text-xl" />}
-                      >
-                        Manage Intake & Fee
-                      </Button>
-                    )}
-                  </MIFModal>
-                ) : null}
 
-                <Menu size={"md"} placement="bottom-end">
+              <HStack mr={"2"}>
+                <Menu size={"md"}>
                   <MenuButton
                     as={Button}
                     size={"sm"}
                     leftIcon={<BsFilter className={"text-xl"} />}
                     colorScheme={"gray"}
-                    position={"relative"}
                     variant={"ghost"}
                   >
                     Filters
                   </MenuButton>
-                  <MenuList
-                    shadow={"2xl"}
-                    position={"absolute"}
-                    zIndex={"dropdown"}
-                  >
+                  <MenuList shadow={"2xl"} zIndex={"dropdown"}>
                     <VStack px={"4"}>
                       <FormControl>
                         <Select onChange={(e) => setFilterType(e.target.value)}>
@@ -489,6 +470,21 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                     </VStack>
                   </MenuList>
                 </Menu>
+                {user?.college === "MANAGEMENT" ? (
+                  <MIFModal>
+                    {({ onOpen }) => (
+                      <Button
+                        onClick={onOpen}
+                        size={"sm"}
+                        variant={"ghost"}
+                        leftIcon={<AiOutlineSetting className="text-xl" />}
+                      >
+                        Manage Intake & Fee
+                      </Button>
+                    )}
+                  </MIFModal>
+                ) : null}
+
                 {/* <AddCouncelAddmissionModel>
                   {({ onOpen }) => (
                     <Button

@@ -452,6 +452,7 @@ export const updateMatrix = createAsyncThunk<
       );
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
+      formData.append("pcm", selected_Matrix[0].pcm);
       formData.append("user_college", payload.user_college);
       formData.append("hostel", selected_Matrix[0].hostel);
       formData.append("exam", selected_Matrix[0].exam);
@@ -526,6 +527,7 @@ export const updateEnquiry = createAsyncThunk<
       );
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
+      formData.append("pcm", selected_Matrix[0].pcm);
       formData.append("referred_by", selected_Matrix[0].referred_by);
       formData.append("hostel", selected_Matrix[0].hostel);
       formData.append("user_college", payload.user_college);
@@ -661,6 +663,8 @@ export interface SelectedMatrix extends BranchAdmission {
   rank: string;
   reg_no: string;
   counselled_quoted_by: string;
+  pcm: string;
+  course: string;
 }
 
 export interface OverallMatrix {

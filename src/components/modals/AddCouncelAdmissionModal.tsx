@@ -337,39 +337,15 @@ export default function AddCouncelAddmissionModel({
 
     {
       name: "percentage",
-      label: "Percentage/CGPA",
+      label: "Overall Percentage / CGPA",
       type: "number",
     },
     {
-      name: "hostel_facility",
-      label: "Hostel Facility Required",
-      type: "select",
-      option: [
-        {
-          option: "YES",
-          value: "YES",
-        },
-        {
-          option: "NO",
-          value: "No",
-        },
-      ],
+      name: "pcm",
+      label: "PCM Aggregate",
+      type: "number",
     },
-    {
-      name: "trasport_facility",
-      label: "Transport Facility Required",
-      type: "select",
-      option: [
-        {
-          option: "YES",
-          value: "YES",
-        },
-        {
-          option: "NO",
-          value: "NO",
-        },
-      ],
-    },
+
     {
       name: "exam",
       label: "Exam",
@@ -415,6 +391,36 @@ export default function AddCouncelAddmissionModel({
       type: "text",
     },
     {
+      name: "hostel_facility",
+      label: "Hostel Facility Required",
+      type: "select",
+      option: [
+        {
+          option: "YES",
+          value: "YES",
+        },
+        {
+          option: "NO",
+          value: "No",
+        },
+      ],
+    },
+    {
+      name: "trasport_facility",
+      label: "Transport Facility Required",
+      type: "select",
+      option: [
+        {
+          option: "YES",
+          value: "YES",
+        },
+        {
+          option: "NO",
+          value: "NO",
+        },
+      ],
+    },
+    {
       name: "category",
       label: "Category",
       type: "select",
@@ -458,6 +464,7 @@ export default function AddCouncelAddmissionModel({
       fd.append("school_college", state.peducation as string);
       fd.append("source", state.source as string);
       fd.append("percentage", state.percentage as string);
+      fd.append("pcm", state.pcm as string);
       fd.append("board", state.board as string);
       fd.append("exam", state.exam as string);
       fd.append("rank", state.rank as string);
@@ -520,6 +527,11 @@ export default function AddCouncelAddmissionModel({
                   !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(
                     state.course as string
                   )
+                )
+                  return null;
+                else if (
+                  (field.name == "percentage" || field.name == "pcm") &&
+                  state.course !== "ENGINEERING"
                 )
                   return null;
                 return (
@@ -596,7 +608,7 @@ export default function AddCouncelAddmissionModel({
                             }
                           } else if (
                             field.type == "number" &&
-                            field.name == "percentage"
+                            (field.name == "percentage" || field.name == "pcm")
                           ) {
                             const value = Math.max(
                               0,
