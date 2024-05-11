@@ -415,46 +415,44 @@ export default function ViewUnApprovedAdmModal({
               }}
             />
           </Flex>
-
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Overall Percentage / CGPA
+              </Heading>
+            </VStack>
+            <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+              <Input
+                variant={"outline"}
+                bg={"white"}
+                type="number"
+                value={parseFloat(
+                  selectedAdmissionDetails[0]?.percentage
+                ).toString()}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({
+                      percentage:
+                        e.target.value == ""
+                          ? 0
+                          : parseInt(e.target.value) > 100
+                          ? Math.trunc(100)
+                          : parseFloat(e.target.value),
+                    })
+                  );
+                }}
+              />
+              <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
+                %
+              </InputRightAddon>
+            </InputGroup>
+          </Flex>
           {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
             <>
-              <Flex
-                className="w-full justify-between"
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <VStack flex={"1"} alignItems={"start"}>
-                  <Heading fontSize={"sm"} fontWeight={"medium"}>
-                    Overall Percentage / CGPA
-                  </Heading>
-                </VStack>
-                <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
-                  <Input
-                    variant={"outline"}
-                    bg={"white"}
-                    type="number"
-                    value={parseFloat(
-                      selectedAdmissionDetails[0]?.percentage
-                    ).toString()}
-                    onChange={(e) => {
-                      dispatch(
-                        updateSelectedMatrix({
-                          percentage:
-                            e.target.value == ""
-                              ? 0
-                              : parseInt(e.target.value) > 100
-                              ? Math.trunc(100)
-                              : parseFloat(e.target.value),
-                        })
-                      );
-                    }}
-                  />
-                  <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
-                    %
-                  </InputRightAddon>
-                </InputGroup>
-              </Flex>
-
               <Flex
                 className="w-full justify-between"
                 justifyContent={"space-between"}
