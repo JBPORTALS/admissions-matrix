@@ -529,10 +529,7 @@ export default function AddCouncelAddmissionModel({
                   )
                 )
                   return null;
-                else if (
-                  (field.name == "percentage" || field.name == "pcm") &&
-                  state.course !== "ENGINEERING"
-                )
+                else if (field.name == "pcm" && state.course !== "ENGINEERING")
                   return null;
                 return (
                   <FormControl
