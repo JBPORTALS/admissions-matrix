@@ -1,5 +1,9 @@
 "use client";
-import { UnAprrovedColumns } from "@/components/mock-data/admission-meta";
+import { useSupabase } from "@/app/supabase-provider";
+import {
+  UnAprrovedColumns,
+  UnAprrovedColumnsForKSPU,
+} from "@/components/mock-data/admission-meta";
 import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
@@ -16,6 +20,7 @@ import { AiOutlineCloudDownload } from "react-icons/ai";
 export default function UnApproved() {
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
+  const user = useSupabase();
   const acadyear = useAppSelector(
     (state) => state.admissions.acadYear
   ) as string;
@@ -120,7 +125,11 @@ export default function UnApproved() {
               animateRows={true}
               className="w-full h-full pb-20 ag-theme-material"
               rowData={data as any}
-              columnDefs={UnAprrovedColumns as any}
+              columnDefs={
+                user.user?.college === "KSPU"
+                  ? (UnAprrovedColumnsForKSPU as any)
+                  : (UnAprrovedColumns as any)
+              }
             />
           ) : ubranch && ucollege && data.length == 0 ? (
             <Center h={"80%"}>
