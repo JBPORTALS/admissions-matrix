@@ -339,6 +339,81 @@ export const UnAprrovedColumns = [
   },
 ];
 
+export const UnAprrovedColumnsForKSPU = [
+  {
+    field: "slno",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "110px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "admission_id",
+    headerName: "App No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width: "130px",
+    cellStyle: {
+      display: "flex",
+      "align-items": "center",
+      "justify-content": "center",
+    },
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    filter: true,
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "father_name",
+    headerName: "Father Name",
+    width: "180px",
+  },
+  {
+    field: "phone_no",
+    headerName: "Phone No.",
+    width: "130px",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: "180px",
+    resizable: true,
+  },
+  {
+    field: "enquiry_date",
+    headerName: "Enquiry Date",
+    filter: true,
+    width: "180px",
+  },
+  {
+    field: "remarks",
+    headerName: "Remarks",
+    filter: true,
+    width: "180px",
+  },
+  {
+    field: "",
+    headerName: "Approve",
+    width: "120px",
+    cellRenderer: CustomUnApproveViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
 export const SearchColumns = [
   {
     field: "",
