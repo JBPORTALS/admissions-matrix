@@ -339,7 +339,7 @@ export const UnAprrovedColumns = [
   },
 ];
 
-export const UnAprrovedColumnsForKSPU = [
+export const UnAprrovedColumnsWithRemarks = [
   {
     field: "slno",
     headerName: "Sl No.",
