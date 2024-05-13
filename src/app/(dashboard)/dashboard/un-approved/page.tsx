@@ -2,7 +2,7 @@
 import { useSupabase } from "@/app/supabase-provider";
 import {
   UnAprrovedColumns,
-  UnAprrovedColumnsForKSPU,
+  UnAprrovedColumnsWithRemarks,
 } from "@/components/mock-data/admission-meta";
 import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
@@ -126,8 +126,8 @@ export default function UnApproved() {
               className="w-full h-full pb-20 ag-theme-material"
               rowData={data as any}
               columnDefs={
-                user.user?.college === "KSPU"
-                  ? (UnAprrovedColumnsForKSPU as any)
+                user.user?.college === "KSPT"
+                  ? (UnAprrovedColumnsWithRemarks as any)
                   : (UnAprrovedColumns as any)
               }
             />
