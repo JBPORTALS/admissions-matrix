@@ -1,4 +1,5 @@
 "use client";
+import { useSupabase } from "@/app/supabase-provider";
 import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppSelector } from "@/store";
@@ -9,6 +10,7 @@ import {
   Center,
   HStack,
   Heading,
+  Spinner,
   Stat,
   StatGroup,
   StatHelpText,
@@ -23,33 +25,42 @@ import { useState } from "react";
 import { AiOutlineFilePdf } from "react-icons/ai";
 
 export default function UnApproved() {
-  const [ucollege, setCollege] = useState<string | undefined>("");
-  const acadYear = useAppSelector((state) => state.admissions.acadYear);
-  const { data: sdata } = trpc.seatMatrix.useQuery(
-    { college: ucollege ?? "", acadYear },
-    { enabled: !!ucollege }
+  const user = useSupabase();
+  const [ucollege, setCollege] = useState<string | undefined>(
+    user.user?.college !== "MANAGEMENT" ? user.user?.college : ""
   );
-  const sError = useAppSelector((state) => state.admissions.seat_matrix.error);
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const {
+    data: sdata,
+    isLoading,
+    isError,
+    error,
+  } = trpc.seatMatrix.useQuery(
+    { college: ucollege ?? "", acadYear },
+    { enabled: !!ucollege || !!user.user }
+  );
 
   return (
-    <div className="h-full">
+    <div className="h-[90%] pb-5">
       <HStack
         justifyContent={"space-between"}
         className="w-full flex border-b py-2 space-x-3 px-5"
       >
         <HStack>
-          <ISelect
-            placeHolder="Select College"
-            value={ucollege}
-            onChange={(value) => setCollege(value)}
-            options={[
-              { value: "KSIT", option: "KSIT" },
-              { value: "KSPT", option: "KSPT" },
-              { value: "KSPU", option: "KSPU" },
-              { value: "KSSA", option: "KSSA" },
-              { value: "KSSEM", option: "KSSEM" },
-            ]}
-          />
+          {user.user?.college === "MANAGEMENT" && (
+            <ISelect
+              placeHolder="Select College"
+              value={ucollege}
+              onChange={(value) => setCollege(value)}
+              options={[
+                { value: "KSIT", option: "KSIT" },
+                { value: "KSPT", option: "KSPT" },
+                { value: "KSPU", option: "KSPU" },
+                { value: "KSSA", option: "KSSA" },
+                { value: "KSSEM", option: "KSSEM" },
+              ]}
+            />
+          )}
         </HStack>
         {ucollege && (
           <Heading size={"lg"} color={"gray.700"} fontWeight={"semibold"}>
@@ -76,17 +87,15 @@ export default function UnApproved() {
           )}
         </Box>
       </HStack>
+
       <VStack className="w-full h-full" spacing={0}>
-        {!ucollege ? <InfoCard message="Select College" /> : null}
         <VStack
           spacing={0}
           px={"10"}
-          className={
-            "justify-start h-fit items-start flex w-full overflow-scroll"
-          }
+          className={"justify-start items-start flex w-full overflow-y-scroll"}
         >
           {/* displaying admin childrens */}
-          {ucollege && sdata && sdata.length > 0 ? (
+          {ucollege && user.user?.college && sdata && (
             <ol className="relative border-l py-10 pb-16 border-gray-200 h-fit w-full">
               {sdata.map((history: any, index) => {
                 return (
@@ -179,12 +188,18 @@ export default function UnApproved() {
                 );
               })}
             </ol>
-          ) : ucollege && sdata && sdata.length == 0 ? (
-            <Center h={"80%"}>
-              <Heading size={"lg"}>{sError}</Heading>
-            </Center>
-          ) : null}
+          )}
         </VStack>
+        {isError && (
+          <Center h={"80%"}>
+            <Heading size={"lg"}>{error.message}</Heading>
+          </Center>
+        )}
+        {isLoading && (
+          <Center h={"80%"}>
+            <Spinner size={"xl"} />
+          </Center>
+        )}
       </VStack>
     </div>
   );
