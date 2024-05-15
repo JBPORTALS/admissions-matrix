@@ -167,7 +167,7 @@ export default function CheckStudentDetails({ children }: props) {
                 name="student_no"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{"Studnet Phone Number (optional)"}</FormLabel>
+                    <FormLabel>{"Student Phone Number (optional)"}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
