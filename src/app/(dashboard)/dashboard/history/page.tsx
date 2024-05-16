@@ -28,8 +28,8 @@ export default function UnApproved() {
   const user = useSupabase();
   const [ucollege, setCollege] = useState<string | undefined>(
     ["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "")
-      ? user.user?.college
-      : ""
+      ? ""
+      : user.user?.college
   );
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const {
