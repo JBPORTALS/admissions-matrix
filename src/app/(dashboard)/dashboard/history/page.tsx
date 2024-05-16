@@ -27,7 +27,9 @@ import { AiOutlineFilePdf } from "react-icons/ai";
 export default function UnApproved() {
   const user = useSupabase();
   const [ucollege, setCollege] = useState<string | undefined>(
-    user.user?.college !== "MANAGEMENT" ? user.user?.college : ""
+    ["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "")
+      ? user.user?.college
+      : ""
   );
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const {
@@ -37,7 +39,10 @@ export default function UnApproved() {
     error,
   } = trpc.seatMatrix.useQuery(
     { college: ucollege ?? "", acadYear },
-    { enabled: !!ucollege || !!user.user }
+    {
+      enabled:
+        !!ucollege || ["MANAGEMENT", "KSPT"].includes(user.user?.college ?? ""),
+    }
   );
 
   return (
@@ -47,7 +52,7 @@ export default function UnApproved() {
         className="w-full flex border-b py-2 space-x-3 px-5"
       >
         <HStack>
-          {user.user?.college === "MANAGEMENT" && (
+          {["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "") && (
             <ISelect
               placeHolder="Select College"
               value={ucollege}
