@@ -11,6 +11,10 @@ import {
   updateToApprove,
 } from "@/store/admissions.slice";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Center,
@@ -1007,6 +1011,18 @@ export default function ViewUnApprovedAdmModal({
             w={"full"}
             className={"border-t border-t-lightgray backdrop-blur-md"}
           >
+            {parseInt(selectedAdmissionDetails[0]?.total) < 0 && (
+              <Alert status="warning">
+                <AlertIcon />
+                <Box>
+                  <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
+                  <AlertDescription fontSize={"smaller"}>
+                    Remaining Amount is less than zero. You still may continue
+                    to save the changes.
+                  </AlertDescription>
+                </Box>
+              </Alert>
+            )}
             <HStack w={"full"}>
               <Button
                 as={Link}

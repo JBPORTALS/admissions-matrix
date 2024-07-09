@@ -11,6 +11,10 @@ import {
   updateSelectedMatrix,
 } from "@/store/admissions.slice";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Flex,
@@ -1013,6 +1017,18 @@ export default function ViewAdmissionDetailsModal({
               </VStack>
             </IModal>
             <VStack w={"full"}>
+              {parseInt(selectedAdmissionDetails[0]?.remaining_amount) < 0 && (
+                <Alert status="warning">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
+                    <AlertDescription fontSize={"smaller"}>
+                      Remaining Amount is less than zero. You still may continue
+                      to save the changes.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              )}
               <Menu
                 isOpen={isMenuOpen}
                 placement="top"
