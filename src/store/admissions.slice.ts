@@ -507,10 +507,15 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("reg_no", selected_Matrix[0]?.reg_no);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
+      formData.append("rank", selected_Matrix[0].rank);
+      formData.append("exam", selected_Matrix[0].exam);
       formData.append("college", selected_Matrix[0].college);
       formData.append("branch", selected_Matrix[0].branch);
       formData.append("fname", selected_Matrix[0].father_name);
+      formData.append("mname", selected_Matrix[0].mother_name);
       formData.append("phone", selected_Matrix[0].phone_no);
+      formData.append("mphone", selected_Matrix[0].mother_no);
+      formData.append("fphone", selected_Matrix[0].father_no);
       formData.append("email", selected_Matrix[0].email);
       formData.append("fee_quoted", selected_Matrix[0].fee_quoted);
       formData.append("quoted_by", name);
@@ -583,6 +588,11 @@ export const updateToApprove = createAsyncThunk<
       formData.append("college", selected_data.college);
       formData.append("branch", selected_data.branch);
       formData.append("fname", selected_data.father_name);
+      formData.append("mname", selected_data.mother_name);
+      formData.append("mphone", selected_data.mother_no);
+      formData.append("fphone", selected_data.father_no);
+      formData.append("rank", selected_data.rank);
+      formData.append("exam", selected_data.exam);
       formData.append("phone", selected_data.phone_no);
       formData.append("email", selected_data.email);
       formData.append("fee_fixed", payload.fee_fixed);
