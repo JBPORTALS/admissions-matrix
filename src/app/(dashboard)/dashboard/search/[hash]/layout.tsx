@@ -2,7 +2,7 @@
 import { HStack, Heading, Tag, VStack } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
