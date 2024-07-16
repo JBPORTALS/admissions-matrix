@@ -437,6 +437,9 @@ export const updateMatrix = createAsyncThunk<
       formData.append("branch", selected_Matrix[0].branch);
       formData.append("fname", selected_Matrix[0].father_name);
       formData.append("phone", selected_Matrix[0].phone_no);
+      formData.append("fphone", selected_Matrix[0].father_no);
+      formData.append("mname", selected_Matrix[0].mother_name);
+      formData.append("mphone", selected_Matrix[0].mother_no);
       formData.append("email", selected_Matrix[0].email);
       formData.append("fee_fixed", payload.fee_fixed);
       formData.append("fee_quoted", payload.fee_quoted);
