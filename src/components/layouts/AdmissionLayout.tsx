@@ -156,7 +156,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
         <HStack w={"full"} position={"relative"} justifyContent={"end"}>
           <HStack>
-            <Heading size={"md"}>{user?.username}</Heading>
+            <Heading size={"md"}>{user?.fullname}</Heading>
             <IconButton
               onClick={onOpen}
               variant={"unstyled"}
@@ -180,7 +180,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                 <HStack spacing={"3"} py={"2"}>
                   <AiOutlineUser className="text-2xl" />
                   <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.username}
+                    {user?.fullname}
                   </Heading>
                 </HStack>
                 <HStack spacing={"3"} py={"2"}>
@@ -190,19 +190,13 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   </Heading>
                 </HStack>
                 <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineFieldTime className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {moment(user?.last_login_at).format("MMMM Do YYYY, h:mm a")}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
                   <Button
                     leftIcon={<AiOutlineLogout />}
                     onClick={async () => {
                       await supabase
                         .from("profiles")
                         .update({ last_login_at: new Date(Date.now()) })
-                        .eq("id", user?.session?.user.id);
+                        .eq("id", user?.id);
                       await supabase.auth.signOut();
                     }}
                     colorScheme="facebook"

@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Fira_Sans, Inter, Manrope } from "next/font/google";
+import { Manrope } from "next/font/google";
 import { Providers } from "./providers";
 import SupabaseProvider from "./supabase-provider";
 import "ag-grid-community/styles/ag-grid.css";
@@ -21,14 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={"overflow-x-hidden overflow-y-auto h-screen"}
-        style={Fira.style}
-      >
-        <SupabaseProvider>
-          <Providers>{children}</Providers>
-        </SupabaseProvider>
-      </body>
+      <Providers>
+        <body
+          className={"overflow-x-hidden overflow-y-auto h-screen"}
+          style={Fira.style}
+        >
+          <SupabaseProvider>{children}</SupabaseProvider>
+        </body>
+      </Providers>
     </html>
   );
 }

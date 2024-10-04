@@ -14,6 +14,8 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { SC } from "@/utils/supabase";
 import Head from "next/head";
+import { useSignIn } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -21,18 +23,24 @@ export default function Home() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { signIn } = useSignIn();
 
   const onSignin = async () => {
     setIsLoading(true);
-    const { error, data } = await SC().auth.signInWithPassword({
-      email: state.email,
-      password: state.password,
-    });
-    
-    if (error) {
+    try {
+      const data = await signIn({
+        email: state.email,
+        password: state.password,
+      });
+      if (data) {
+        router.refresh();
+      }
+    } catch (e) {
       toast.error("Invalid credentials !");
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -66,7 +74,7 @@ export default function Home() {
             />
           </FormControl>
           <Stack spacing={2}>
-            <Stack
+            {/* <Stack
               direction={{ base: "column", sm: "row" }}
               align={"start"}
               justify={"end"}
@@ -74,7 +82,7 @@ export default function Home() {
               <Link href={"/forgot-password"} color={"blue.400"}>
                 Forgot password?
               </Link>
-            </Stack>
+            </Stack> */}
             <Button
               isLoading={isLoading}
               onClick={onSignin}
