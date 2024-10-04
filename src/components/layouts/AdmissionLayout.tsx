@@ -61,6 +61,7 @@ import Image from "next/image";
 import MIFModal from "../drawers/MIFModal";
 import SideBar from "../ui/SideBar";
 import { FaChevronDown, FaFileDownload } from "react-icons/fa";
+import { useSignIn, useUser } from "@/utils/auth";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -88,7 +89,8 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const pathname = usePathname();
 
-  const { user, supabase } = useSupabase();
+  const user = useUser();
+  const { signOut } = useSignIn();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navRouter = useRouter();
 
@@ -193,11 +195,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                   <Button
                     leftIcon={<AiOutlineLogout />}
                     onClick={async () => {
-                      await supabase
-                        .from("profiles")
-                        .update({ last_login_at: new Date(Date.now()) })
-                        .eq("id", user?.id);
-                      await supabase.auth.signOut();
+                      await signOut();
                     }}
                     colorScheme="facebook"
                     w={"full"}
