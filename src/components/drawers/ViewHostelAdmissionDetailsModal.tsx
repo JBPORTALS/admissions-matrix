@@ -621,7 +621,7 @@ export default function ViewHostelAdmissionDetailsModal({
             <Input
               w={"60%"}
               type={"number"}
-              isReadOnly={!user?.can_edit}
+              isReadOnly={!user?.can_update_total}
               variant={"outline"}
               bg={"white"}
               value={state.fee_fixed}

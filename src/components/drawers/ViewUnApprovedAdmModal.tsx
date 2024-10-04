@@ -269,7 +269,7 @@ export default function ViewUnApprovedAdmModal({
   const onsubmit = async () => {
     await dispatch(
       updateToApprove({
-        username: user?.username!,
+        username: user?.fullname!,
         fee_fixed: state.fee_fixed,
         fee_quoted: state.fee_quoted,
         user_college: user?.college!,
@@ -1074,7 +1074,7 @@ export default function ViewUnApprovedAdmModal({
                 onClick={() =>
                   dispatch(
                     updateEnquiry({
-                      username: user?.username!,
+                      username: user?.fullname!,
                       fee_fixed: state.fee_fixed,
                       fee_quoted: state.fee_quoted,
                       user_college: user?.college!,

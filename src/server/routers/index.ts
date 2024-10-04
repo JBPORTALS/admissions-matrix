@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { SessionData } from "@/utils/session";
 
 interface Matrix {
   allotted_seats: string;
@@ -129,6 +130,73 @@ export const appRouter = router({
       const data = await response.json();
 
       return data as [];
+    }),
+  signIn: procedure
+    .input(
+      z.object({
+        email: z.string().min(1, "Email required"),
+        password: z.string().min(1, "Password required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("email", input.email);
+      formData.append("password", input.password);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_FEE_URL + "usersignin.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok)
+        throw new TRPCError({
+          message: "Invalid credentials",
+          code: "BAD_REQUEST",
+        });
+
+      const user = (await response.json()) as SessionData;
+
+      return user;
+    }),
+  getUser: procedure
+    .input(z.string().min(1, "ID required"))
+    .query(async ({ input }) => {
+      try {
+        // Prepare form data
+        const formData = new FormData();
+        formData.append("id", input);
+
+        // Fetch user details
+        const userResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_FEE_URL}usergetdetails.php`,
+          {
+            method: "POST", // Changed to POST as you're sending form data
+            body: formData,
+          }
+        );
+
+        if (!userResponse.ok) {
+          throw new Error(
+            `User details fetch failed: ${userResponse.statusText}`
+          );
+        }
+
+        const userData = await userResponse.json();
+
+        if (!userData) {
+          throw new Error("Invalid user data");
+        }
+
+        return userData as SessionData;
+      } catch (error) {
+        console.error("Error in getUser procedure:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch user data",
+        });
+      }
     }),
 });
 
