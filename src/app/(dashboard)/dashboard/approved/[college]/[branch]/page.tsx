@@ -15,7 +15,7 @@ import { columns } from "@/components/mock-data/admission-meta";
 export default function Home() {
   const router = useParams();
   const { data } = trpc.searchClass.useQuery({
-    acadyear: "2024",
+    acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
     branch: router.branch as string,
     college: router.college as string,
   });

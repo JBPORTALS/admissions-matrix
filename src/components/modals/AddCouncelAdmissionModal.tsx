@@ -446,7 +446,7 @@ export default function AddCouncelAddmissionModel({
     setIsLoading(true);
     try {
       const fd = new FormData();
-      fd.append("acadyear", "2024");
+      fd.append("acadyear", process.env.NEXT_PUBLIC_ACADYEAR!);
       fd.append("course", state.course as string);
       fd.append("reg_no", state.regno as string);
       fd.append("name", state.name as string);
