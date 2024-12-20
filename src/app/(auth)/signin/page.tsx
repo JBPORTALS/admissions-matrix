@@ -8,14 +8,14 @@ import {
   Button,
   Heading,
   Text,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
-import { Link } from "@chakra-ui/next-js";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { SC } from "@/utils/supabase";
-import Head from "next/head";
 import { useSignIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -23,6 +23,8 @@ export default function Home() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
   const router = useRouter();
   const { signIn } = useSignIn();
 
@@ -65,13 +67,21 @@ export default function Home() {
           </FormControl>
           <FormControl id="password">
             <FormLabel>Password</FormLabel>
-            <Input
-              value={state.password}
-              onChange={(e) =>
-                setState((prev) => ({ ...prev, password: e.target.value }))
-              }
-              type="password"
-            />
+            <InputGroup>
+              <Input
+                value={state.password}
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, password: e.target.value }))
+                }
+                type={show ? "text" : "password"}
+                pr="4.5rem"
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={handleClick}>
+                  {show ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
           </FormControl>
           <Stack spacing={2}>
             {/* <Stack
