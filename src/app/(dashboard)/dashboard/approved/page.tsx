@@ -19,7 +19,7 @@ import { useSupabase } from "@/app/supabase-provider";
 export default function Home() {
   const { user } = useSupabase();
   const { isLoading, data } = trpc.getOverallMatrix.useQuery({
-    acadyear: "2024",
+    acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
     college: user?.college ?? "",
   });
 
