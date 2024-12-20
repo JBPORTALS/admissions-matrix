@@ -142,6 +142,8 @@ export const appRouter = router({
       const formData = new FormData();
       formData.append("email", input.email);
       formData.append("password", input.password);
+
+      console.log("data", input);
       const response = await fetch(
         process.env.NEXT_PUBLIC_FEE_URL + "usersignin.php",
         {
@@ -149,6 +151,8 @@ export const appRouter = router({
           body: formData,
         }
       );
+
+      console.log(response.status);
 
       if (!response.ok)
         throw new TRPCError({
