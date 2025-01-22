@@ -60,7 +60,7 @@ export default function UnApproved() {
             placeHolder="Select College"
             value={ucollege}
             onChange={(value) => setCollege(value)}
-            options={COLLEGES}
+            options={COLLEGES()}
           />
           {ucollege ? (
             <ISelect
