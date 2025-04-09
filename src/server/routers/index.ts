@@ -39,8 +39,8 @@ export const appRouter = router({
           body: formData,
         }
       );
-      // console.log(response);
       const data = await response.json();
+      console.log(data);
       return data as Matrix[];
     }),
   retreiveBranchMatrix: procedure

@@ -9,7 +9,4 @@ export const COLLEGES = () => {
     { value: "KSSEM", option: "KSSEM" },
   ];
 };
-export const ACADYEARS = [
-  { value: "2024", option: "2024-25" },
-  { value: "2023", option: "2023-24" },
-];
+export const ACADYEARS = [{ value: "2025", option: "2025-26" }];
