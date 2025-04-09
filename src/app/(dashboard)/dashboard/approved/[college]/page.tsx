@@ -64,7 +64,7 @@ export default function Home() {
             </Th>
 
             {router.college === "KSIT" ||
-            router.college === "KSSA" ||
+            router.college === "KSDC" ||
             router.college === "KSSEM" ? (
               <>
                 <Th>
@@ -131,7 +131,7 @@ export default function Home() {
                   </Td>
 
                   {router.college === "KSIT" ||
-                  router.college === "KSSA" ||
+                  router.college === "KSDC" ||
                   router.college === "KSSEM" ? (
                     <>
                       <Td>

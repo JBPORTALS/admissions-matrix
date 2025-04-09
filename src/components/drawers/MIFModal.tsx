@@ -164,7 +164,7 @@ const FormikContextProvider = () => {
     if (
       values.college === "KSIT" ||
       values.college === "KSSEM" ||
-      values.college === "KSSA"
+      values.college === "KSDC"
     )
       return <>{children}</>;
   };
@@ -283,7 +283,7 @@ const FormikContextProvider = () => {
               </HStack>
               {values.college === "KSIT" ||
               values.college === "KSSEM" ||
-              values.college === "KSSA" ? (
+              values.college === "KSDC" ? (
                 <>
                   <HStack w={"full"} justifyContent={"space-between"}>
                     <b>Total Seats</b>

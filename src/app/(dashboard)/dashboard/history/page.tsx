@@ -61,7 +61,7 @@ export default function UnApproved() {
                 { value: "KSIT", option: "KSIT" },
                 { value: "KSPT", option: "KSPT" },
                 { value: "KSPU", option: "KSPU" },
-                { value: "KSSA", option: "KSSA" },
+                { value: "KSDC", option: "KSDC" },
                 { value: "KSSEM", option: "KSSEM" },
               ]}
             />

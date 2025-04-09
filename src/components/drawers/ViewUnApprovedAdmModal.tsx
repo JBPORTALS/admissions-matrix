@@ -522,7 +522,7 @@ export default function ViewUnApprovedAdmModal({
               <option value={"KSIT"}>KSIT</option>
               <option value={"KSPT"}>KSPT</option>
               <option value={"KSPU"}>KSPU</option>
-              <option value={"KSSA"}>KSSA</option>
+              <option value={"KSDC"}>KSDC</option>
               <option value={"KSSEM"}>KSSEM</option>
             </Select>
           </Flex>
