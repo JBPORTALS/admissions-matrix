@@ -236,8 +236,8 @@ export default function AddCouncelAddmissionModel({
           value: "MTECH",
         },
         {
-          option: "ARCHITECTURE",
-          value: "ARCHITECTURE",
+          option: "DEGREE",
+          value: "DEGREE",
         },
         {
           option: "ENGINEERING",
@@ -524,7 +524,7 @@ export default function AddCouncelAddmissionModel({
               {formData.map((field: FormDataProps, index) => {
                 if (
                   (field.name == "exam" || field.name == "rank") &&
-                  !["ENGINEERING", "MBA", "ARCHITECTURE"].includes(
+                  !["ENGINEERING", "MBA", "DEGREE"].includes(
                     state.course as string
                   )
                 )
