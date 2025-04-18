@@ -23,7 +23,7 @@ export function useUser() {
     }
 
     setUserId(sessionData.id);
-  }, [user.data?.id]);
+  }, []);
 
   React.useEffect(() => {
     setUser();
@@ -77,7 +77,7 @@ export function useSignIn() {
 
   React.useEffect(() => {
     setUser();
-  }, []);
+  }, [user.data?.id]);
 
   return {
     isLoggedIn: !!user.data,

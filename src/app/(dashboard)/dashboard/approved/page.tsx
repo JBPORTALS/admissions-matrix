@@ -18,10 +18,13 @@ import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
   const { user } = useSupabase();
-  const { isLoading, data } = trpc.getOverallMatrix.useQuery({
-    acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
-    college: user?.college ?? "",
-  });
+  const { isLoading, data } = trpc.getOverallMatrix.useQuery(
+    {
+      acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
+      college: user?.college ?? "",
+    },
+    { enabled: !!user?.college, queryHash: user?.college }
+  );
 
   if (isLoading)
     return (
