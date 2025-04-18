@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     response,
     sessionOptions
   );
-  console.log("\n\n\nSession data of GET request", session, "\n\n\n");
+
   if (!session.id) {
     return NextResponse.json({ isLoggedIn: false }, { status: 401 });
   }

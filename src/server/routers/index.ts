@@ -196,10 +196,6 @@ export const appRouter = router({
         return userData as SessionData;
       } catch (error) {
         console.error("Error in getUser procedure:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch user data",
-        });
       }
     }),
 });

@@ -1,7 +1,6 @@
 import React from "react";
 import { trpc } from "./trpc-cleint";
 import { useRouter } from "next/navigation";
-import { withTRPC } from "@trpc/next";
 
 export function useUser() {
   const [userId, setUserId] = React.useState(undefined);
@@ -24,11 +23,11 @@ export function useUser() {
     }
 
     setUserId(sessionData.id);
-  }, []);
+  }, [user.data?.id]);
 
   React.useEffect(() => {
     setUser();
-  }, []);
+  }, [user.data?.id]);
 
   return user.data ?? null;
 }

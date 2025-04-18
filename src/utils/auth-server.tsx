@@ -13,7 +13,7 @@ export async function auth() {
   if (!session.id) return { isLoggedIn: false, user: null };
   const user = await api.getUser(session.id ?? "");
   return {
-    isLoggedIn: !!user.id,
+    isLoggedIn: !!user?.id,
     user,
   };
 }

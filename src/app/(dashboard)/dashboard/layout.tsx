@@ -1,4 +1,3 @@
-"use client";
 import AdmissionLayout from "@/components/layouts/AdmissionLayout";
 
 export default function DashboardMainLayout(props: {
