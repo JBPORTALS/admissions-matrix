@@ -156,6 +156,23 @@ export default function AddCouncelAddmissionModel({
       max: 10,
     },
     {
+      name: "aadhar",
+      label: "Aadhar Number",
+      type: "number",
+      max: 12,
+    },
+    {
+      name: "pan",
+      label: "PAN Number",
+      type: "text",
+      max: 10,
+    },
+    {
+      name: "address",
+      label: "Address",
+      type: "text",
+    },
+    {
       name: "source",
       label: "Referral Source",
       type: "select",
@@ -440,6 +457,11 @@ export default function AddCouncelAddmissionModel({
       label: "Counselled By",
       type: "text",
     },
+    {
+      name: "recommended_by",
+      label: "Recommended By",
+      type: "text",
+    },
   ];
 
   const onSubmit = async () => {
@@ -450,6 +472,14 @@ export default function AddCouncelAddmissionModel({
       fd.append("course", state.course as string);
       fd.append("reg_no", state.regno as string);
       fd.append("name", state.name as string);
+      /*****************************************************/
+
+      fd.append("aadhar", state.aadhar as string);
+      fd.append("pan", state.pan as string);
+      fd.append("address", state.address as string);
+      fd.append("recommended_by", state.recommended_by as string);
+
+      /*****************************************************/
       fd.append("gender", state.gender as string);
       fd.append("fname", state.fname as string);
       fd.append("father_no", state.fmobile as string);
@@ -592,11 +622,15 @@ export default function AddCouncelAddmissionModel({
                             field.onChange(e.target.value);
                             return;
                           }
+
                           if (field.max && field.type == "number") {
                             if (e.target.value.length <= field.max) {
                               const value = Math.max(
                                 0,
-                                Math.min(9999999999, Number(e.target.value))
+                                Math.min(
+                                  99999999999999999,
+                                  Number(e.target.value)
+                                )
                               );
                               setState((prev) => ({
                                 ...prev,
