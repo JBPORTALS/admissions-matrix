@@ -446,6 +446,10 @@ export const updateMatrix = createAsyncThunk<
       formData.append("fee_paid", selected_Matrix[0].fee_paid);
       formData.append("paid_date", selected_Matrix[0].paid_date);
       formData.append("remaining", selected_Matrix[0].remaining_amount);
+      formData.append("aadhar_no", selected_Matrix[0].aadhar_no);
+      formData.append("pan_no", selected_Matrix[0].pan_no);
+      formData.append("address", selected_Matrix[0].address);
+      formData.append("recommended_by", selected_Matrix[0].recommended_by);
       formData.append("due_date", selected_Matrix[0].due_date);
       formData.append("approved_by", selected_Matrix[0].approved_by);
       formData.append("referred_by", selected_Matrix[0].referred_by);
@@ -529,6 +533,10 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("remaining", selected_Matrix[0].remaining_amount);
       formData.append("due_date", selected_Matrix[0].due_date);
       formData.append("approved_by", selected_Matrix[0].approved_by);
+      formData.append("aadhar_no", selected_Matrix[0].aadhar_no);
+      formData.append("pan_no", selected_Matrix[0].pan_no);
+      formData.append("address", selected_Matrix[0].address);
+      formData.append("recommended_by", selected_Matrix[0].recommended_by);
       formData.append(
         "counselled_quoted_by",
         selected_Matrix[0].counselled_quoted_by
@@ -617,6 +625,10 @@ export const updateToApprove = createAsyncThunk<
       formData.append("hostel", selected_data.hostel);
       formData.append("exam", selected_data.exam);
       formData.append("rank", selected_data.rank);
+      formData.append("aadhar_no", selected_data.aadhar_no);
+      formData.append("pan_no", selected_data.pan_no);
+      formData.append("address", selected_data.address);
+      formData.append("recommended_by", selected_data.recommended_by);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "approveenquiry.php",
         method: "POST",
@@ -678,6 +690,10 @@ export interface SelectedMatrix extends BranchAdmission {
   counselled_quoted_by: string;
   pcm: string;
   course: string;
+  aadhar_no: string;
+  pan_no: string;
+  address: string;
+  recommended_by: string;
 }
 
 export interface OverallMatrix {

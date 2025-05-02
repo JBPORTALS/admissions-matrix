@@ -657,6 +657,72 @@ export default function ViewUnApprovedAdmModal({
           >
             <VStack flex={"1"} alignItems={"start"}>
               <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Aadhar Card No.
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.aadhar_no}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ aadhar_no: e.target.value }));
+              }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Pan Card No.
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.pan_no}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ pan_no: e.target.value }));
+              }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Address
+              </Heading>
+            </VStack>
+            <Textarea
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.address}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(updateSelectedMatrix({ address: e.target.value }));
+              }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
                 E-Mail
               </Heading>
             </VStack>
@@ -923,6 +989,30 @@ export default function ViewUnApprovedAdmModal({
               className={"shadow-md shadow-lightBrand"}
               onChange={(e) => {
                 dispatch(updateSelectedMatrix({ referred_by: e.target.value }));
+              }}
+            />
+          </Flex>
+
+          <Flex
+            className="w-full justify-between"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <VStack flex={"1"} alignItems={"start"}>
+              <Heading fontSize={"sm"} fontWeight={"medium"}>
+                Recommended By
+              </Heading>
+            </VStack>
+            <Input
+              w={"60%"}
+              variant={"outline"}
+              bg={"white"}
+              value={selectedAdmissionDetails[0]?.recommended_by}
+              className={"shadow-md shadow-lightBrand"}
+              onChange={(e) => {
+                dispatch(
+                  updateSelectedMatrix({ recommended_by: e.target.value })
+                );
               }}
             />
           </Flex>
