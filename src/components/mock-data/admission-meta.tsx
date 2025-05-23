@@ -1,6 +1,5 @@
-import { Box, IconButton, Progress, Tag, VStack } from "@chakra-ui/react";
+import { IconButton, Tag } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
-import { useRouter } from "next/router";
 import {
   AiOutlineCheckSquare,
   AiOutlineDownload,
@@ -91,23 +90,15 @@ const DownloadProvisional = (data: { value: any }) => {
   );
 };
 
-const PercentageView = (data: { value: any }) => {
-  return (
-    <Box position={"relative"} zIndex={"base"}>
-      <h1>Helo</h1>
-    </Box>
-  );
-};
-
 const StatusView = (data: { value: any }) => {
   return (
     <div className="flex justify-center items-center font-medium text-brand h-full w-full">
       {data.value == "APPROVED" ? (
-        <Tag fontWeight={"medium"} colorScheme="whatsapp" size={"lg"}>
+        <Tag fontWeight={"medium"} colorScheme="whatsapp" size={"md"}>
           Approved
         </Tag>
       ) : (
-        <Tag fontWeight={"medium"} colorScheme="orange" size={"lg"}>
+        <Tag fontWeight={"medium"} colorScheme="orange" size={"md"}>
           Un-Approved
         </Tag>
       )}
@@ -143,7 +134,7 @@ export const columns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "110px",
+    width: "90px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -152,12 +143,12 @@ export const columns = [
   },
   {
     field: "admission_id",
-    headerName: "Application No.",
+    headerName: "App No.",
     filter: true,
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "180px",
+    width: "120px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -168,42 +159,43 @@ export const columns = [
     field: "name",
     headerName: "Name",
     resizable: true,
+    width: "140px",
     suppressMovable: true,
   },
   {
     field: "father_name",
     headerName: "Father Name",
-    width: "180px",
+    width: "160px",
   },
   {
     field: "phone_no",
     headerName: "Phone No.",
-    width: "130px",
+    width: "120px",
   },
   {
     field: "fee_fixed",
     headerName: "Fixed",
-    width: "120px",
+    width: "100px",
   },
   {
     field: "fee_paid",
     headerName: "Paid",
-    width: "120px",
+    width: "100px",
   },
   {
     field: "remaining_amount",
     headerName: "Payable",
-    width: "120px",
+    width: "100px",
   },
   {
     field: "referred_by",
     headerName: "Referred By",
-    width: "170px",
+    width: "150px",
   },
   {
     field: "approved_by",
     headerName: "Approved By",
-    width: "170px",
+    width: "150px",
   },
 ];
 
@@ -215,7 +207,7 @@ export const hostelcolumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "120px",
+    width: "90px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -224,12 +216,12 @@ export const hostelcolumns = [
   },
   {
     field: "admission_id",
-    headerName: "Application No.",
+    headerName: "App No.",
     filter: true,
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "180px",
+    width: "120px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -251,7 +243,7 @@ export const hostelcolumns = [
   {
     field: "phone_no",
     headerName: "Phone No.",
-    width: "130px",
+    width: "120px",
   },
   {
     field: "email",
@@ -278,7 +270,7 @@ export const UnAprrovedColumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "110px",
+    width: "90px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -292,7 +284,7 @@ export const UnAprrovedColumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "130px",
+    width: "120px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -305,33 +297,34 @@ export const UnAprrovedColumns = [
     filter: true,
     resizable: true,
     suppressMovable: true,
+    width: "160px",
   },
   {
     field: "father_name",
     headerName: "Father Name",
-    width: "180px",
+    width: "160px",
   },
   {
     field: "phone_no",
     headerName: "Phone No.",
-    width: "130px",
+    width: "120px",
   },
   {
     field: "email",
     headerName: "Email",
-    width: "180px",
+    width: "160px",
     resizable: true,
   },
   {
     field: "enquiry_date",
     headerName: "Enquiry Date",
     filter: true,
-    width: "180px",
+    width: "160px",
   },
   {
     field: "",
     headerName: "Approve",
-    width: "120px",
+    width: "100px",
     cellRenderer: CustomUnApproveViewButton,
     valueGetter: (params: any) => {
       return params.data;
@@ -347,7 +340,7 @@ export const UnAprrovedColumnsWithRemarks = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "110px",
+    width: "90px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -361,7 +354,7 @@ export const UnAprrovedColumnsWithRemarks = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "130px",
+    width: "120px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -374,39 +367,40 @@ export const UnAprrovedColumnsWithRemarks = [
     filter: true,
     resizable: true,
     suppressMovable: true,
+    width: "160px",
   },
   {
     field: "father_name",
     headerName: "Father Name",
-    width: "180px",
+    width: "160px",
   },
   {
     field: "phone_no",
     headerName: "Phone No.",
-    width: "130px",
+    width: "120px",
   },
   {
     field: "email",
     headerName: "Email",
-    width: "180px",
+    width: "160px",
     resizable: true,
   },
   {
     field: "enquiry_date",
     headerName: "Enquiry Date",
     filter: true,
-    width: "180px",
+    width: "160px",
   },
   {
     field: "remarks",
     headerName: "Remarks",
     filter: true,
-    width: "180px",
+    width: "140px",
   },
   {
     field: "",
     headerName: "Approve",
-    width: "120px",
+    width: "100px",
     cellRenderer: CustomUnApproveViewButton,
     valueGetter: (params: any) => {
       return params.data;
@@ -433,7 +427,7 @@ export const SearchColumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "110px",
+    width: "90px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -442,13 +436,13 @@ export const SearchColumns = [
   },
   {
     field: "admission_id",
-    headerName: "Application No.",
+    headerName: "App No.",
     height: "80px",
     filter: true,
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width: "140px",
+    width: "120px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -462,6 +456,7 @@ export const SearchColumns = [
     filter: true,
     resizable: true,
     suppressMovable: true,
+    width: "160px",
     cellStyle: {
       display: "flex",
       "align-items": "center",
@@ -499,7 +494,7 @@ export const SearchColumns = [
   {
     field: "father_name",
     headerName: "Father Name",
-    width: "180px",
+    width: "160px",
     height: "80px",
     cellStyle: {
       display: "flex",
@@ -510,7 +505,7 @@ export const SearchColumns = [
   {
     field: "phone_no",
     headerName: "Phone No.",
-    width: "130px",
+    width: "120px",
     height: "80px",
     cellStyle: {
       display: "flex",
@@ -521,14 +516,9 @@ export const SearchColumns = [
   {
     field: "email",
     headerName: "Email",
-    width: "180px",
+    width: "160px",
     height: "80px",
     resizable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
   },
   {
     field: "status",
@@ -537,143 +527,5 @@ export const SearchColumns = [
     filter: true,
     width: "180px",
     cellRenderer: StatusView,
-  },
-];
-
-const CollegeLink = (data: { value: string }) => {
-  return (
-    <Link href={"/admin/verified/admissions/" + data.value}>
-      <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-        {data.value}
-      </div>
-    </Link>
-  );
-};
-
-const BranchLink = (data: { value: string }) => {
-  const router = useRouter();
-
-  return (
-    <Link href={router.asPath + "/" + data.value}>
-      <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-        {data.value}
-      </div>
-    </Link>
-  );
-};
-
-export const OverallColumn = [
-  {
-    field: "college",
-    headerName: "College",
-    filter: true,
-    pinned: "left",
-    resizable: true,
-    suppressMovable: true,
-    width: "140px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-    cellRenderer: CollegeLink,
-  },
-  {
-    field: "total",
-    headerName: "Total Seats",
-    resizable: true,
-    suppressMovable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "allotted_seats",
-    headerName: "Allotted Seats",
-    width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "remaining_seats",
-    headerName: "Remaining Seats",
-    width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "filled_percentage",
-    headerName: "Filled ( % )",
-    width: "150px",
-    cellRenderer: PercentageView,
-    valueGetter: (params: any) => {
-      return params.data;
-    },
-  },
-];
-
-export const CollegeMatrixCol = [
-  {
-    field: "branch",
-    headerName: "Branch",
-    filter: true,
-    pinned: "left",
-    resizable: true,
-    suppressMovable: true,
-    width: "140px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-    cellRenderer: BranchLink,
-  },
-  {
-    field: "total",
-    headerName: "Total Seats",
-    resizable: true,
-    suppressMovable: true,
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "allotted_seats",
-    headerName: "Allotted Seats",
-    width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "remaining_seats",
-    headerName: "Remaining Seats",
-    width: "180px",
-    cellStyle: {
-      display: "flex",
-      "align-items": "center",
-      "justify-content": "center",
-    },
-  },
-  {
-    field: "filled_percentage",
-    headerName: "Filled ( % )",
-    width: "150px",
-    cellRenderer: PercentageView,
-    valueGetter: (params: any) => {
-      return params.data;
-    },
   },
 ];
