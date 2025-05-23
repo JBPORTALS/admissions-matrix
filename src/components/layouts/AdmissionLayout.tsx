@@ -625,7 +625,7 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                                 <AiFillFilePdf className="text-lg text-rose-700" />
                               }
                             >
-                              .Pdf format fith <b>Fee</b> details
+                              .Pdf format with <b>Fee</b> details
                             </MenuItem>
                           </MenuList>
                         </Menu>
