@@ -4,19 +4,19 @@ import {
   Skeleton,
   Stack,
   Table,
-  Tbody,
-  Td,
-  Th,
-  Tr,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
-import { Link } from "@chakra-ui/next-js";
+import "ag-grid-community/styles/ag-TableHeadereme-material.css";
 import { useParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
+import Link from "next/link";
 
 export default function Home() {
   const router = useParams();
@@ -29,7 +29,7 @@ export default function Home() {
 
   if (isLoading)
     return (
-      <VStack spacing={1} h={"full"} w={"full"}>
+      <VStack gap={1} h={"full"} w={"full"}>
         <Skeleton w={"full"} h={"14"}></Skeleton>
         {new Array(8).fill(0).map((_, index) => {
           return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
@@ -46,8 +46,8 @@ export default function Home() {
         colorScheme="facebook"
         size={"md"}
       >
-        <Tbody>
-          <Tr
+        <TableBody>
+          <TableRow
             position={"sticky"}
             top={"0"}
             zIndex={"banner"}
@@ -57,66 +57,66 @@ export default function Home() {
             shadow={"sm"}
             className="backdrop-blur-sm bg-[rgba(255,255,255,0.6)] border-b-2"
           >
-            <Th>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Branch
               </div>
-            </Th>
+            </TableHeader>
 
             {router.college === "KSIT" ||
             router.college === "KSDC" ||
             router.college === "KSSEM" ? (
               <>
-                <Th>
+                <TableHeader>
                   <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                     Total Seats
                   </div>
-                </Th>
-                <Th>
+                </TableHeader>
+                <TableHeader>
                   <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                     CET & SNQ
                   </div>
-                </Th>
-                <Th>
+                </TableHeader>
+                <TableHeader>
                   <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                     COMEDK
                   </div>
-                </Th>
+                </TableHeader>
               </>
             ) : null}
-            <Th>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Management
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Allotted
               </div>
-            </Th>
+            </TableHeader>
 
-            <Th>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Remaining
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Filled Percentage
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Total Enquiries
               </div>
-            </Th>
-          </Tr>
+            </TableHeader>
+          </TableRow>
           {data &&
             data.length > 0 &&
             data?.map((value, index) => {
               return (
-                <Tr key={index}>
-                  <Td>
+                <TableRow key={index}>
+                  <TableCell>
                     <Link
                       href={
                         "/dashboard/approved/" +
@@ -128,55 +128,55 @@ export default function Home() {
                         {value.branch}
                       </div>
                     </Link>
-                  </Td>
+                  </TableCell>
 
                   {router.college === "KSIT" ||
                   router.college === "KSDC" ||
                   router.college === "KSSEM" ? (
                     <>
-                      <Td>
+                      <TableCell>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                           {value.total}
                         </div>
-                      </Td>
-                      <Td>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                           {value.cet}
                         </div>
-                      </Td>
-                      <Td>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                           {value.comedk}
                         </div>
-                      </Td>
+                      </TableCell>
                     </>
                   ) : null}
-                  <Td>
+                  <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.management}
                     </div>
-                  </Td>
-                  <Td>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.allotted_seats}
                     </div>
-                  </Td>
+                  </TableCell>
 
-                  <Td className="flex justify-center">
+                  <TableCell className="flex justify-center">
                     <span className="relative flex items-center justify-center h-10 w-10">
                       <span className="animate-ping absolute inline-flex h-[72%] w-[72%] rounded-full bg-sky-400 opacity-75"></span>
                       <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-sky-600">
                         {value.remaining_seats}
                       </span>
                     </span>
-                  </Td>
-                  <Td position={"relative"} zIndex={"base"}>
+                  </TableCell>
+                  <TableCell position={"relative"} zIndex={"base"}>
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">
                       {value.filled_percentage} %
                     </h3>
                     <Progress
                       w={"full"}
-                      hasStripe
+                      hasSTableRowipe
                       value={value.filled_percentage}
                       rounded={"full"}
                       isAnimated
@@ -184,16 +184,16 @@ export default function Home() {
                       size="sm"
                       colorScheme="blue"
                     />
-                  </Td>
-                  <Td>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.total_enquiries}
                     </div>
-                  </Td>
-                </Tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-        </Tbody>
+        </TableBody>
       </Table>
     </Stack>
   );

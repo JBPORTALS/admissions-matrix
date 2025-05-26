@@ -13,7 +13,6 @@ import {
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Box,
   Button,
@@ -25,7 +24,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputRightAddon,
   Select,
   Textarea,
   useDisclosure,
@@ -40,8 +38,8 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
-import { Link } from "@chakra-ui/next-js";
 import { trpc } from "@/utils/trpc-cleint";
+import Link from "next/link";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -88,14 +86,14 @@ export default function ViewUnApprovedAdmModal({
   admissionno,
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { open, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
-    isOpen: isDeleteOpen,
+    open: isDeleteOpen,
     onClose: onDeleteClose,
     onOpen: onDeleteOpen,
   } = useDisclosure();
   const {
-    isOpen: isConfirm,
+    open: isConfirm,
     onClose: onConfirmClose,
     onOpen: onConfirmOpen,
   } = useDisclosure();
@@ -121,7 +119,7 @@ export default function ViewUnApprovedAdmModal({
       acadYear,
     },
     {
-      enabled: isOpen && !!selectedAdmissionDetails[0]?.college,
+      enabled: open && !!selectedAdmissionDetails[0]?.college,
     }
   );
   const dispatch = useAppDispatch();
@@ -134,7 +132,7 @@ export default function ViewUnApprovedAdmModal({
   let intialRender = true;
 
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       console.log("triggered");
       setState({
         fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
@@ -143,14 +141,14 @@ export default function ViewUnApprovedAdmModal({
       intialRender = false;
     }
   }, [
-    isOpen,
+    open,
     selectedAdmissionDetails[0]?.fee_fixed,
     selectedAdmissionDetails[0]?.fee_quoted,
   ]);
 
   useEffect(() => {
     if (
-      isOpen &&
+      open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       intialRender
     ) {
@@ -172,13 +170,13 @@ export default function ViewUnApprovedAdmModal({
     selectedAdmissionDetails[0]?.admission_id,
     fee,
     dispatch,
-    isOpen,
+    open,
     intialRender,
   ]);
 
   useEffect(() => {
     if (
-      isOpen &&
+      open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       intialRender
     ) {
@@ -186,7 +184,7 @@ export default function ViewUnApprovedAdmModal({
     }
   }, [
     dispatch,
-    isOpen,
+    open,
     selectedAdmissionDetails[0]?.admission_id,
     selectedAdmissionDetails[0]?.college,
   ]);
@@ -246,7 +244,7 @@ export default function ViewUnApprovedAdmModal({
   };
 
   useEffect(() => {
-    isOpen &&
+    open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       dispatch(
         updateSelectedMatrix({
@@ -263,7 +261,7 @@ export default function ViewUnApprovedAdmModal({
     dispatch, // eslint-disable-line
     selectedAdmissionDetails[0]?.admission_id,
     admissionno,
-    isOpen,
+    open,
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
@@ -288,7 +286,7 @@ export default function ViewUnApprovedAdmModal({
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        isOpen={open}
         heading="Approve Enquiry"
       >
         <IModal
@@ -308,7 +306,7 @@ export default function ViewUnApprovedAdmModal({
             </Heading>
           </Center>
         </IModal>
-        <VStack w={"full"} h={"full"} px={"5"} spacing={"3"} py={"5"}>
+        <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -320,7 +318,7 @@ export default function ViewUnApprovedAdmModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -429,7 +427,11 @@ export default function ViewUnApprovedAdmModal({
                 Overall Percentage / CGPA
               </Heading>
             </VStack>
-            <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+            <InputGroup
+              w={"60%"}
+              endElement={"%"}
+              className={"shadow-md shadow-lightBrand"}
+            >
               <Input
                 variant={"outline"}
                 bg={"white"}
@@ -450,9 +452,6 @@ export default function ViewUnApprovedAdmModal({
                   );
                 }}
               />
-              <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
-                %
-              </InputRightAddon>
             </InputGroup>
           </Flex>
           {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
@@ -467,7 +466,11 @@ export default function ViewUnApprovedAdmModal({
                     PCM Aggregate
                   </Heading>
                 </VStack>
-                <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+                <InputGroup
+                  w={"60%"}
+                  endAddon="%"
+                  className={"shadow-md shadow-lightBrand"}
+                >
                   <Input
                     variant={"outline"}
                     bg={"white"}
@@ -488,9 +491,6 @@ export default function ViewUnApprovedAdmModal({
                       );
                     }}
                   />
-                  <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
-                    %
-                  </InputRightAddon>
                 </InputGroup>
               </Flex>
             </>
@@ -506,7 +506,7 @@ export default function ViewUnApprovedAdmModal({
                 College
               </Heading>
             </VStack>
-            <Select
+            <Select.Root
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -524,7 +524,7 @@ export default function ViewUnApprovedAdmModal({
               <option value={"KSPU"}>KSPU</option>
               <option value={"KSDC"}>KSDC</option>
               <option value={"KSSEM"}>KSSEM</option>
-            </Select>
+            </Select.Root>
           </Flex>
           <Flex
             className="w-full justify-between"
@@ -540,7 +540,7 @@ export default function ViewUnApprovedAdmModal({
               w={"60%"}
               isInvalid={!selectedAdmissionDetails[0]?.branch}
             >
-              <Select
+              <Select.Root.Root
                 w={"full"}
                 variant={"outline"}
                 bg={"white"}
@@ -550,7 +550,7 @@ export default function ViewUnApprovedAdmModal({
                   dispatch(updateSelectedMatrix({ branch: e.target.value }));
                 }}
               >
-                <option value={""}>Select Branch</option>
+                <option value={""}>Select.Root Branch</option>
                 {branch_list &&
                   branch_list.map((branch: any) => {
                     return (
@@ -559,7 +559,7 @@ export default function ViewUnApprovedAdmModal({
                       </option>
                     );
                   })}
-              </Select>
+              </Select.Root.Root>
               {selectedAdmissionDetails[0]?.branch == "" && (
                 <FormErrorMessage>Branch is required !</FormErrorMessage>
               )}
@@ -748,7 +748,7 @@ export default function ViewUnApprovedAdmModal({
                 Exam
               </Heading>
             </VStack>
-            <Select
+            <Select.Root
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -764,7 +764,7 @@ export default function ViewUnApprovedAdmModal({
                   {option.option}
                 </option>
               ))}
-            </Select>
+            </Select.Root>
           </Flex>
 
           <Flex
@@ -801,7 +801,7 @@ export default function ViewUnApprovedAdmModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               type={"number"}
               variant={"outline"}
@@ -925,7 +925,7 @@ export default function ViewUnApprovedAdmModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               type={"number"}
               variant={"outline"}
@@ -1031,7 +1031,7 @@ export default function ViewUnApprovedAdmModal({
               w={"60%"}
               isInvalid={!selectedAdmissionDetails[0]?.hostel}
             >
-              <Select
+              <Select.Root
                 w={"full"}
                 variant={"outline"}
                 bg={"white"}
@@ -1041,9 +1041,14 @@ export default function ViewUnApprovedAdmModal({
                   dispatch(updateSelectedMatrix({ hostel: e.target.value }));
                 }}
               >
-                <option value={"NO"}>NO</option>
-                <option value={"YES"}>YES</option>
-              </Select>
+                <Select.Trigger>
+                  <Select.ValueText />
+                </Select.Trigger>
+                <Select.Content>
+                  <Select.Item value={"NO"}>NO</Select.Item>
+                  <Select.Item value={"YES"}>YES</Select.Item>
+                </Select.Content>
+              </Select.Root>
               {selectedAdmissionDetails[0]?.branch == "" && (
                 <FormErrorMessage>Branch is required !</FormErrorMessage>
               )}
@@ -1102,31 +1107,29 @@ export default function ViewUnApprovedAdmModal({
             className={"border-t border-t-lightgray backdrop-blur-md"}
           >
             {parseInt(selectedAdmissionDetails[0]?.total) < 0 && (
-              <Alert status="warning">
-                <AlertIcon />
+              <Alert.Root status="warning">
+                <Alert.Indicator />
                 <Box>
-                  <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
-                  <AlertDescription fontSize={"smaller"}>
+                  <Alert.Title fontSize={"small"}>Warning !</Alert.Title>
+                  <Alert.Description fontSize={"smaller"}>
                     Remaining Amount is less than zero. You still may continue
                     to save the changes.
-                  </AlertDescription>
+                  </Alert.Description>
                 </Box>
-              </Alert>
+              </Alert.Root>
             )}
             <HStack w={"full"}>
-              <Button
-                as={Link}
-                target={"_blank"}
-                download
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `searchenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
-                }
-                colorScheme={"teal"}
-                w={"full"}
-                leftIcon={<AiOutlineDownload className="text-xl" />}
-              >
-                Download Enquiry
+              <Button colorScheme={"teal"} w={"full"} asChild>
+                <Link
+                  target={"_blank"}
+                  download
+                  href={
+                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                    `searchenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}`
+                  }
+                >
+                  Download Enquiry <AiOutlineDownload className="text-xl" />
+                </Link>
               </Button>
             </HStack>
             <HStack w={"full"}>
@@ -1151,16 +1154,15 @@ export default function ViewUnApprovedAdmModal({
                 </VStack>
               </IModal>
               <Button
-                isLoading={isDeleting}
+                loading={isDeleting}
                 onClick={onDeleteOpen}
-                leftIcon={<AiOutlineDelete />}
                 colorScheme={"red"}
                 w={"full"}
               >
-                Delete
+                Delete <AiOutlineDelete />
               </Button>
               <Button
-                isLoading={isUpdating}
+                loading={isUpdating}
                 onClick={() =>
                   dispatch(
                     updateEnquiry({

@@ -4,17 +4,15 @@ import {
   Skeleton,
   Stack,
   Table,
-  Tbody,
-  Td,
-  Th,
-  Tr,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
   VStack,
 } from "@chakra-ui/react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
-import { Link } from "@chakra-ui/next-js";
 import { trpc } from "@/utils/trpc-cleint";
 import { useSupabase } from "@/app/supabase-provider";
+import Link from "next/link";
 
 export default function Home() {
   const { user } = useSupabase();
@@ -28,7 +26,7 @@ export default function Home() {
 
   if (isLoading)
     return (
-      <VStack spacing={1} h={"full"} w={"full"}>
+      <VStack gap={1} h={"full"} w={"full"}>
         <Skeleton w={"full"} h={"14"}></Skeleton>
         {new Array(8).fill(0).map((_, index) => {
           return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
@@ -43,101 +41,104 @@ export default function Home() {
       justifyContent={"start"}
       overflowY={"scroll"}
     >
-      <Table
+      <Table.Root
         px={"5"}
-        variant={"simple"}
+        variant={"outline"}
         bg={"white"}
         colorScheme="facebook"
         size={"lg"}
       >
-        <Tbody px={"5"}>
-          <Tr>
-            <Th>
+        <TableBody px={"5"}>
+          <TableRow>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 College
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Management Seats
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Allotted Seats
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Total Enquiries
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Remaining Seats
               </div>
-            </Th>
-            <Th>
+            </TableHeader>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Filled Percentage
               </div>
-            </Th>
-          </Tr>
+            </TableHeader>
+          </TableRow>
           {data &&
             data.length > 0 &&
             data?.map((value, index) => {
               return (
-                <Tr key={index}>
-                  <Td>
+                <TableRow key={index}>
+                  <TableCell>
                     <Link href={"/dashboard/approved/" + value.college}>
                       <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                         {value.college}
                       </div>
                     </Link>
-                  </Td>
-                  <Td className="text-center">
+                  </TableCell>
+                  <TableCell className="text-center">
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.total}
                     </div>
-                  </Td>
-                  <Td>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.allotted_seats}
                     </div>
-                  </Td>
-                  <Td>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.total_enquiries}
                     </div>
-                  </Td>
-                  <Td className="flex justify-center">
+                  </TableCell>
+                  <TableCell className="flex justify-center">
                     <span className="relative flex items-center justify-center h-10 w-10">
                       <span className="animate-ping absolute inline-flex h-[72%] w-[72%] rounded-full bg-sky-400 opacity-75"></span>
                       <span className="relative text-md flex items-center p-2 justify-center text-white font-medium rounded-full h-10 w-10 bg-sky-600">
                         {value.remaining_seats}
                       </span>
                     </span>
-                  </Td>
-                  <Td position={"relative"} zIndex={"base"}>
+                  </TableCell>
+                  <TableCell position={"relative"} zIndex={"base"}>
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">
                       {value.filled_percentage} %
                     </h3>
-                    <Progress
-                      w={"full"}
-                      hasStripe
-                      value={value.filled_percentage}
-                      rounded={"full"}
-                      isAnimated
-                      isIndeterminate={value.filled_percentage == undefined}
-                      size="sm"
-                      colorScheme="blue"
-                    />
-                  </Td>
-                </Tr>
+                    <Progress.Root>
+                      <Progress.Track>
+                        <Progress.Range
+                          w={"full"}
+                          value={value.filled_percentage}
+                          rounded={"full"}
+                          isAnimated
+                          isIndeterminate={value.filled_percentage == undefined}
+                          size="sm"
+                          colorScheme="blue"
+                        />
+                      </Progress.Track>
+                    </Progress.Root>
+                  </TableCell>
+                </TableRow>
               );
             })}
-        </Tbody>
-      </Table>
+        </TableBody>
+      </Table.Root>
     </Stack>
   );
 }

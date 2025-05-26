@@ -1,3 +1,4 @@
+import { Button, Text } from "@chakra-ui/react";
 import { cva, VariantProps, cx } from "class-variance-authority";
 import React, { HTMLAttributes } from "react";
 
@@ -23,20 +24,14 @@ interface NavButtonProps
 
 export default function NavButton({
   active,
-  children,
-  icon,
   ...props
-}: NavButtonProps) {
+}: React.ComponentProps<typeof Button> & { active: boolean }) {
   return (
-    <button className={ButtonStyles({ active })} {...props}>
-      <span className={cx([active ? "text-xl text-blue-800" : "text-xl"])}>
-        {icon}
-      </span>
-      <span
-        className={cx([active ? "font-semibold text-blue-800" : "font-normal"])}
-      >
-        {children}
-      </span>
-    </button>
+    <Button
+      justifyContent={"start"}
+      w={"full"}
+      variant={active ? "surface" : "ghost"}
+      {...props}
+    />
   );
 }

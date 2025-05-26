@@ -1,36 +1,22 @@
 "use client";
 import {
-  Avatar,
   Box,
   Button,
-  FormControl,
-  FormLabel,
+  Field,
   Heading,
   HStack,
   IconButton,
   Input,
   InputGroup,
-  InputRightElement,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Select,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Tag,
-  TagLabel,
   Text,
   useDisclosure,
   VStack,
+  Tabs,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Link from "next/link";
@@ -39,7 +25,6 @@ import {
   AiOutlineArrowRight,
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
-  AiOutlineFieldTime,
   AiOutlineFileExcel,
   AiOutlineFilePdf,
   AiOutlineHistory,
@@ -52,16 +37,25 @@ import {
 import { HiBuildingOffice } from "react-icons/hi2";
 import { useAppSelector } from "@/store";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import { BsFilter } from "react-icons/bs";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Image from "next/image";
 import MIFModal from "../drawers/MIFModal";
-import SideBar from "../ui/SideBar";
+import SideBar from "../SideBar";
 import { FaChevronDown, FaFileDownload } from "react-icons/fa";
 import { useSignIn, useUser } from "@/utils/auth";
+import {
+  DialogTrigger,
+  DialogRoot,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogBody,
+} from "../ui/dialog";
+import { Avatar } from "../ui/avatar";
+import { LuCheck } from "react-icons/lu";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -91,11 +85,11 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
 
   const user = useUser();
   const { signOut } = useSignIn();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const navRouter = useRouter();
 
   return (
-    <div className="bg-background z-20 relative overflow-hidden w-full  h-full flex flex-col">
+    <Box h={"100svh"} w={"full"} position={"relative"} display={"contents"}>
       <HStack
         w={"full"}
         position={"sticky"}
@@ -103,13 +97,16 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
         left={"0"}
         px={"5"}
         justifyContent={"space-between"}
-        h={"14"}
-        gap={3}
-        bg={"whiteAlpha.100"}
-        className="border-b border-b-lightgray backdrop-blur-sm"
+        h={"16"}
+        gap={"3"}
+        borderBottomColor={"border"}
+        borderBottomWidth={"thin"}
+        backdropBlur={"sm"}
+        zIndex={"sticky"}
+        background={"Background"}
       >
         <HStack w={"full"}>
-          <div className="relative flex h-8 w-28">
+          {/* <Box h={"8"} w={"28"} position={"relative"}>
             <Image
               quality={100}
               alt={"ismart"}
@@ -118,13 +115,30 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               sizes="24vh"
               fill
             />
-          </div>
-          <Heading size={"sm"} position={"relative"} color={"gray.600"}>
-            | Admission Matrix
+          </Box> */}
+          <Heading size={"lg"} position={"relative"} color={"fg"}>
+            Admission Matrix
           </Heading>
         </HStack>
         <HStack w={"full"}>
-          <InputGroup w={"full"}>
+          <InputGroup
+            endElement={
+              <IconButton
+                onClick={async () => {
+                  navRouter.push(
+                    `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
+                  );
+                }}
+                colorScheme="facebook"
+                size={"md"}
+                variant={"ghost"}
+                aria-label="search"
+              >
+                <AiOutlineSearch className="text-lg" />
+              </IconButton>
+            }
+            w={"full"}
+          >
             <Input
               onChange={(e) => setQuery(e.target.value)}
               value={query}
@@ -139,305 +153,219 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
               }}
               placeholder="Search Admission no./Student Name/Phone No."
             />
-            <InputRightElement>
-              <IconButton
-                onClick={async () => {
-                  navRouter.push(
-                    `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
-                  );
-                }}
-                colorScheme="facebook"
-                size={"md"}
-                variant={"ghost"}
-                aria-label="search"
-                icon={<AiOutlineSearch className="text-lg" />}
-              />
-            </InputRightElement>
           </InputGroup>
         </HStack>
 
         <HStack w={"full"} position={"relative"} justifyContent={"end"}>
           <HStack>
             <Heading size={"md"}>{user?.fullname}</Heading>
-            <IconButton
-              onClick={onOpen}
-              variant={"unstyled"}
-              aria-label="avatar"
-            >
-              <Avatar size={"sm"}></Avatar>
-            </IconButton>
+            <DialogRoot size={"sm"}>
+              <DialogTrigger>
+                <IconButton
+                  onClick={onOpen}
+                  variant={"plain"}
+                  aria-label="avatar"
+                >
+                  <Avatar />
+                </IconButton>
+              </DialogTrigger>
+
+              <DialogContent
+                position={"relative"}
+                zIndex={"toast"}
+                backdropBlur={"2xl"}
+                shadow={"2xl"}
+              >
+                <DialogHeader fontWeight="semibold" fontSize={"lg"}>
+                  <DialogTitle>Profile Info</DialogTitle>
+                </DialogHeader>
+                <DialogBody>
+                  <HStack gap={"3"} py={"2"}>
+                    <AiOutlineUser className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {user?.fullname}
+                    </Heading>
+                  </HStack>
+                  <HStack gap={"3"} py={"2"}>
+                    <AiOutlineMail className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {user?.email}
+                    </Heading>
+                  </HStack>
+                  <HStack gap={"3"} py={"2"}>
+                    <Button
+                      onClick={async () => {
+                        await signOut();
+                      }}
+                      colorScheme="facebook"
+                      w={"full"}
+                    >
+                      <AiOutlineLogout />
+                      SignOut
+                    </Button>
+                  </HStack>
+                </DialogBody>
+              </DialogContent>
+            </DialogRoot>
           </HStack>
-          <Modal isOpen={isOpen} size={"sm"} onClose={onClose}>
-            <ModalOverlay className="backdrop-blur-sm" />
-            <ModalContent
-              position={"relative"}
-              zIndex={"toast"}
-              backdropBlur={"2xl"}
-              shadow={"2xl"}
-            >
-              <ModalHeader fontWeight="semibold" fontSize={"lg"}>
-                Profile Info
-              </ModalHeader>
-              <ModalBody>
-                <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineUser className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.fullname}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineMail className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.email}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
-                  <Button
-                    leftIcon={<AiOutlineLogout />}
-                    onClick={async () => {
-                      await signOut();
-                    }}
-                    colorScheme="facebook"
-                    w={"full"}
-                  >
-                    SignOut
-                  </Button>
-                </HStack>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
         </HStack>
       </HStack>
 
-      <div className="w-full h-full grid grid-cols-7 grid-flow-row">
-        <SideBar />
-        <div className="col-span-6 h-full w-full">
-          <Tabs
-            index={
-              pathname.startsWith("/dashboard/approved")
-                ? 0
-                : pathname.startsWith("/dashboard/un-approved")
-                ? 1
-                : pathname.startsWith("/dashboard/history")
-                ? 2
-                : pathname.startsWith("/dashboard/hostel")
-                ? 3
-                : pathname.startsWith("/dashboard/search")
-                ? 4
-                : -1
-            }
-            size={"sm"}
-            variant={"line"}
-            h={"92vh"}
-            w={"full"}
-            px={"0"}
-          >
-            <TabList className="px-5" justifyContent={"space-between"}>
-              <HStack>
-                <Heading size={"sm"}>
-                  {pathname.startsWith("/dashboard/approved")
-                    ? "Approved Details"
-                    : pathname.startsWith("/dashboard/un-approved")
-                    ? "Un-Approved Details"
-                    : pathname.startsWith("/dashboard/hostel")
-                    ? "Hostel Details"
-                    : pathname.startsWith("/dashboard/history")
-                    ? "Admissions History"
-                    : ""}
-                </Heading>
-              </HStack>
-              <HStack visibility={"hidden"}>
-                <Tab
-                  as={Button}
-                  rounded={"none"}
-                  colorScheme="green"
-                  variant={"ghost"}
-                  size={"lg"}
-                  py={"2"}
-                  _selected={{
-                    color: "green.400",
-                    borderBottom: "2px",
-                    borderBottomColor: "green.400",
-                  }}
-                  leftIcon={<AiOutlineCheckCircle className="text-lg" />}
-                >
-                  Approved
-                </Tab>
-                <Tab
-                  as={Button}
-                  py={"2"}
-                  colorScheme="orange"
-                  variant={"ghost"}
-                  rounded={"none"}
-                  size={"lg"}
-                  _selected={{
-                    color: "orange.400",
-                    borderBottom: "2px",
-                    borderBottomColor: "orange.400",
-                  }}
-                  leftIcon={<AiOutlineClockCircle className="text-lg" />}
-                >
-                  Un-Approved
-                </Tab>
-                <Tab
-                  as={Button}
-                  py={"2"}
-                  colorScheme="purple"
-                  variant={"ghost"}
-                  rounded={"none"}
-                  size={"lg"}
-                  _selected={{
-                    color: "purple.400",
-                    borderBottom: "2px",
-                    borderBottomColor: "purple.400",
-                  }}
-                  leftIcon={<AiOutlineHistory className="text-lg" />}
-                >
-                  History
-                </Tab>
-                <Tab
-                  as={Button}
-                  py={"2"}
-                  colorScheme="purple"
-                  variant={"ghost"}
-                  rounded={"none"}
-                  size={"lg"}
-                  _selected={{
-                    color: "green.400",
-                    borderBottom: "2px",
-                    borderBottomColor: "green.4000",
-                  }}
-                  leftIcon={<HiBuildingOffice className="text-lg" />}
-                >
-                  Hostel
-                </Tab>
-                <Tab hidden>search</Tab>
-              </HStack>
+      <Grid
+        gridAutoFlow={"row"}
+        h={"100svh"}
+        w={"full"}
+        templateColumns="repeat(7, 1fr)"
+      >
+        {/** SideBar contents */}
+        <GridItem>
+          <SideBar />
+        </GridItem>
 
-              <HStack mr={"2"}>
-                <Menu size={"md"}>
-                  <MenuButton
-                    as={Button}
-                    size={"sm"}
-                    leftIcon={<BsFilter className={"text-xl"} />}
-                    colorScheme={"gray"}
-                    variant={"ghost"}
-                  >
+        {/** Main Content */}
+        <GridItem colSpan={6} p={"5"} h={"full"} w={"full"}>
+          <HStack justifyContent={"space-between"}>
+            <Heading size={"2xl"} color={"fg"}>
+              {pathname.startsWith("/dashboard/approved")
+                ? "Approved Details"
+                : pathname.startsWith("/dashboard/un-approved")
+                ? "Un-Approved Details"
+                : pathname.startsWith("/dashboard/hostel")
+                ? "Hostel Details"
+                : pathname.startsWith("/dashboard/history")
+                ? "Admissions History"
+                : ""}
+            </Heading>
+
+            <HStack mr={"2"}>
+              <Menu.Root size={"md"}>
+                <Menu.Trigger asChild>
+                  <Button>
+                    <BsFilter className={"text-xl"} />
                     Filters
-                  </MenuButton>
-                  <MenuList shadow={"2xl"} zIndex={"dropdown"}>
-                    <VStack px={"4"}>
-                      <FormControl>
-                        <Select onChange={(e) => setFilterType(e.target.value)}>
-                          <option value={""}>Select Filter</option>
-                          <option value={"ENQUIRY"}>By Enquiry Date</option>
-                          <option value={"APPROVAL"}>By Approval Date</option>
-                          <option value={"SOURCE"}>By source.</option>
-                        </Select>
-                      </FormControl>
-                      {filterType && (
-                        <>
-                          <FormControl>
-                            {filterType == "SOURCE" ? (
-                              <>
-                                <FormLabel>Source</FormLabel>
-                                <Select
-                                  onChange={(e) =>
-                                    setFilterState((prev) => ({
-                                      ...prev,
-                                      source: e.target.value,
-                                    }))
-                                  }
-                                >
-                                  <option value={""}>Select Source</option>
-                                  {[
-                                    {
-                                      option: "MANAGEMENT",
-                                      value: "MANAGEMENT",
-                                    },
-                                    {
-                                      option: "COLLEGE WEBSITE",
-                                      value: "COLLEGE WEBSITE",
-                                    },
-                                    {
-                                      option: "STUDENT REFERENCE",
-                                      value: "STUDENT REFERENCE",
-                                    },
-                                    {
-                                      option: "PARENT/RELATIVE REFERENCE",
-                                      value: "PARENT/RELATIVE REFERENCE",
-                                    },
-                                    {
-                                      option: "FACULTY REFERENCE",
-                                      value: "FACULTY REFERENCE",
-                                    },
-                                    {
-                                      option: "NEWS PAPER AD",
-                                      value: "NEWS PAPER AD",
-                                    },
-                                    {
-                                      option: "TV OR RADIO AD",
-                                      value: "TV OR RADIO AD",
-                                    },
-                                    {
-                                      option: "METRO BRANDING",
-                                      value: "METRO BRANDING",
-                                    },
-                                    {
-                                      option: "BUS BRANDING",
-                                      value: "BUS BRANDING",
-                                    },
-                                    {
-                                      option: "EDUCATION FAIR",
-                                      value: "EDUCATION FAIR",
-                                    },
-                                    {
-                                      option: "PHONE OR SMS OR WHATSAPP",
-                                      value: "PHONE OR SMS OR WHATSAPP",
-                                    },
-                                    {
-                                      option: "SOCAIL MEDIA",
-                                      value: "SOCAIL MEDIA",
-                                    },
-                                    {
-                                      option: "OTHERS",
-                                      value: "OTHERS",
-                                    },
-                                  ].map((value, _index) => (
-                                    <option
-                                      key={value.value}
-                                      value={value.value}
-                                    >
-                                      {value.option}
-                                    </option>
-                                  ))}
-                                </Select>
-                              </>
-                            ) : filterType == "APPROVAL" ||
-                              filterType == "ENQUIRY" ? (
-                              <>
-                                <FormLabel>Date</FormLabel>
-                                <ReactDatePicker
-                                  className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                                  selected={
-                                    !filterState.date
-                                      ? new Date()
-                                      : new Date(filterState.date)
-                                  }
-                                  dateFormat={"dd/MM/yyyy"}
-                                  onChange={(date) => {
-                                    setFilterState((prev) => ({
-                                      ...prev,
-                                      date,
-                                    }));
-                                  }}
-                                />
-                              </>
-                            ) : null}
-                          </FormControl>
-                          <FormControl>
-                            <Button
-                              as={Link}
+                  </Button>
+                </Menu.Trigger>
+                <Menu.Content shadow={"2xl"} zIndex={"dropdown"}>
+                  <VStack px={"4"}>
+                    <Field.Root>
+                      <Select.Root
+                        onChange={(e) => setFilterType(e.target.value)}
+                      >
+                        <Select.Trigger>
+                          <Select.ValueText />
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Item value={""}>Select Filter</Select.Item>
+                          <Select.Item value={"ENQUIRY"}>
+                            By Enquiry Date
+                          </Select.Item>
+                          <Select.Item value={"APPROVAL"}>
+                            By Approval Date
+                          </Select.Item>
+                          <Select.Item value={"SOURCE"}>By source.</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Field.Root>
+                    {filterType && (
+                      <>
+                        <Field.Root>
+                          {filterType == "SOURCE" ? (
+                            <>
+                              <Field.Label>Source</Field.Label>
+                              <Select.Root
+                                onChange={(e) =>
+                                  setFilterState((prev) => ({
+                                    ...prev,
+                                    source: e.target.value,
+                                  }))
+                                }
+                              >
+                                <option value={""}>Select Source</option>
+                                {[
+                                  {
+                                    option: "MANAGEMENT",
+                                    value: "MANAGEMENT",
+                                  },
+                                  {
+                                    option: "COLLEGE WEBSITE",
+                                    value: "COLLEGE WEBSITE",
+                                  },
+                                  {
+                                    option: "STUDENT REFERENCE",
+                                    value: "STUDENT REFERENCE",
+                                  },
+                                  {
+                                    option: "PARENT/RELATIVE REFERENCE",
+                                    value: "PARENT/RELATIVE REFERENCE",
+                                  },
+                                  {
+                                    option: "FACULTY REFERENCE",
+                                    value: "FACULTY REFERENCE",
+                                  },
+                                  {
+                                    option: "NEWS PAPER AD",
+                                    value: "NEWS PAPER AD",
+                                  },
+                                  {
+                                    option: "TV OR RADIO AD",
+                                    value: "TV OR RADIO AD",
+                                  },
+                                  {
+                                    option: "METRO BRANDING",
+                                    value: "METRO BRANDING",
+                                  },
+                                  {
+                                    option: "BUS BRANDING",
+                                    value: "BUS BRANDING",
+                                  },
+                                  {
+                                    option: "EDUCATION FAIR",
+                                    value: "EDUCATION FAIR",
+                                  },
+                                  {
+                                    option: "PHONE OR SMS OR WHATSAPP",
+                                    value: "PHONE OR SMS OR WHATSAPP",
+                                  },
+                                  {
+                                    option: "SOCAIL MEDIA",
+                                    value: "SOCAIL MEDIA",
+                                  },
+                                  {
+                                    option: "OTHERS",
+                                    value: "OTHERS",
+                                  },
+                                ].map((value, _index) => (
+                                  <option key={value.value} value={value.value}>
+                                    {value.option}
+                                  </option>
+                                ))}
+                              </Select.Root>
+                            </>
+                          ) : filterType == "APPROVAL" ||
+                            filterType == "ENQUIRY" ? (
+                            <>
+                              <Field.Label>Date</Field.Label>
+                              <ReactDatePicker
+                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                                selected={
+                                  !filterState.date
+                                    ? new Date()
+                                    : new Date(filterState.date)
+                                }
+                                dateFormat={"dd/MM/yyyy"}
+                                onChange={(date) => {
+                                  setFilterState((prev) => ({
+                                    ...prev,
+                                    date,
+                                  }));
+                                }}
+                              />
+                            </>
+                          ) : null}
+                        </Field.Root>
+                        <Field.Root>
+                          <Button asChild w={"full"} colorPalette={"blue"}>
+                            <Link
                               href={`/dashboard/search/${new Date(
                                 Date.now()
                               ).getTime()}/?type=${filterType}&date=${moment(
@@ -445,334 +373,35 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
                               ).format("yyyy-MM-DD")}&source=${
                                 filterState.source
                               }`}
-                              colorScheme={"blue"}
                               onClick={() => {
                                 //  navigation.refresh()
                               }}
-                              rightIcon={
-                                <AiOutlineSearch className={"text-lg"} />
-                              }
-                              w={"full"}
                             >
+                              <AiOutlineSearch className={"text-lg"} />
                               Search
-                            </Button>
-                          </FormControl>
-                        </>
-                      )}
-                    </VStack>
-                  </MenuList>
-                </Menu>
-                {user?.college === "MANAGEMENT" ? (
-                  <MIFModal>
-                    {({ onOpen }) => (
-                      <Button
-                        onClick={onOpen}
-                        size={"sm"}
-                        variant={"ghost"}
-                        leftIcon={<AiOutlineSetting className="text-xl" />}
-                      >
-                        Manage Intake & Fee
-                      </Button>
+                            </Link>
+                          </Button>
+                        </Field.Root>
+                      </>
                     )}
-                  </MIFModal>
-                ) : null}
+                  </VStack>
+                </Menu.Content>
+              </Menu.Root>
 
-                {/* <AddCouncelAddmissionModel>
+              {user?.college === "MANAGEMENT" ? (
+                <MIFModal>
                   {({ onOpen }) => (
-                    <Button
-                      leftIcon={<AiOutlinePlusCircle className="text-lg" />}
-                      onClick={onOpen}
-                      size={"sm"}
-                      colorScheme="facebook"
-                    >
-                      Add Enquiry
+                    <Button onClick={onOpen} size={"sm"} variant={"ghost"}>
+                      Manage Intake & Fee{" "}
+                      <AiOutlineSetting className="text-xl" />
                     </Button>
                   )}
-                </AddCouncelAddmissionModel> */}
-              </HStack>
-            </TabList>
-            <TabPanels px={"0"} h={"full"}>
-              <TabPanel p={"0"} w={"full"}>
-                <HStack
-                  className="bg-secondary"
-                  px={"5"}
-                  py={"3"}
-                  borderBottom={"1px"}
-                  borderColor={"gray.200"}
-                  zIndex={"dropdown"}
-                  w={"full"}
-                  justifyContent={"space-between"}
-                >
-                  <HStack w={"full"}>
-                    <Link href={"/dashboard/approved"}>
-                      <Box
-                        as={Tag}
-                        colorScheme="gray"
-                        size={"lg"}
-                        _hover={{ textDecoration: "underline" }}
-                      >
-                        Overall
-                      </Box>
-                    </Link>
-                    {college && (
-                      <>
-                        <AiOutlineArrowRight />
-                        <Link href={"/dashboard/approved/" + college}>
-                          <Box
-                            as={Tag}
-                            colorScheme="gray"
-                            size={"lg"}
-                            _hover={{ textDecoration: "underline" }}
-                          >
-                            {college}
-                          </Box>
-                        </Link>
-                      </>
-                    )}
-                    {college && branch && (
-                      <>
-                        <AiOutlineArrowRight />
-                        <Box
-                          as={Tag}
-                          colorScheme="gray"
-                          size={"lg"}
-                          _hover={{ textDecoration: "underline" }}
-                        >
-                          {branch}
-                        </Box>
-                      </>
-                    )}
-                  </HStack>
-                  {college && branch && (
-                    <>
-                      <HStack px={3} w={"full"}>
-                        <Tag gap={2} pl={0} variant={"outline"}>
-                          <Tag colorScheme="gray" variant={"solid"}>
-                            Intake
-                          </Tag>
-                          <TagLabel>{metaData[0]?.intake!}</TagLabel>
-                        </Tag>
-                        <Text>-</Text>
-                        <Tag gap={2} pl={0} variant={"outline"}>
-                          <Tag colorScheme="gray" variant={"solid"}>
-                            Alloted
-                          </Tag>
-                          <TagLabel>{metaData[0]?.allotted!}</TagLabel>
-                        </Tag>
-                        <Text>=</Text>
-                        <Tag gap={2} pl={0} variant={"outline"}>
-                          <Tag colorScheme="gray" variant={"solid"}>
-                            Remaining
-                          </Tag>
-                          <TagLabel>{metaData[0]?.remaining!}</TagLabel>
-                        </Tag>
-                      </HStack>
-                      <HStack w={"full"} justifyContent={"end"}>
-                        <Menu>
-                          <MenuButton
-                            as={Button}
-                            colorScheme="gray"
-                            variant={"ghost"}
-                            size={"sm"}
-                            leftIcon={
-                              <FaFileDownload className="text-gray-700" />
-                            }
-                            rightIcon={<FaChevronDown />}
-                          >
-                            Export Data
-                          </MenuButton>
-                          <MenuList zIndex={"dropdown"}>
-                            <MenuItem
-                              as={Link}
-                              target={"_blank"}
-                              download
-                              command="↗️"
-                              href={
-                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                                `dowloadclassexcel.php?college=${college}&branch=${branch}`
-                              }
-                              icon={
-                                <AiOutlineFileExcel className="text-lg text-green-600" />
-                              }
-                            >
-                              .Excel format
-                            </MenuItem>
-                            <MenuItem
-                              as={Link}
-                              target={"_blank"}
-                              download
-                              href={
-                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                                `downloadclasspdf.php?college=${college}&branch=${branch}`
-                              }
-                              command="↗️"
-                              icon={
-                                <AiOutlineFilePdf className="text-lg text-rose-600" />
-                              }
-                            >
-                              .Pdf format
-                            </MenuItem>
-                            <MenuItem
-                              as={Link}
-                              target={"_blank"}
-                              download
-                              href={
-                                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                                `downloadclasswithfee.php?college=${college}&branch=${branch}`
-                              }
-                              command="↗️"
-                              icon={
-                                <AiFillFilePdf className="text-lg text-rose-700" />
-                              }
-                            >
-                              .Pdf format with <b>Fee</b> details
-                            </MenuItem>
-                          </MenuList>
-                        </Menu>
-                      </HStack>
-                    </>
-                  )}
-                </HStack>
-                <VStack h={"100vh"} overflow={"scroll"} w={"full"}>
-                  {children}
-                </VStack>
-              </TabPanel>
-              <TabPanel p={"0"} h={"full"}>
-                {children}
-              </TabPanel>
-              <TabPanel p={"0"} h={"full"}>
-                {children}
-              </TabPanel>
-              <TabPanel p={"0"}>
-                <HStack
-                  className="bg-secondary"
-                  px={"5"}
-                  py={"3"}
-                  borderBottom={"1px"}
-                  borderColor={"gray.200"}
-                >
-                  <HStack w={"full"}>
-                    <Link href={"/dashboard/hostel"}>
-                      <Box
-                        as={Tag}
-                        colorScheme="gray"
-                        size={"lg"}
-                        _hover={{ textDecoration: "underline" }}
-                      >
-                        Overall
-                      </Box>
-                    </Link>
-                    {college && (
-                      <>
-                        <AiOutlineArrowRight />
-                        <Link href={"/dashboard/hostel/" + college}>
-                          <Box
-                            as={Tag}
-                            colorScheme="gray"
-                            size={"lg"}
-                            _hover={{ textDecoration: "underline" }}
-                          >
-                            {college}
-                          </Box>
-                        </Link>
-                      </>
-                    )}
-                    {college && branch && (
-                      <>
-                        <AiOutlineArrowRight />
-                        <Box
-                          as={Tag}
-                          colorScheme="gray"
-                          size={"lg"}
-                          _hover={{ textDecoration: "underline" }}
-                        >
-                          {branch}
-                        </Box>
-                      </>
-                    )}
-                  </HStack>
-                  {/* <HStack>
-                {college && branch && (
-                  <>
-                    <VStack px={3}>
-                      <Heading
-                        size={"sm"}
-                        whiteSpace={"nowrap"}
-                        fontWeight={"medium"}
-                      >
-                        Intake - Alloted = Remaining
-                      </Heading>
-                      {metaData.length > 0 && (
-                        <Heading
-                          size={"sm"}
-                          whiteSpace={"nowrap"}
-                          fontWeight={"medium"}
-                        >
-                          {metaData[0]?.intake!} - {metaData[0]?.allotted!} ={" "}
-                          {metaData[0]?.remaining!}
-                        </Heading>
-                      )}
-                    </VStack>
-                    <Button
-                      as={Link}
-                      target={"_blank"}
-                      download
-                      href={
-                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `dowloadclassexcel.php?college=${college}&branch=${branch}`
-                      }
-                      leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-                      colorScheme={"green"}
-                      variant={"outline"}
-                      size={"sm"}
-                    >
-                      Download Excel
-                    </Button>
-                    <Button
-                      as={Link}
-                      target={"_blank"}
-                      download
-                      href={
-                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `downloadclasspdf.php?college=${college}&branch=${branch}`
-                      }
-                      leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-                      colorScheme={"orange"}
-                      variant={"outline"}
-                      size={"sm"}
-                    >
-                      Download PDF
-                    </Button>
-                    <Button
-                      as={Link}
-                      target={"_blank"}
-                      download
-                      href={
-                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `downloadclasswithfee.php?college=${college}&branch=${branch}`
-                      }
-                      leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-                      colorScheme={"purple"}
-                      variant={"outline"}
-                      size={"sm"}
-                    >
-                      Download PDF With Fee Details
-                    </Button>
-                  </>
-                )}
-              </HStack> */}
-                </HStack>
-                <VStack h={"100vh"} overflow={"scroll"} w={"full"}>
-                  {children}
-                </VStack>
-              </TabPanel>
-              <TabPanel p={"0"} h={"full"}>
-                {children}
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </div>
-      </div>
-    </div>
+                </MIFModal>
+              ) : null}
+            </HStack>
+          </HStack>
+        </GridItem>
+      </Grid>
+    </Box>
   );
 }

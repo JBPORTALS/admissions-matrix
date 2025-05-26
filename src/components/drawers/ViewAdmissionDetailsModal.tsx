@@ -24,7 +24,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputRightAddon,
   Menu,
   MenuButton,
   MenuItem,
@@ -49,7 +48,6 @@ import IModal from "../ui/utils/IModal";
 import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
-import { Link } from "@chakra-ui/next-js";
 import { exams } from "./ViewUnApprovedAdmModal";
 import { trpc } from "@/utils/trpc-cleint";
 
@@ -64,11 +62,11 @@ export default function ViewAdmissionDetailsModal({
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const {
-    isOpen: isDeleteOpen,
+    open: isDeleteOpen,
     onClose: onDeleteClose,
     onOpen: onDeleteOpen,
   } = useDisclosure();
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { open, onClose, onOpen: onModalOpen } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
@@ -79,14 +77,14 @@ export default function ViewAdmissionDetailsModal({
   const { data: branch_list } = trpc.retrieveBranchList.useQuery(
     { acadYear, college: selectedAdmissionDetails[0]?.college },
     {
-      enabled: isOpen && !!selectedAdmissionDetails[0]?.college,
+      enabled: open && !!selectedAdmissionDetails[0]?.college,
     }
   );
   const dispatch = useAppDispatch();
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
   const {
-    isOpen: isMenuOpen,
+    open: isMenuOpen,
     onOpen: onMenuOpen,
     onClose: onMenuClose,
   } = useDisclosure();
@@ -99,7 +97,7 @@ export default function ViewAdmissionDetailsModal({
   let intialRender = true;
 
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       console.log("triggered");
       setState({
         fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
@@ -108,14 +106,14 @@ export default function ViewAdmissionDetailsModal({
       intialRender = false;
     }
   }, [
-    isOpen,
+    open,
     selectedAdmissionDetails[0]?.fee_fixed,
     selectedAdmissionDetails[0]?.fee_quoted,
   ]);
 
   useEffect(() => {
     if (
-      isOpen &&
+      open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       intialRender
     ) {
@@ -137,13 +135,13 @@ export default function ViewAdmissionDetailsModal({
     selectedAdmissionDetails[0]?.admission_id,
     fee,
     dispatch,
-    isOpen,
+    open,
     intialRender,
   ]);
 
   useEffect(() => {
     if (
-      isOpen &&
+      open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       intialRender
     ) {
@@ -151,7 +149,7 @@ export default function ViewAdmissionDetailsModal({
     }
   }, [
     dispatch,
-    isOpen,
+    open,
     selectedAdmissionDetails[0]?.admission_id,
     selectedAdmissionDetails[0]?.college,
   ]);
@@ -162,8 +160,8 @@ export default function ViewAdmissionDetailsModal({
   }, [selectedAdmissionDetails[0]?.due_date]);
 
   useEffect(() => {
-    isOpen && runSetDueDate();
-  }, [isOpen]);
+    open && runSetDueDate();
+  }, [open]);
 
   const onOpen = () => {
     onModalOpen();
@@ -196,7 +194,7 @@ export default function ViewAdmissionDetailsModal({
   };
 
   useEffect(() => {
-    isOpen &&
+    open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
       dispatch(
         updateSelectedMatrix({
@@ -212,7 +210,7 @@ export default function ViewAdmissionDetailsModal({
     selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
     selectedAdmissionDetails[0]?.admission_id,
     admissionno,
-    isOpen,
+    open,
     dispatch,
   ]); // eslint-disable-line
 
@@ -244,10 +242,10 @@ export default function ViewAdmissionDetailsModal({
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        isOpen={open}
         heading="Admission Details"
       >
-        <VStack w={"full"} h={"full"} px={"5"} spacing={"3"} py={"5"}>
+        <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
           <Flex
             className="w-full justify-between"
             justifyContent={"space-between"}
@@ -259,7 +257,7 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -300,7 +298,7 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -361,7 +359,11 @@ export default function ViewAdmissionDetailsModal({
                 Overall Percentage / CGPA
               </Heading>
             </VStack>
-            <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+            <InputGroup
+              endElement={"%"}
+              w={"60%"}
+              className={"shadow-md shadow-lightBrand"}
+            >
               <Input
                 variant={"outline"}
                 bg={"white"}
@@ -382,9 +384,6 @@ export default function ViewAdmissionDetailsModal({
                   );
                 }}
               />
-              <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
-                %
-              </InputRightAddon>
             </InputGroup>
           </Flex>
           {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
@@ -399,7 +398,11 @@ export default function ViewAdmissionDetailsModal({
                     PCM Aggregate
                   </Heading>
                 </VStack>
-                <InputGroup w={"60%"} className={"shadow-md shadow-lightBrand"}>
+                <InputGroup
+                  w={"60%"}
+                  endElement={"%"}
+                  className={"shadow-md shadow-lightBrand"}
+                >
                   <Input
                     variant={"outline"}
                     bg={"white"}
@@ -420,9 +423,6 @@ export default function ViewAdmissionDetailsModal({
                       );
                     }}
                   />
-                  <InputRightAddon fontSize={"lg"} fontWeight={"bold"}>
-                    %
-                  </InputRightAddon>
                 </InputGroup>
               </Flex>
             </>
@@ -730,7 +730,7 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               type={"number"}
               variant={"outline"}
@@ -756,7 +756,7 @@ export default function ViewAdmissionDetailsModal({
             <Input
               w={"60%"}
               type={"number"}
-              isReadOnly={!user?.can_update_total}
+              readOnly={!user?.can_update_total}
               variant={"outline"}
               bg={"white"}
               value={state.fee_fixed}
@@ -782,7 +782,7 @@ export default function ViewAdmissionDetailsModal({
               w={"60%"}
               type={"number"}
               variant={"outline"}
-              // isReadOnly={!user?.can_edit}
+              // readOnly={!user?.can_edit}
               bg={"white"}
               value={selectedAdmissionDetails[0]?.fee_paid}
               className={"shadow-md shadow-lightBrand"}
@@ -853,7 +853,7 @@ export default function ViewAdmissionDetailsModal({
             </VStack>
             <Input
               w={"60%"}
-              isReadOnly
+              readOnly
               type={"number"}
               variant={"outline"}
               bg={"white"}
@@ -1044,7 +1044,7 @@ export default function ViewAdmissionDetailsModal({
               </Heading>
             </VStack>
             <Input
-              isReadOnly
+              readOnly
               w={"60%"}
               variant={"outline"}
               bg={"white"}
@@ -1120,7 +1120,7 @@ export default function ViewAdmissionDetailsModal({
                 </Alert>
               )}
               <Menu
-                isOpen={isMenuOpen}
+                open={isMenuOpen}
                 placement="top"
                 matchWidth
                 closeOnSelect
@@ -1145,7 +1145,6 @@ export default function ViewAdmissionDetailsModal({
                 <MenuList>
                   <MenuItem
                     icon={<AiOutlineFilePdf />}
-                    as={Link}
                     href={
                       process.env.NEXT_PUBLIC_ADMISSIONS_URL +
                       `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
@@ -1159,7 +1158,6 @@ export default function ViewAdmissionDetailsModal({
                   {selectedAdmissionDetails[0]?.status === "APPROVED" && (
                     <>
                       <MenuItem
-                        as={Link}
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
                           `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
@@ -1186,13 +1184,13 @@ export default function ViewAdmissionDetailsModal({
               </Menu>
 
               <Button
-                isLoading={isDeleting}
+                loading={isDeleting}
                 onClick={onDeleteOpen}
-                leftIcon={<AiOutlineDelete />}
                 colorScheme={"red"}
                 w={"full"}
               >
                 Delete
+                <AiOutlineDelete />
               </Button>
             </VStack>
           </HStack>

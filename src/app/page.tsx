@@ -1,21 +1,10 @@
-"use client";
-import AddCouncelAddmissionModel from "@/components/modals/AddCouncelAdmissionModal";
-import { Image } from "@chakra-ui/next-js";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  Button,
-  Card,
-  Center,
-  Flex,
-  HStack,
-  Heading,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 import { MdOutlineAdd } from "react-icons/md";
 import CheckStudentDetails from "@/components/modals/CheckStudentDetails";
 
 export default function Home() {
-  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <Flex className="bg-white flex h-[100vh] flex-col justify-start w-full">
       <HStack
@@ -42,20 +31,14 @@ export default function Home() {
               // href={"/new-enquiry"}
               size={"sm"}
               colorScheme="facebook"
-              leftIcon={<MdOutlineAdd />}
             >
               Add Enquiry
+              <MdOutlineAdd />
             </Button>
           </CheckStudentDetails>
 
-          <Button
-            size={"sm"}
-            variant={"outline"}
-            colorScheme="gray"
-            as={Link}
-            href={"/signin"}
-          >
-            Signin
+          <Button size={"sm"} variant={"outline"} colorScheme="gray" asChild>
+            <Link href={"/signin"}>Signin</Link>
           </Button>
         </HStack>
       </HStack>
@@ -73,11 +56,10 @@ export default function Home() {
             mt={"4"}
             size={"lg"}
             colorScheme="facebook"
-            as={Link}
-            href={"/signin"}
             w={"full"}
+            asChild
           >
-            Get Signin
+            <Link href="/signin">Get Signin</Link>
           </Button>
         </Card>
       </Center>

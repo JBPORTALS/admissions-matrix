@@ -6,17 +6,17 @@ import {
   Skeleton,
   Stack,
   Table,
-  Tbody,
-  Td,
-  Th,
-  Tr,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import { Link } from "@chakra-ui/next-js";
 import { useSupabase } from "@/app/supabase-provider";
+import Link from "next/link";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -41,7 +41,7 @@ export default function Home() {
 
   if (isLoading)
     return (
-      <VStack spacing={1} h={"full"} w={"full"}>
+      <VStack gap={1} h={"full"} w={"full"}>
         <Skeleton w={"full"} h={"14"}></Skeleton>
         {new Array(8).fill(0).map((_, index) => {
           return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
@@ -63,40 +63,40 @@ export default function Home() {
         colorScheme="facebook"
         size={"lg"}
       >
-        <Tbody px={"5"}>
-          <Tr>
-            <Th>
+        <TableBody px={"5"}>
+          <TableRow>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 College
               </div>
-            </Th>
+            </TableHeader>
 
-            <Th>
+            <TableHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Total Students
               </div>
-            </Th>
-          </Tr>
+            </TableHeader>
+          </TableRow>
           {overAllMatrix.length > 0 &&
             overAllMatrix?.map((value: any, index) => {
               return (
-                <Tr key={index}>
-                  <Td>
+                <TableRow key={index}>
+                  <TableCell>
                     <Link href={"/dashboard/hostel/" + value.college}>
                       <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                         {value.college}
                       </div>
                     </Link>
-                  </Td>
-                  <Td className="text-center">
+                  </TableCell>
+                  <TableCell className="text-center">
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.total_students}
                     </div>
-                  </Td>
-                </Tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-        </Tbody>
+        </TableBody>
       </Table>
     </Stack>
   );

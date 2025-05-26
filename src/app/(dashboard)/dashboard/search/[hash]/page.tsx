@@ -1,10 +1,10 @@
 "use client";
 import { SearchColumns } from "@/components/mock-data/admission-meta";
 import { useAppSelector } from "@/store";
-import { Image } from "@chakra-ui/next-js";
 import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
+import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -82,7 +82,7 @@ export default function SearchPage() {
         justifyContent={"start"}
         alignItems={"start"}
         h={"full"}
-        spacing={0.5}
+        gap={0.5}
         w={"100vw"}
       >
         {new Array(16).fill(0).map((value, index) => {
