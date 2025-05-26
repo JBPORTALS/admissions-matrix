@@ -16,7 +16,7 @@ import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AiOutlineCloudDownload } from "react-icons/ai";
+import { LuFileDown } from "react-icons/lu";
 
 export default function UnApproved() {
   const [ubranch, setBranch] = useState<string | undefined>("");
@@ -73,48 +73,49 @@ export default function UnApproved() {
           ) : null}
         </HStack>
         <HStack>
-          <Button
-            as={Link}
-            target={"_blank"}
-            download
-            href={
-              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-              `downloadenquiryclassexcel.php?college=${ucollege}&branch=${ubranch}`
-            }
-            leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-            colorScheme={"green"}
-            variant={"outline"}
-            size={"sm"}
-          >
-            Download Excel
-          </Button>
-          {ucollege && ubranch && (
-            <Button
-              as={Link}
+          <Button colorPalette={"green"} variant={"outline"} size={"sm"}>
+            <Link
               target={"_blank"}
               download
               href={
                 process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                `downloadenquiryclasspdf.php?college=${ucollege}&branch=${ubranch}&acadyear=${acadyear}`
+                `downloadenquiryclassexcel.php?college=${ucollege}&branch=${ubranch}`
               }
-              leftIcon={<AiOutlineCloudDownload className="text-lg" />}
-              colorScheme={"orange"}
+            >
+              <LuFileDown />
+              Download Excel
+            </Link>
+          </Button>
+          {ucollege && ubranch && (
+            <Button
+              as={Link}
+              colorPalette={"orange"}
               variant={"outline"}
               size={"sm"}
             >
-              Download PDF
+              <Link
+                target={"_blank"}
+                download
+                href={
+                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                  `downloadenquiryclasspdf.php?college=${ucollege}&branch=${ubranch}&acadyear=${acadyear}`
+                }
+              >
+                <LuFileDown />
+                Download PDF
+              </Link>
             </Button>
           )}
         </HStack>
       </HStack>
-      <VStack className="w-full h-full" spacing={0}>
+      <VStack className="w-full h-full" gap={0}>
         {!ucollege ? (
           <InfoCard message="Select College" />
         ) : ucollege && !ubranch ? (
           <InfoCard message="Select Branch" />
         ) : null}
         <VStack
-          spacing={0}
+          gap={0}
           className={
             "justify-start h-[91vh] items-start flex w-full overflow-scroll"
           }

@@ -11,14 +11,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-TableHeadereme-material.css";
 import { useParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
 import Link from "next/link";
+import { ProgressBar, ProgressRoot } from "@/components/ui/progress";
 
-export default function Home() {
+export default function CollegeList() {
   const router = useParams();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
   const { data, error } = trpc.retreiveBranchMatrix.useQuery({
@@ -39,78 +38,31 @@ export default function Home() {
 
   return (
     <Stack h={"fit"} w={"full"} pb={"40"} justifyContent={"start"}>
-      <Table
-        px={"5"}
-        variant={"simple"}
-        bg={"white"}
-        colorScheme="facebook"
-        size={"md"}
-      >
-        <TableBody>
-          <TableRow
-            position={"sticky"}
-            top={"0"}
-            zIndex={"banner"}
-            borderBottom={"1px"}
-            borderColor={"gray.300"}
-            fontSize={"sm"}
-            shadow={"sm"}
-            className="backdrop-blur-sm bg-[rgba(255,255,255,0.6)] border-b-2"
-          >
-            <TableHeader>
+      <Table.Root px={"5"} size={"lg"}>
+        <Table.Body>
+          <Table.Row>
+            <Table.ColumnHeader>
               <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                 Branch
               </div>
-            </TableHeader>
+            </Table.ColumnHeader>
 
             {router.college === "KSIT" ||
             router.college === "KSDC" ||
             router.college === "KSSEM" ? (
               <>
-                <TableHeader>
-                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                    Total Seats
-                  </div>
-                </TableHeader>
-                <TableHeader>
-                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                    CET & SNQ
-                  </div>
-                </TableHeader>
-                <TableHeader>
-                  <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                    COMEDK
-                  </div>
-                </TableHeader>
+                <Table.ColumnHeader>Total Seats</Table.ColumnHeader>
+                <Table.ColumnHeader>CET & SNQ</Table.ColumnHeader>
+                <Table.ColumnHeader>COMEDK</Table.ColumnHeader>
               </>
             ) : null}
-            <TableHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Management
-              </div>
-            </TableHeader>
-            <TableHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Allotted
-              </div>
-            </TableHeader>
+            <Table.ColumnHeader>Management</Table.ColumnHeader>
+            <Table.ColumnHeader>Allotted</Table.ColumnHeader>
 
-            <TableHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Remaining
-              </div>
-            </TableHeader>
-            <TableHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Filled Percentage
-              </div>
-            </TableHeader>
-            <TableHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Total Enquiries
-              </div>
-            </TableHeader>
-          </TableRow>
+            <Table.ColumnHeader>Remaining</Table.ColumnHeader>
+            <Table.ColumnHeader>Filled Percentage</Table.ColumnHeader>
+            <Table.ColumnHeader>Total Enquiries</Table.ColumnHeader>
+          </Table.Row>
           {data &&
             data.length > 0 &&
             data?.map((value, index) => {
@@ -174,16 +126,13 @@ export default function Home() {
                     <h3 className="text-brand drop-shadow-lg text-lg font-medium">
                       {value.filled_percentage} %
                     </h3>
-                    <Progress
-                      w={"full"}
-                      hasSTableRowipe
-                      value={value.filled_percentage}
-                      rounded={"full"}
-                      isAnimated
-                      isIndeterminate={value.filled_percentage == undefined}
+                    <ProgressRoot
                       size="sm"
-                      colorScheme="blue"
-                    />
+                      defaultValue={value.filled_percentage}
+                      striped
+                    >
+                      <ProgressBar />
+                    </ProgressRoot>
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
@@ -193,8 +142,8 @@ export default function Home() {
                 </TableRow>
               );
             })}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
     </Stack>
   );
 }

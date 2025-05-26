@@ -1,7 +1,6 @@
 "use client";
 import { useSupabase } from "@/app/supabase-provider";
 import ISelect from "@/components/ui/utils/ISelect";
-import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
 import {
@@ -15,14 +14,12 @@ import {
   StatGroup,
   StatHelpText,
   StatLabel,
-  StatNumber,
-  StatUpArrow,
   VStack,
 } from "@chakra-ui/react";
 import moment from "moment";
 import Link from "next/link";
 import { useState } from "react";
-import { AiOutlineFilePdf } from "react-icons/ai";
+import { LuFileDown } from "react-icons/lu";
 
 export default function UnApproved() {
   const user = useSupabase();
@@ -46,10 +43,15 @@ export default function UnApproved() {
   );
 
   return (
-    <div className="h-[90%] pb-5">
+    <VStack pb={"5"} w={"full"}>
       <HStack
         justifyContent={"space-between"}
-        className="w-full flex border-b py-2 space-x-3 px-5"
+        spaceX={"3"}
+        px={"5"}
+        pb={"2"}
+        w={"full"}
+        borderBottomColor={"border"}
+        borderBottomWidth={"thin"}
       >
         <HStack>
           {["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "") && (
@@ -74,31 +76,24 @@ export default function UnApproved() {
         )}
         <Box>
           {ucollege && (
-            <Button
-              as={Link}
-              target="_blank"
-              href={
-                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                "seatmatrixdownload.php?college=" +
-                ucollege
-              }
-              size={"sm"}
-              colorScheme="teal"
-              leftIcon={<AiOutlineFilePdf className="text-2xl" />}
-              variant={"ghost"}
-            >
-              Download Matrix
+            <Button size={"sm"} asChild colorPalette="teal" variant={"ghost"}>
+              <Link
+                target="_blank"
+                href={
+                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                  "seatmatrixdownload.php?college=" +
+                  ucollege
+                }
+              >
+                <LuFileDown /> Download Matrix
+              </Link>
             </Button>
           )}
         </Box>
       </HStack>
 
-      <VStack className="w-full h-full" spacing={0}>
-        <VStack
-          spacing={0}
-          px={"10"}
-          className={"justify-start items-start flex w-full overflow-y-scroll"}
-        >
+      <VStack w={"full"} gap={0}>
+        <VStack gap={0} px={"10"} w={"full"} justifyContent={"start"}>
           {/* displaying admin childrens */}
           {ucollege && user.user?.college && sdata && (
             <ol className="relative border-l py-10 pb-16 border-gray-200 h-fit w-full">
@@ -108,28 +103,15 @@ export default function UnApproved() {
                     key={history.date + index}
                     className="mb-10 ml-6 border-gray-200 border-b pb-5"
                   >
-                    <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
-                      <svg
-                        aria-hidden="true"
-                        className="w-3 h-3 text-blue-800"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                          clip-rule="evenodd"
-                        ></path>
-                      </svg>
-                    </span>
                     <h3 className="flex pb-3 px-3 items-center mb-1 text-lg font-semibold text-gray-900 ">
                       {moment(history.date).format("MMM DD, YYYY")}
                     </h3>
                     <StatGroup width={"50%"} px={"0"}>
-                      <Stat size={"md"}>
-                        <StatLabel textAlign={"center"}>Total Seats</StatLabel>
-                        <StatNumber
+                      <Stat.Root size={"md"}>
+                        <Stat.Label textAlign={"center"}>
+                          Total Seats
+                        </Stat.Label>
+                        <Stat.ValueUnit
                           fontSize={"3xl"}
                           textAlign={"center"}
                           color={"purple.700"}
@@ -137,13 +119,13 @@ export default function UnApproved() {
                           textShadow={"lg"}
                         >
                           {history.total}
-                        </StatNumber>
-                      </Stat>
-                      <Stat>
+                        </Stat.ValueUnit>
+                      </Stat.Root>
+                      <Stat.Root>
                         <StatLabel textAlign={"center"}>
                           Total Admissions
                         </StatLabel>
-                        <StatNumber
+                        <Stat.ValueUnit
                           fontSize={"3xl"}
                           textAlign={"center"}
                           color={"green.500"}
@@ -151,13 +133,13 @@ export default function UnApproved() {
                           textShadow={"lg"}
                         >
                           {history.allotted_seats}
-                        </StatNumber>
-                      </Stat>
-                      <Stat>
+                        </Stat.ValueUnit>
+                      </Stat.Root>
+                      <Stat.Root>
                         <StatLabel textAlign={"center"}>
                           Today Admissions
                         </StatLabel>
-                        <StatNumber
+                        <Stat.ValueUnit
                           textAlign={"center"}
                           fontSize={"3xl"}
                           color={"teal.700"}
@@ -165,20 +147,20 @@ export default function UnApproved() {
                           textShadow={"lg"}
                         >
                           {history.today_admissions}
-                        </StatNumber>
+                        </Stat.ValueUnit>
                         <StatHelpText textAlign={"center"}>
                           {history.today_admissions > 0 && (
                             <>
-                              <StatUpArrow type="increase" /> Got increased
+                              <Stat.UpIndicator /> Got increased
                             </>
                           )}
                         </StatHelpText>
-                      </Stat>
-                      <Stat>
+                      </Stat.Root>
+                      <Stat.Root>
                         <StatLabel textAlign={"center"}>
                           Remaining Seats
                         </StatLabel>
-                        <StatNumber
+                        <Stat.ValueUnit
                           textAlign={"center"}
                           fontSize={"3xl"}
                           color={"red.600"}
@@ -186,8 +168,8 @@ export default function UnApproved() {
                           textShadow={"lg"}
                         >
                           {history.remaining_seats}
-                        </StatNumber>
-                      </Stat>
+                        </Stat.ValueUnit>
+                      </Stat.Root>
                     </StatGroup>
                   </li>
                 );
@@ -206,6 +188,6 @@ export default function UnApproved() {
           </Center>
         )}
       </VStack>
-    </div>
+    </VStack>
   );
 }

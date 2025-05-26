@@ -7,14 +7,16 @@ export const system = createSystem(defaultConfig, {
         heading: { value: `'Figtree', sans-serif` },
         body: { value: `'Figtree', sans-serif` },
       },
+      radii: {
+        "*": {
+          value: "12px",
+        },
+      },
     },
   },
   globalCss: {
     html: {
       colorPalette: "blue",
-      _dark: {
-        colorPalette: "blue",
-      },
     },
   },
 });

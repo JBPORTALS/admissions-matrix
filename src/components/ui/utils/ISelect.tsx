@@ -1,4 +1,10 @@
-import { Heading, HStack, Select, VStack } from "@chakra-ui/react";
+import {
+  Heading,
+  HStack,
+  NativeSelect,
+  Select,
+  VStack,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
 interface ISelectProps {
@@ -23,26 +29,22 @@ export default function ISelect({
   }, [currentValue, value]); // eslint-disable-line
 
   return (
-    <VStack
-      p={0}
-      px={0}
-      className="bg-background w-52 relative flex flex-col px-10"
-    >
-      <Select
-        bg={"white"}
-        onChange={(e) => setCurrentValue(e.target.value)}
-        size={"sm"}
-        shadow={"md"}
-      >
-        <option value={""}>{placeHolder}</option>
-        {options?.map((value) => {
-          return (
-            <option key={value.value} value={value.value}>
-              {value.option}
-            </option>
-          );
-        })}
-      </Select>
+    <VStack p={0} px={0}>
+      <NativeSelect.Root size={"sm"} shadow={"md"}>
+        <NativeSelect.Field
+          onChange={(e) => setCurrentValue(e.currentTarget.value)}
+          value={currentValue}
+        >
+          {options?.map((value) => {
+            return (
+              <option key={value.value} value={value.value}>
+                {value.option}
+              </option>
+            );
+          })}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator />
+      </NativeSelect.Root>
     </VStack>
   );
 }
