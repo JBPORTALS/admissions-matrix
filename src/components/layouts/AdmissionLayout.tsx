@@ -10,41 +10,30 @@ import {
   InputGroup,
   Menu,
   Select,
-  Tag,
-  Text,
   useDisclosure,
   VStack,
-  Tabs,
   Grid,
   GridItem,
+  createListCollection,
+  Portal,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  AiFillFilePdf,
-  AiOutlineArrowRight,
-  AiOutlineCheckCircle,
-  AiOutlineClockCircle,
-  AiOutlineFileExcel,
-  AiOutlineFilePdf,
-  AiOutlineHistory,
   AiOutlineLogout,
   AiOutlineMail,
   AiOutlineSearch,
   AiOutlineSetting,
   AiOutlineUser,
 } from "react-icons/ai";
-import { HiBuildingOffice } from "react-icons/hi2";
 import { useAppSelector } from "@/store";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import moment from "moment";
 import { BsFilter } from "react-icons/bs";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Image from "next/image";
 import MIFModal from "../drawers/MIFModal";
 import SideBar from "../SideBar";
-import { FaChevronDown, FaFileDownload } from "react-icons/fa";
 import { useSignIn, useUser } from "@/utils/auth";
 import {
   DialogTrigger,
@@ -55,12 +44,94 @@ import {
   DialogBody,
 } from "../ui/dialog";
 import { Avatar } from "../ui/avatar";
-import { LuCheck } from "react-icons/lu";
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from "../ui/select";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
   showDownloadFile?: boolean;
 }
+
+const filterSourceOptions = createListCollection({
+  items: [
+    {
+      label: "MANAGEMENT",
+      value: "MANAGEMENT",
+    },
+    {
+      label: "COLLEGE WEBSITE",
+      value: "COLLEGE WEBSITE",
+    },
+    {
+      label: "STUDENT REFERENCE",
+      value: "STUDENT REFERENCE",
+    },
+    {
+      label: "PARENT/RELATIVE REFERENCE",
+      value: "PARENT/RELATIVE REFERENCE",
+    },
+    {
+      label: "FACULTY REFERENCE",
+      value: "FACULTY REFERENCE",
+    },
+    {
+      label: "NEWS PAPER AD",
+      value: "NEWS PAPER AD",
+    },
+    {
+      label: "TV OR RADIO AD",
+      value: "TV OR RADIO AD",
+    },
+    {
+      label: "METRO BRANDING",
+      value: "METRO BRANDING",
+    },
+    {
+      label: "BUS BRANDING",
+      value: "BUS BRANDING",
+    },
+    {
+      label: "EDUCATION FAIR",
+      value: "EDUCATION FAIR",
+    },
+    {
+      label: "PHONE OR SMS OR WHATSAPP",
+      value: "PHONE OR SMS OR WHATSAPP",
+    },
+    {
+      label: "SOCAIL MEDIA",
+      value: "SOCAIL MEDIA",
+    },
+    {
+      label: "OTHERS",
+      value: "OTHERS",
+    },
+  ],
+});
+
+const filterStateOptions = createListCollection({
+  items: [
+    {
+      label: "By enquiry Date",
+      value: "ENQUIRY",
+    },
+    {
+      label: "By Approval Date.",
+      value: "APPROVAL",
+    },
+    {
+      label: "By Source",
+      value: "SOURCE",
+    },
+  ],
+});
 
 export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
   const router = useParams();
@@ -238,155 +309,113 @@ export default function AdmissionLayout({ children }: AttendanceLayoutProps) {
             </Heading>
 
             <HStack mr={"2"}>
-              <Menu.Root size={"md"}>
-                <Menu.Trigger asChild>
-                  <Button>
+              <MenuRoot size={"md"}>
+                <MenuTrigger asChild>
+                  <Button variant={"outline"}>
                     <BsFilter className={"text-xl"} />
                     Filters
                   </Button>
-                </Menu.Trigger>
-                <Menu.Content shadow={"2xl"} zIndex={"dropdown"}>
-                  <VStack px={"4"}>
-                    <Field.Root>
-                      <Select.Root
-                        onChange={(e) => setFilterType(e.target.value)}
-                      >
-                        <Select.Trigger>
-                          <Select.ValueText />
-                        </Select.Trigger>
-                        <Select.Content>
-                          <Select.Item value={""}>Select Filter</Select.Item>
-                          <Select.Item value={"ENQUIRY"}>
-                            By Enquiry Date
-                          </Select.Item>
-                          <Select.Item value={"APPROVAL"}>
-                            By Approval Date
-                          </Select.Item>
-                          <Select.Item value={"SOURCE"}>By source.</Select.Item>
-                        </Select.Content>
-                      </Select.Root>
-                    </Field.Root>
-                    {filterType && (
-                      <>
-                        <Field.Root>
-                          {filterType == "SOURCE" ? (
-                            <>
-                              <Field.Label>Source</Field.Label>
-                              <Select.Root
-                                onChange={(e) =>
-                                  setFilterState((prev) => ({
-                                    ...prev,
-                                    source: e.target.value,
-                                  }))
-                                }
-                              >
-                                <option value={""}>Select Source</option>
-                                {[
-                                  {
-                                    option: "MANAGEMENT",
-                                    value: "MANAGEMENT",
-                                  },
-                                  {
-                                    option: "COLLEGE WEBSITE",
-                                    value: "COLLEGE WEBSITE",
-                                  },
-                                  {
-                                    option: "STUDENT REFERENCE",
-                                    value: "STUDENT REFERENCE",
-                                  },
-                                  {
-                                    option: "PARENT/RELATIVE REFERENCE",
-                                    value: "PARENT/RELATIVE REFERENCE",
-                                  },
-                                  {
-                                    option: "FACULTY REFERENCE",
-                                    value: "FACULTY REFERENCE",
-                                  },
-                                  {
-                                    option: "NEWS PAPER AD",
-                                    value: "NEWS PAPER AD",
-                                  },
-                                  {
-                                    option: "TV OR RADIO AD",
-                                    value: "TV OR RADIO AD",
-                                  },
-                                  {
-                                    option: "METRO BRANDING",
-                                    value: "METRO BRANDING",
-                                  },
-                                  {
-                                    option: "BUS BRANDING",
-                                    value: "BUS BRANDING",
-                                  },
-                                  {
-                                    option: "EDUCATION FAIR",
-                                    value: "EDUCATION FAIR",
-                                  },
-                                  {
-                                    option: "PHONE OR SMS OR WHATSAPP",
-                                    value: "PHONE OR SMS OR WHATSAPP",
-                                  },
-                                  {
-                                    option: "SOCAIL MEDIA",
-                                    value: "SOCAIL MEDIA",
-                                  },
-                                  {
-                                    option: "OTHERS",
-                                    value: "OTHERS",
-                                  },
-                                ].map((value, _index) => (
-                                  <option key={value.value} value={value.value}>
-                                    {value.option}
-                                  </option>
-                                ))}
-                              </Select.Root>
-                            </>
-                          ) : filterType == "APPROVAL" ||
-                            filterType == "ENQUIRY" ? (
-                            <>
-                              <Field.Label>Date</Field.Label>
-                              <ReactDatePicker
-                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                                selected={
-                                  !filterState.date
-                                    ? new Date()
-                                    : new Date(filterState.date)
-                                }
-                                dateFormat={"dd/MM/yyyy"}
-                                onChange={(date) => {
-                                  setFilterState((prev) => ({
-                                    ...prev,
-                                    date,
-                                  }));
-                                }}
-                              />
-                            </>
-                          ) : null}
-                        </Field.Root>
-                        <Field.Root>
-                          <Button asChild w={"full"} colorPalette={"blue"}>
-                            <Link
-                              href={`/dashboard/search/${new Date(
-                                Date.now()
-                              ).getTime()}/?type=${filterType}&date=${moment(
-                                filterState.date
-                              ).format("yyyy-MM-DD")}&source=${
-                                filterState.source
-                              }`}
-                              onClick={() => {
-                                //  navigation.refresh()
-                              }}
+                </MenuTrigger>
+
+                <MenuContent
+                  gap={"3"}
+                  display={"flex"}
+                  flexDir={"column"}
+                  shadow={"2xl"}
+                >
+                  <Field.Root>
+                    <SelectRoot
+                      collection={filterStateOptions}
+                      value={[filterType]}
+                      onValueChange={(e) => setFilterType(e.value[0])}
+                    >
+                      <SelectLabel>Select Filter</SelectLabel>
+                      <SelectTrigger w={"240px"}>
+                        <Select.ValueText placeContent={"Select ..."} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filterStateOptions.items.map((item) => (
+                          <SelectItem key={item.value} item={item}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </SelectRoot>
+                  </Field.Root>
+                  {filterType && (
+                    <>
+                      <Field.Root>
+                        {filterType == "SOURCE" ? (
+                          <>
+                            <SelectRoot
+                              collection={filterSourceOptions}
+                              value={[filterState.source]}
+                              onValueChange={(e) =>
+                                setFilterState((prev) => ({
+                                  ...prev,
+                                  source: e.value[0],
+                                }))
+                              }
                             >
-                              <AiOutlineSearch className={"text-lg"} />
-                              Search
-                            </Link>
-                          </Button>
-                        </Field.Root>
-                      </>
-                    )}
-                  </VStack>
-                </Menu.Content>
-              </Menu.Root>
+                              <SelectLabel>Select Source</SelectLabel>
+                              <SelectTrigger w={"240px"}>
+                                <SelectValueText placeholder="Select..." />
+                              </SelectTrigger>
+                              <SelectContent zIndex={"max"}>
+                                {filterSourceOptions.items.map(
+                                  (item, _index) => (
+                                    <SelectItem item={item} key={item.value}>
+                                      {item.label}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectContent>
+                            </SelectRoot>
+                          </>
+                        ) : filterType == "APPROVAL" ||
+                          filterType == "ENQUIRY" ? (
+                          <>
+                            <Field.Label>Date</Field.Label>
+                            <Input
+                              className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                              value={
+                                !filterState.date
+                                  ? new Date().toDateString()
+                                  : new Date(filterState.date).toDateString()
+                              }
+                              type="date"
+                              onChange={(date) => {
+                                setFilterState((prev) => ({
+                                  ...prev,
+                                }));
+                              }}
+                            />
+                          </>
+                        ) : null}
+                      </Field.Root>
+                      <Field.Root>
+                        <Button asChild w={"full"} colorPalette={"blue"}>
+                          <Link
+                            href={`/dashboard/search/${new Date(
+                              Date.now()
+                            ).getTime()}/?type=${filterType}&date=${moment(
+                              filterState.date
+                            ).format("yyyy-MM-DD")}&source=${
+                              filterState.source
+                            }`}
+                            onClick={() => {
+                              //  navigation.refresh()
+                            }}
+                          >
+                            <AiOutlineSearch className={"text-lg"} />
+                            Search
+                          </Link>
+                        </Button>
+                      </Field.Root>
+                    </>
+                  )}
+                </MenuContent>
+              </MenuRoot>
 
               {user?.college === "MANAGEMENT" ? (
                 <MIFModal>

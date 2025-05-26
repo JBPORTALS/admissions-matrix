@@ -1,3 +1,5 @@
+import { createListCollection } from "@chakra-ui/react";
+
 export const COLLEGES = () => {
   if (process.env.NEXT_PUBLIC_IS_CLONE)
     return [{ value: "SSPT", option: "SSPT" }];
@@ -9,4 +11,6 @@ export const COLLEGES = () => {
     { value: "KSSEM", option: "KSSEM" },
   ];
 };
-export const ACADYEARS = [{ value: "2025", option: "2025-26" }];
+export const ACADYEARS = createListCollection({
+  items: [{ value: "2025", label: "2025-26" }],
+});

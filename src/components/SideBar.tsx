@@ -15,6 +15,7 @@ import {
   Heading,
   Portal,
   Select,
+  SelectControl,
   Separator,
   VStack,
 } from "@chakra-ui/react";
@@ -26,6 +27,13 @@ import { useRouter } from "next/navigation";
 import { ACADYEARS } from "@/utils/constants";
 import CheckStudentDetails from "./modals/CheckStudentDetails";
 import { toast } from "react-hot-toast";
+import {
+  SelectContent,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from "./ui/select";
+import { LuCheck, LuClock10, LuHistory, LuUserCheck } from "react-icons/lu";
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -44,31 +52,19 @@ export default function SideBar() {
     >
       <NavButton asChild active={pathname.startsWith("/dashboard/approved")}>
         <Link href={"/dashboard/approved"}>
-          {pathname.startsWith("/dashboard/approved") ? (
-            <MdCheckCircle />
-          ) : (
-            <MdCheckCircleOutline />
-          )}
+          <LuUserCheck />
           Approved
         </Link>
       </NavButton>
       <NavButton asChild active={pathname.startsWith("/dashboard/un-approved")}>
         <Link href={"/dashboard/un-approved"}>
-          {pathname.startsWith("/dashboard/un-approved") ? (
-            <IoMdClock />
-          ) : (
-            <IoMdClock />
-          )}
+          <LuClock10 />
           Un-Approved
         </Link>
       </NavButton>
       <NavButton asChild active={pathname.startsWith("/dashboard/history")}>
         <Link href={"/dashboard/history"}>
-          {pathname.startsWith("/dashboard/history") ? (
-            <MdHistory />
-          ) : (
-            <MdOutlineHistory />
-          )}
+          <LuHistory />
           History
         </Link>
       </NavButton>
@@ -92,8 +88,9 @@ export default function SideBar() {
         ACADEMIC YEAR
       </Heading>
       <Field.Root>
-        <Select.Root
+        <SelectRoot
           value={[acadYear]}
+          collection={ACADYEARS}
           onValueChange={(e) => {
             dispatch(updateAcadYear(e.value));
             toast.success(`Academic year changed to "${e.value}"`);
@@ -101,24 +98,19 @@ export default function SideBar() {
           }}
           rounded={"full"}
         >
-          <Select.HiddenSelect />
-          <Select.Control>
-            <Select.Trigger>
-              <Select.ValueText placeholder="Select Academic Year" />
-            </Select.Trigger>
-          </Select.Control>
-          <Portal>
-            <Select.Positioner>
-              <Select.Content>
-                {ACADYEARS.map((option) => (
-                  <Select.Item item={option} key={option.value}>
-                    {option.option}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Positioner>
-          </Portal>
-        </Select.Root>
+          <SelectControl>
+            <SelectTrigger>
+              <SelectValueText placeholder="Select Academic Year" />
+            </SelectTrigger>
+          </SelectControl>
+          <SelectContent>
+            {ACADYEARS.items.map((option) => (
+              <Select.Item item={option} key={option.value}>
+                {option.label}
+              </Select.Item>
+            ))}
+          </SelectContent>
+        </SelectRoot>
       </Field.Root>
     </VStack>
   );
