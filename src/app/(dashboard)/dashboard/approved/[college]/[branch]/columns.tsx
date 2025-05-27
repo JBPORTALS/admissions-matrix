@@ -93,14 +93,16 @@ export const columns: ColumnDef<Payment>[] = [
     id: "menu",
     cell(props) {
       return (
-        <MenuRoot>
+        <MenuRoot closeOnSelect={false}>
           <MenuTrigger>
             <IconButton variant={"ghost"}>
               <LuEllipsis />
             </IconButton>
           </MenuTrigger>
           <MenuContent>
-            <ViewAdmissionDetailsModal>
+            <ViewAdmissionDetailsModal
+              admissionno={props.row.original.admission_id}
+            >
               <MenuItem value="view">
                 <LuEye /> <Box flex={"1"}> View</Box>
               </MenuItem>

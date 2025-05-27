@@ -17,9 +17,8 @@ import {
   Box,
   Button,
   Center,
+  createListCollection,
   Flex,
-  FormControl,
-  FormErrorMessage,
   Heading,
   HStack,
   Input,
@@ -42,44 +41,9 @@ import { trpc } from "@/utils/trpc-cleint";
 import Link from "next/link";
 
 interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
+  children: React.ReactNode;
   admissionno: string;
 }
-
-export const exams = [
-  {
-    option: "CET",
-    value: "CET",
-  },
-  {
-    option: "COMEDK",
-    value: "COMEDK",
-  },
-  {
-    option: "CET AND COMEDK",
-    value: "CET AND COMEDK",
-  },
-  {
-    option: "DCET",
-    value: "DCET",
-  },
-  {
-    option: "JEE (M)",
-    value: "JEE (M)",
-  },
-  {
-    option: "NATA",
-    value: "NATA",
-  },
-  {
-    option: "OTHERS",
-    value: "OTHERS",
-  },
-  {
-    option: "NONE",
-    value: "NONE",
-  },
-];
 
 export default function ViewUnApprovedAdmModal({
   children,
@@ -289,7 +253,7 @@ export default function ViewUnApprovedAdmModal({
         isOpen={open}
         heading="Approve Enquiry"
       >
-        <IModal
+        {/* <IModal
           onSubmit={onsubmit}
           buttonTitle="Yes"
           heading="Are you sure ?"
@@ -305,7 +269,7 @@ export default function ViewUnApprovedAdmModal({
               {selectedAdmissionDetails[0]?.admission_id})
             </Heading>
           </Center>
-        </IModal>
+        </IModal> */}
         <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
           <Flex
             className="w-full justify-between"

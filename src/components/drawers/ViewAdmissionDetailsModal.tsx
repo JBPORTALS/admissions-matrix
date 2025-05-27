@@ -13,48 +13,85 @@ import {
   Alert,
   Box,
   Button,
+  createListCollection,
   Field,
   Flex,
   Heading,
   HStack,
+  IconButton,
   Input,
   InputGroup,
-  Select,
   Textarea,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import IModal from "../ui/utils/IModal";
-import ReactDatePicker from "react-datepicker";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
-import { exams } from "./ViewUnApprovedAdmModal";
 import { trpc } from "@/utils/trpc-cleint";
-import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
-import { LuChevronUp, LuFileDown } from "react-icons/lu";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+  MenuTriggerItem,
+} from "../ui/menu";
+import {
+  LuChevronLeft,
+  LuChevronRight,
+  LuChevronUp,
+  LuEllipsis,
+  LuFileDown,
+  LuTrash2,
+} from "react-icons/lu";
 import Link from "next/link";
 import {
   DrawerBody,
+  DrawerCloseTrigger,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerRoot,
   DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
-import { collegesOptions } from "@/utils/constants";
+import {
+  collegesOptions,
+  examsOptions,
+  hostelOptions,
+} from "@/utils/constants";
 import {
   SelectContent,
   SelectItem,
+  SelectItemGroup,
   SelectRoot,
   SelectTrigger,
   SelectValueText,
 } from "../ui/select";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+  DialogActionTrigger,
+} from "../ui/dialog";
+import { CloseButton } from "../ui/close-button";
+import { format } from "date-fns";
 
 interface props {
   children: React.ReactNode;
@@ -66,15 +103,12 @@ export default function ViewAdmissionDetailsModal({
   admissionno,
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const {
-    open: isDeleteOpen,
-    onClose: onDeleteClose,
-    onOpen: onDeleteOpen,
-  } = useDisclosure();
-  const { open, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { open, onToggle: onChangeOpen } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
+  const matrix = selectedAdmissionDetails[0];
+
   const isLoading = useAppSelector(
     (state) => state.admissions.selectedMatrix.pending
   ) as boolean;
@@ -95,7 +129,21 @@ export default function ViewAdmissionDetailsModal({
   });
   const fee = useAppSelector((state) => state.admissions.fee);
   const params = useParams();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const getAnchorRect = () => contentRef.current!.getBoundingClientRect();
   let intialRender = true;
+
+  const branchCollection = useMemo(
+    () =>
+      createListCollection({
+        items:
+          branch_list?.map((b: any) => ({
+            value: b.value,
+            label: b.value,
+          })) ?? [],
+      }),
+    [branch_list]
+  );
 
   useEffect(() => {
     if (open) {
@@ -164,10 +212,10 @@ export default function ViewAdmissionDetailsModal({
     open && runSetDueDate();
   }, [open]);
 
-  const onOpen = () => {
-    onModalOpen();
-    dispatch(fetchSelectedMatrix({ admissionno }));
-  };
+  // Fetch selected matrix when dialog is open
+  useEffect(() => {
+    if (open) dispatch(fetchSelectedMatrix({ admissionno }));
+  }, [open]);
 
   const onDelete = async () => {
     setIsDeleting(true);
@@ -194,6 +242,7 @@ export default function ViewAdmissionDetailsModal({
     setIsDeleting(false);
   };
 
+  // Update Selected Matrix
   useEffect(() => {
     open &&
       selectedAdmissionDetails[0]?.admission_id == admissionno &&
@@ -234,92 +283,88 @@ export default function ViewAdmissionDetailsModal({
   };
 
   return (
-    <DrawerRoot>
+    <DrawerRoot open={open} onOpenChange={onChangeOpen} size={"sm"}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-
-      <DrawerContent>
-        <DrawerHeader>
+      <DrawerContent offset={"4"} rounded={"md"} ref={contentRef}>
+        <DrawerHeader flexDir={"column"} alignItems={"start"} gap={"0"}>
           <DrawerTitle>Admission Details</DrawerTitle>
+          <DrawerDescription fontSize={"xs"}>
+            Enquired on{" "}
+            {matrix?.enquiry_date &&
+              format(new Date(matrix.enquiry_date), "dd MMM, yyyy")}
+          </DrawerDescription>
         </DrawerHeader>
 
         <DrawerBody asChild>
-          <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
+          <VStack
+            w={"full"}
+            alignItems={"start"}
+            justifyContent={"start"}
+            h={"full"}
+            px={"5"}
+            gap={"3"}
+            py={"5"}
+          >
             <Flex
-              className="w-full justify-between"
+              w={"full"}
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Application No.
                 </Heading>
               </VStack>
               <Input
                 readOnly
                 w={"60%"}
-                variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.admission_id}
                 className={"shadow-md shadow-lightBrand"}
               />
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w={"full"}
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
-                  Enquiry Date
-                </Heading>
-              </VStack>
-              {selectedAdmissionDetails[0]?.enquiry_date && (
-                <Box w={"60%"}>
-                  <ReactDatePicker
-                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                    selected={
-                      new Date(selectedAdmissionDetails[0]?.enquiry_date)
-                    }
-                    dateFormat={"dd/MM/yyyy"}
-                    onChange={(date) => {}}
-                    readOnly
-                  />
-                </Box>
-              )}
-            </Flex>
-            <Flex
-              className="w-full justify-between"
-              justifyContent={"space-between"}
-              alignItems={"center"}
-            >
-              <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Register Number
                 </Heading>
               </VStack>
               <Input
+                placeholder="Not set yet."
                 readOnly
                 w={"60%"}
-                variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.reg_no}
                 className={"shadow-md shadow-lightBrand"}
               />
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w={"full"}
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Name
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -329,19 +374,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Student Phone No.
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.phone_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -349,13 +397,18 @@ export default function ViewAdmissionDetailsModal({
                 }}
               />
             </Flex>
+
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Overall Percentage / CGPA
                 </Heading>
               </VStack>
@@ -366,8 +419,8 @@ export default function ViewAdmissionDetailsModal({
               >
                 <Input
                   variant={"outline"}
-                  bg={"white"}
                   type="number"
+                  textAlign={"right"}
                   value={parseFloat(
                     selectedAdmissionDetails[0]?.percentage
                   ).toString()}
@@ -386,15 +439,20 @@ export default function ViewAdmissionDetailsModal({
                 />
               </InputGroup>
             </Flex>
+
             {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
               <>
                 <Flex
-                  className="w-full justify-between"
+                  w="full"
                   justifyContent={"space-between"}
                   alignItems={"center"}
                 >
                   <VStack flex={"1"} alignItems={"start"}>
-                    <Heading fontSize={"sm"} fontWeight={"medium"}>
+                    <Heading
+                      fontSize={"sm"}
+                      color={"fg.muted"}
+                      fontWeight={"medium"}
+                    >
                       PCM Aggregate
                     </Heading>
                   </VStack>
@@ -404,8 +462,8 @@ export default function ViewAdmissionDetailsModal({
                     className={"shadow-md shadow-lightBrand"}
                   >
                     <Input
+                      textAlign={"right"}
                       variant={"outline"}
-                      bg={"white"}
                       type="number"
                       value={parseFloat(
                         selectedAdmissionDetails[0]?.pcm
@@ -429,19 +487,23 @@ export default function ViewAdmissionDetailsModal({
             )}
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   College
                 </Heading>
               </VStack>
               <SelectRoot
                 w={"60%"}
                 collection={collegesOptions}
-                defaultValue={[selectedAdmissionDetails[0]?.college]}
+                value={[selectedAdmissionDetails[0]?.college]}
                 onValueChange={(e) => {
                   dispatch(updateSelectedMatrix({ college: e.value }));
                 }}
@@ -450,7 +512,7 @@ export default function ViewAdmissionDetailsModal({
                   <SelectValueText placeholder="Select..." />
                 </SelectTrigger>
 
-                <SelectContent>
+                <SelectContent portalRef={contentRef}>
                   {collegesOptions.items.map((item) => (
                     <SelectItem item={item} key={item.value}>
                       {item.label}
@@ -460,12 +522,16 @@ export default function ViewAdmissionDetailsModal({
               </SelectRoot>
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Branch
                 </Heading>
               </VStack>
@@ -474,28 +540,28 @@ export default function ViewAdmissionDetailsModal({
                 invalid={!selectedAdmissionDetails[0]?.branch}
               >
                 <SelectRoot
-                  w={"60%"}
-                  collection={branch_list?.map((branch: any) => ({
-                    value: branch.value,
-                    label: branch.value,
-                  }))}
-                  defaultValue={[selectedAdmissionDetails[0]?.college]}
+                  w={"full"}
+                  collection={branchCollection}
+                  value={[selectedAdmissionDetails[0]?.branch]}
                   onValueChange={(e) => {
-                    dispatch(updateSelectedMatrix({ college: e.value }));
+                    dispatch(updateSelectedMatrix({ branch: e.value }));
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValueText placeholder="Select..." />
+                    <SelectValueText placeholder="Select Branch..." />
                   </SelectTrigger>
-                  <option value={""}>Select Branch</option>
-                  {branch_list &&
-                    branch_list.map((branch: any) => {
-                      return (
-                        <option key={branch.value} value={branch.value}>
-                          {branch.option}
-                        </option>
-                      );
-                    })}
+
+                  <SelectContent portalRef={contentRef}>
+                    <SelectItemGroup label="Branches">
+                      {branchCollection.items.map((item) => {
+                        return (
+                          <SelectItem key={item.value} item={item}>
+                            {item.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectItemGroup>
+                  </SelectContent>
                 </SelectRoot>
                 {selectedAdmissionDetails[0]?.branch == "" && (
                   <Field.ErrorText>Branch is required !</Field.ErrorText>
@@ -503,19 +569,22 @@ export default function ViewAdmissionDetailsModal({
               </Field.Root>
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Father Name
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.father_name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -526,19 +595,22 @@ export default function ViewAdmissionDetailsModal({
               />
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Father Mobile No.
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.father_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -547,19 +619,22 @@ export default function ViewAdmissionDetailsModal({
               />
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Mother Name
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.mother_name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -570,19 +645,22 @@ export default function ViewAdmissionDetailsModal({
               />
             </Flex>
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Mother Mobile No.
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.mother_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -592,19 +670,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Aadhar Card No.
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.aadhar_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -614,19 +695,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Pan Card No.
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.pan_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -636,21 +720,26 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
-              alignItems={"center"}
+              alignItems={"start"}
+              flexDir={"column"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
-                  Address
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
+                  Complete Address
                 </Heading>
               </VStack>
               <Textarea
-                w={"60%"}
+                w={"full"}
+                rows={4}
                 variant={"outline"}
-                bg={"white"}
+                resize={"none"}
                 value={selectedAdmissionDetails[0]?.address}
-                className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ address: e.target.value }));
                 }}
@@ -658,19 +747,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   E-Mail
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.email}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -680,48 +772,58 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Exam
                 </Heading>
               </VStack>
-              <Select.Root
+              <SelectRoot
                 w={"60%"}
-                variant={"outline"}
-                bg={"white"}
-                value={selectedAdmissionDetails[0]?.exam}
+                collection={examsOptions}
+                value={[selectedAdmissionDetails[0]?.exam]}
                 className={"shadow-md shadow-lightBrand"}
-                onChange={(e) => {
-                  dispatch(updateSelectedMatrix({ exam: e.target.value }));
+                onValueChange={(e) => {
+                  dispatch(updateSelectedMatrix({ exam: e.value }));
                 }}
               >
-                <option value={""}>Select Exam</option>
-                {exams.map((option, key) => (
-                  <option key={key + option.value} value={option.value}>
-                    {option.option}
-                  </option>
-                ))}
-              </Select.Root>
+                <SelectTrigger>
+                  <SelectValueText placeholder="Select Exam..." />
+                </SelectTrigger>
+                <SelectContent portalRef={contentRef}>
+                  {examsOptions.items.map((item) => (
+                    <SelectItem key={item.value} item={item}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Rank
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.rank}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -731,12 +833,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Management Fee
                 </Heading>
               </VStack>
@@ -745,7 +851,6 @@ export default function ViewAdmissionDetailsModal({
                 w={"60%"}
                 type={"number"}
                 variant={"outline"}
-                bg={"white"}
                 value={state.fee_quoted}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -758,12 +863,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Fee Fixed
                 </Heading>
               </VStack>
@@ -772,7 +881,6 @@ export default function ViewAdmissionDetailsModal({
                 type={"number"}
                 readOnly={!user?.can_update_total}
                 variant={"outline"}
-                bg={"white"}
                 value={state.fee_fixed}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -785,12 +893,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Fee Paid
                 </Heading>
               </VStack>
@@ -800,7 +912,7 @@ export default function ViewAdmissionDetailsModal({
                 type={"number"}
                 variant={"outline"}
                 // readOnly={!user?.can_edit}
-                bg={"white"}
+
                 value={selectedAdmissionDetails[0]?.fee_paid}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -810,26 +922,24 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Fee Paid Date
                 </Heading>
               </VStack>
               {selectedAdmissionDetails[0]?.paid_date && (
                 <Box w={"60%"}>
-                  <ReactDatePicker
-                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                    selected={
-                      selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
-                        ? new Date()
-                        : new Date(selectedAdmissionDetails[0]?.paid_date)
-                    }
-                    dateFormat={"dd/MM/yyyy"}
-                    onChange={(date) => {}}
+                  <Input
+                    type="date"
+                    value={selectedAdmissionDetails[0]?.paid_date}
                     readOnly
                   />
                 </Box>
@@ -837,19 +947,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Mode / Remarks
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.remarks}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -859,12 +972,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Remaining Fee
                 </Heading>
               </VStack>
@@ -873,7 +990,6 @@ export default function ViewAdmissionDetailsModal({
                 readOnly
                 type={"number"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.remaining_amount}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -887,38 +1003,28 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} w={"full"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Due Date
                 </Heading>
               </VStack>
               {selectedAdmissionDetails[0]?.due_date && (
                 <Box w={"60%"}>
-                  <ReactDatePicker
-                    calendarClassName="z-30 bg-blue-200"
-                    todayButton={
-                      <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
-                        Today Date
-                      </Button>
-                    }
-                    className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                    selected={
-                      selectedAdmissionDetails[0]?.due_date !==
-                        "Invalid date" ||
-                      selectedAdmissionDetails[0]?.due_date.toString() ==
-                        "0000-00-00"
-                        ? new Date(selectedAdmissionDetails[0]?.due_date)
-                        : new Date()
-                    }
-                    dateFormat={"dd/MM/yyyy"}
-                    onChange={(date) => {
+                  <Input
+                    type="date"
+                    value={selectedAdmissionDetails[0]?.due_date}
+                    onChange={(e) => {
                       dispatch(
                         updateSelectedMatrix({
-                          due_date: moment(date).format("yyyy-MM-DD"),
+                          due_date: moment(e.target.value).format("yyyy-MM-DD"),
                         })
                       );
                     }}
@@ -928,12 +1034,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Approved By
                 </Heading>
               </VStack>
@@ -941,7 +1051,6 @@ export default function ViewAdmissionDetailsModal({
                 w={"60%"}
                 readOnly
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.approved_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {}}
@@ -949,23 +1058,24 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Approved Date
                 </Heading>
               </VStack>
               {selectedAdmissionDetails[0]?.approved_date && (
                 <Box w={"60%"}>
-                  <ReactDatePicker
-                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                    selected={
-                      new Date(selectedAdmissionDetails[0]?.approved_date)
-                    }
-                    dateFormat={"dd/MM/yyyy"}
+                  <Input
+                    type="date"
+                    value={selectedAdmissionDetails[0]?.approved_date}
                     onChange={(date) => {}}
                     readOnly
                   />
@@ -974,19 +1084,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Referred By
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.referred_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -998,19 +1111,22 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Recommended By
                 </Heading>
               </VStack>
               <Input
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.recommended_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -1022,12 +1138,16 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Hostel
                 </Heading>
               </VStack>
@@ -1035,19 +1155,25 @@ export default function ViewAdmissionDetailsModal({
                 w={"60%"}
                 invalid={!selectedAdmissionDetails[0]?.hostel}
               >
-                <Select
+                <SelectRoot
                   w={"full"}
-                  variant={"outline"}
-                  bg={"white"}
-                  value={selectedAdmissionDetails[0]?.hostel}
-                  className={"shadow-md shadow-lightBrand"}
-                  onChange={(e) => {
-                    dispatch(updateSelectedMatrix({ hostel: e.target.value }));
+                  collection={hostelOptions}
+                  value={[selectedAdmissionDetails[0]?.hostel]}
+                  onValueChange={(e) => {
+                    dispatch(updateSelectedMatrix({ hostel: e.value }));
                   }}
                 >
-                  <option value={"NO"}>NO</option>
-                  <option value={"YES"}>YES</option>
-                </Select>
+                  <SelectTrigger>
+                    <SelectValueText placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent portalRef={contentRef}>
+                    {hostelOptions.items.map((item) => (
+                      <SelectItem key={item.value} item={item}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectRoot>
                 {selectedAdmissionDetails[0]?.branch == "" && (
                   <Field.ErrorText>Branch is required !</Field.ErrorText>
                 )}
@@ -1055,13 +1181,17 @@ export default function ViewAdmissionDetailsModal({
             </Flex>
 
             <Flex
-              className="w-full justify-between"
+              w="full"
               justifyContent={"space-between"}
               alignItems={"center"}
               pb={"5"}
             >
               <VStack flex={"1"} alignItems={"start"}>
-                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   Status
                 </Heading>
               </VStack>
@@ -1069,7 +1199,6 @@ export default function ViewAdmissionDetailsModal({
                 readOnly
                 w={"60%"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.status}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -1089,7 +1218,6 @@ export default function ViewAdmissionDetailsModal({
               <Textarea
                 w={"full"}
                 variant={"outline"}
-                bg={"white"}
                 value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
@@ -1101,127 +1229,120 @@ export default function ViewAdmissionDetailsModal({
                 }}
               />
             </VStack>
-
-            <HStack
-              zIndex={"sticky"}
-              position={"sticky"}
-              bottom={"0"}
-              py={"2"}
-              w={"full"}
-              className={"border-t border-t-lightgray bg-background"}
-            >
-              <IModal
-                heading="Are you sure ?"
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                colorBtn="red"
-                onSubmit={() => {
-                  onDelete();
-                  onDeleteClose();
-                }}
-                buttonTitle="Yes"
-              >
-                <VStack py={"5"}>
-                  <Heading size={"md"} fontWeight={"medium"}>
-                    You want to delete this record
-                  </Heading>
-                  <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
-                    {"This action can't be undo"}
-                  </Heading>
-                </VStack>
-              </IModal>
-              <VStack w={"full"}>
-                {parseInt(selectedAdmissionDetails[0]?.remaining_amount) <
-                  0 && (
-                  <Alert.Root status="warning">
-                    <Alert.Indicator />
-                    <Box>
-                      <Alert.Title fontSize={"small"}>Warning !</Alert.Title>
-                      <Alert.Description fontSize={"smaller"}>
-                        Remaining Amount is less than zero. You still may
-                        continue to save the changes.
-                      </Alert.Description>
-                    </Box>
-                  </Alert.Root>
-                )}
-                <MenuRoot>
-                  <MenuTrigger
-                    as={Button}
-                    w={"full"}
-                    colorScheme="purple"
-                    asChild
-                  >
-                    <Button>Download Document</Button> <LuChevronUp />
-                  </MenuTrigger>
-                  <MenuContent>
-                    <MenuItem
-                      asChild
-                      colorPalette={"purple"}
-                      w={"full"}
-                      value="counselling-form"
-                    >
-                      <Link
-                        href={
-                          process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                        }
-                        target="_blank"
-                      >
-                        <LuFileDown />
-                        <Box flex={"1"}>Counselling Form</Box>
-                      </Link>
-                    </MenuItem>
-                    {selectedAdmissionDetails[0]?.status === "APPROVED" && (
-                      <>
-                        <MenuItem asChild value="provisional">
-                          <Link
-                            href={
-                              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                              `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                            }
-                            target="_blank"
-                          >
-                            <LuFileDown />
-                            <Box flex={"1"}>Provisional</Box>
-                          </Link>
-                        </MenuItem>
-                        <MenuItem value="fee-invoice" asChild>
-                          {" "}
-                          <Link
-                            target="_blank"
-                            href={
-                              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                              `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                            }
-                          >
-                            <LuFileDown />
-                            <Box flex={"1"}>Fee Invoice</Box>
-                          </Link>
-                        </MenuItem>
-                      </>
-                    )}
-                  </MenuContent>
-                </MenuRoot>
-
-                <Button
-                  loading={isDeleting}
-                  onClick={onDeleteOpen}
-                  colorScheme={"red"}
-                  w={"full"}
-                >
-                  Delete
-                  <AiOutlineDelete />
-                </Button>
-              </VStack>
-            </HStack>
           </VStack>
         </DrawerBody>
 
-        <DrawerFooter>
-          <Button onClick={onsubmit} loading={isLoading}>
-            Save
-          </Button>
+        <DrawerFooter justifyContent={"space-between"}>
+          {/** More Actions */}
+          <MenuRoot>
+            <MenuTrigger asChild>
+              <IconButton variant={"surface"} size={"sm"}>
+                <LuEllipsis />
+              </IconButton>
+            </MenuTrigger>
+
+            <MenuContent portalRef={contentRef}>
+              <MenuRoot positioning={{ placement: "left-start", gutter: 2 }}>
+                <MenuTriggerItem value="export">Download</MenuTriggerItem>
+
+                <MenuContent portalRef={contentRef}>
+                  <MenuItem asChild value="counselling-form">
+                    <Link
+                      href={
+                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                        `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                      }
+                      target="_blank"
+                    >
+                      <LuFileDown />
+                      <Box flex={"1"}>Counselling Form</Box>
+                    </Link>
+                  </MenuItem>
+
+                  {/* Only if matrix is approved */}
+                  {selectedAdmissionDetails[0]?.status === "APPROVED" && (
+                    <>
+                      <MenuItem asChild value="provisional">
+                        <Link
+                          href={
+                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                            `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                          }
+                          target="_blank"
+                        >
+                          <LuFileDown />
+                          <Box flex={"1"}>Provisional</Box>
+                        </Link>
+                      </MenuItem>
+                      <MenuItem value="fee-invoice" asChild>
+                        <Link
+                          target="_blank"
+                          href={
+                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                            `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                          }
+                        >
+                          <LuFileDown />
+                          <Box flex={"1"}>Fee Invoice</Box>
+                        </Link>
+                      </MenuItem>
+                    </>
+                  )}
+                </MenuContent>
+              </MenuRoot>
+
+              <DialogRoot role="alertdialog">
+                <DialogTrigger asChild>
+                  <MenuItem
+                    value="delete"
+                    color="fg.error"
+                    _hover={{ bg: "bg.error", color: "fg.error" }}
+                  >
+                    Delete
+                  </MenuItem>
+                </DialogTrigger>
+
+                <DialogContent portalRef={contentRef}>
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                  </DialogHeader>
+                  <DialogBody>
+                    <p>
+                      This action cannot be undone. This will permanently delete
+                      your record and remove your data from our systems.
+                    </p>
+                  </DialogBody>
+
+                  <DialogFooter>
+                    <DialogActionTrigger asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogActionTrigger>
+                    <Button
+                      colorPalette="red"
+                      loading={isDeleting}
+                      onClick={onDelete}
+                    >
+                      Delete
+                    </Button>
+                  </DialogFooter>
+                  <DialogCloseTrigger asChild>
+                    <CloseButton size="sm" />
+                  </DialogCloseTrigger>
+                </DialogContent>
+              </DialogRoot>
+            </MenuContent>
+          </MenuRoot>
+
+          <HStack>
+            <Button onClick={onsubmit} loading={isLoading}>
+              Save
+            </Button>
+          </HStack>
         </DrawerFooter>
+
+        <DrawerCloseTrigger>
+          <CloseButton size={"xs"} />
+        </DrawerCloseTrigger>
       </DrawerContent>
     </DrawerRoot>
   );
