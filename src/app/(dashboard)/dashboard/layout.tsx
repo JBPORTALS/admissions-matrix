@@ -186,6 +186,7 @@ export default function DashboardMainLayout(props: {
               w={"full"}
               flex={"1"}
               maxW={"7xl"}
+              spaceY={"2.5"}
             >
               {props.children}
             </Stack>

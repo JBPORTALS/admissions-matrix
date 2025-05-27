@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "./ui/select";
-import { LuClock10, LuHistory, LuUserCheck } from "react-icons/lu";
+import { LuBuilding2, LuClock10, LuHistory, LuUserCheck } from "react-icons/lu";
 
 const items = [
   {
@@ -34,9 +34,14 @@ const items = [
     icon: LuUserCheck,
   },
   {
-    label: "UnApproved",
+    label: "Unapproved",
     href: "/dashboard/un-approved",
     icon: LuClock10,
+  },
+  {
+    label: "Hostel",
+    href: "/dashboard/hostel",
+    icon: LuBuilding2,
   },
   {
     label: "History",
