@@ -68,3 +68,11 @@ export const hostelOptions = createListCollection({
     { value: "NO", label: "No" },
   ],
 });
+
+export const genderOptions = createListCollection({
+  items: [
+    { value: "MALE", label: "Male" },
+    { value: "FEMALE", label: "Female" },
+    { value: "OTHER", label: "Other" },
+  ],
+});

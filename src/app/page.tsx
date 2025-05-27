@@ -58,9 +58,11 @@ export default function Home() {
             enrollment, simplify every step with intelligent workflows
           </Text>
           <HStack gap={"3"}>
-            <Button size={"lg"}>
-              <LuPlus />
-              New Enquiry
+            <Button size={"lg"} asChild>
+              <Link href={`/new-enquiry`}>
+                <LuPlus />
+                New Enquiry
+              </Link>
             </Button>
 
             <Button size={"lg"} variant={"surface"} asChild>
