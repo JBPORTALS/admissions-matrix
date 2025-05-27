@@ -1,0 +1,116 @@
+"use client";
+
+import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
+import { Box, IconButton } from "@chakra-ui/react";
+import { ColumnDef } from "@tanstack/react-table";
+import { LuEllipsis, LuEye, LuFileDown } from "react-icons/lu";
+
+export type Payment = {
+  admission_id: string;
+  sl_no: string;
+  name: string;
+  father_name: string;
+  phone_no: string;
+  fee_fixed: string;
+  fee_paid: string;
+  remaining_amount: string;
+  referenced_by: string;
+  approved_by: string;
+};
+
+/**
+ {
+    accessorKey: "",
+   
+    header: "Download",
+    width: "120px",
+    cellRenderer: DownloadProvisional,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+  {
+    accessorKey: "",
+   
+    header: "View",
+   
+    cellRenderer: CustomViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+ 
+ */
+
+export const columns: ColumnDef<Payment>[] = [
+  {
+    accessorKey: "sl_no",
+    header: "Sl No.",
+  },
+  {
+    accessorKey: "admission_id",
+    header: "App No.",
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "father_name",
+    header: "Father Name",
+  },
+  {
+    accessorKey: "phone_no",
+    header: "Phone No.",
+  },
+  {
+    accessorKey: "fee_fixed",
+    header: "Fixed",
+  },
+  {
+    accessorKey: "fee_paid",
+    header: "Paid",
+  },
+  {
+    accessorKey: "remaining_amount",
+    header: "Payable",
+  },
+  {
+    accessorKey: "referred_by",
+    header: "Referred By",
+  },
+  {
+    accessorKey: "approved_by",
+    header: "Approved By",
+  },
+  {
+    id: "menu",
+    cell(props) {
+      return (
+        <MenuRoot>
+          <MenuTrigger>
+            <IconButton variant={"ghost"}>
+              <LuEllipsis />
+            </IconButton>
+          </MenuTrigger>
+          <MenuContent>
+            <ViewAdmissionDetailsModal>
+              <MenuItem value="view">
+                <LuEye /> <Box flex={"1"}> View</Box>
+              </MenuItem>
+            </ViewAdmissionDetailsModal>
+            <MenuItem value="download-provisional">
+              <LuFileDown /> <Box flex={"1"}>Download Provisional</Box>
+            </MenuItem>
+          </MenuContent>
+        </MenuRoot>
+      );
+    },
+  },
+];

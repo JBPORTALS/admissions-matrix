@@ -1,12 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  HStack,
+  Heading,
+  Highlight,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { MdOutlineAdd } from "react-icons/md";
-import CheckStudentDetails from "@/components/modals/CheckStudentDetails";
+import { LuPlus } from "react-icons/lu";
 
 export default function Home() {
   return (
-    <Flex className="bg-white flex h-[100vh] flex-col justify-start w-full">
+    <VStack h={"svh"} justifyContent={"start"} w={"full"}>
       <HStack
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
@@ -14,7 +23,7 @@ export default function Home() {
         px={"16"}
         py={"3"}
       >
-        <div className="relative flex h-8 w-28">
+        <Box h={"8"} w={"28"} position={"relative"}>
           <Image
             quality={100}
             alt={"ismart"}
@@ -23,46 +32,43 @@ export default function Home() {
             sizes="24vh"
             fill
           />
-        </div>
-        <HStack gap={3}>
-          <CheckStudentDetails>
-            <Button
-              // as={Link}
-              // href={"/new-enquiry"}
-              size={"sm"}
-              colorScheme="facebook"
-            >
-              Add Enquiry
-              <MdOutlineAdd />
-            </Button>
-          </CheckStudentDetails>
-
-          <Button size={"sm"} variant={"outline"} colorScheme="gray" asChild>
-            <Link href={"/signin"}>Signin</Link>
-          </Button>
-        </HStack>
+        </Box>
+        <HStack gap={3}></HStack>
       </HStack>
       <Center h={"full"}>
-        <Card
-          border={"1px"}
-          borderColor={"gray.300"}
-          shadow={"md"}
-          p={"16"}
-          alignItems={"center"}
-        >
-          <Heading>Admission Matrix</Heading>
-          <p className="mt-3">To manage admission process details</p>
-          <Button
-            mt={"4"}
-            size={"lg"}
-            colorScheme="facebook"
-            w={"full"}
-            asChild
-          >
-            <Link href="/signin">Get Signin</Link>
-          </Button>
-        </Card>
+        <VStack gap={"5"} w={"50%"}>
+          <Heading textAlign={"center"} size={"5xl"} fontWeight={"semibold"}>
+            <Highlight
+              styles={{
+                px: "3",
+                borderStartRadius: "md",
+                borderRightColor: "colorPalette",
+                borderRightWidth: "2px",
+                bg: "colorPalette.subtle",
+                color: "colorPalette.500",
+              }}
+              query={"Precision"}
+            >
+              Streamline Admissions with Precision
+            </Highlight>
+          </Heading>
+          <Text fontSize={"xl"} color={"fg.muted"} textAlign={"center"}>
+            Admission Matrix empowers institutions to manage student
+            applications with ease, transparency, and accuracy. From inquiry to
+            enrollment, simplify every step with intelligent workflows
+          </Text>
+          <HStack gap={"3"}>
+            <Button size={"lg"}>
+              <LuPlus />
+              New Enquiry
+            </Button>
+
+            <Button size={"lg"} variant={"surface"} asChild>
+              <Link href={"/signin"}>Signin to Dashboard</Link>
+            </Button>
+          </HStack>
+        </VStack>
       </Center>
-    </Flex>
+    </VStack>
   );
 }

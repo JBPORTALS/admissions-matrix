@@ -1,5 +1,7 @@
 "use client";
 import {
+  Breadcrumb,
+  LinkBox,
   Progress,
   Skeleton,
   Stack,
@@ -10,7 +12,7 @@ import {
   TableRow,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
@@ -18,11 +20,11 @@ import Link from "next/link";
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress";
 
 export default function CollegeList() {
-  const router = useParams();
+  const params = useParams<{ college: string }>();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
   const { data, error } = trpc.retreiveBranchMatrix.useQuery({
     acadyear,
-    college: router.college as string,
+    college: params.college,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,54 +39,78 @@ export default function CollegeList() {
     );
 
   return (
-    <Stack h={"fit"} w={"full"} pb={"40"} justifyContent={"start"}>
-      <Table.Root px={"5"} size={"lg"}>
+    <React.Fragment>
+      {/* BreadCrumbs  */}
+      <Breadcrumb.Root>
+        <Breadcrumb.List>
+          <Breadcrumb.Item>
+            <Breadcrumb.Link asChild>
+              <Link href={"/dashboard/approved"}>Overall</Link>
+            </Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator />
+          <Breadcrumb.Item>
+            <Breadcrumb.CurrentLink>{params.college}</Breadcrumb.CurrentLink>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
+
+      <Table.Root
+        interactive
+        px={"5"}
+        variant={"outline"}
+        rounded={"lg"}
+        size={"lg"}
+        colorPalette={"gray"}
+      >
+        <Table.Header>
+          <Table.ColumnHeader>
+            <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+              Branch
+            </div>
+          </Table.ColumnHeader>
+
+          {params.college === "KSIT" ||
+          params.college === "KSDC" ||
+          params.college === "KSSEM" ? (
+            <>
+              <Table.ColumnHeader>Total Seats</Table.ColumnHeader>
+              <Table.ColumnHeader>CET & SNQ</Table.ColumnHeader>
+              <Table.ColumnHeader>COMEDK</Table.ColumnHeader>
+            </>
+          ) : null}
+          <Table.ColumnHeader>Management</Table.ColumnHeader>
+          <Table.ColumnHeader>Allotted</Table.ColumnHeader>
+
+          <Table.ColumnHeader>Remaining</Table.ColumnHeader>
+          <Table.ColumnHeader>Filled Percentage</Table.ColumnHeader>
+          <Table.ColumnHeader>Total Enquiries</Table.ColumnHeader>
+        </Table.Header>
         <Table.Body>
-          <Table.Row>
-            <Table.ColumnHeader>
-              <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                Branch
-              </div>
-            </Table.ColumnHeader>
-
-            {router.college === "KSIT" ||
-            router.college === "KSDC" ||
-            router.college === "KSSEM" ? (
-              <>
-                <Table.ColumnHeader>Total Seats</Table.ColumnHeader>
-                <Table.ColumnHeader>CET & SNQ</Table.ColumnHeader>
-                <Table.ColumnHeader>COMEDK</Table.ColumnHeader>
-              </>
-            ) : null}
-            <Table.ColumnHeader>Management</Table.ColumnHeader>
-            <Table.ColumnHeader>Allotted</Table.ColumnHeader>
-
-            <Table.ColumnHeader>Remaining</Table.ColumnHeader>
-            <Table.ColumnHeader>Filled Percentage</Table.ColumnHeader>
-            <Table.ColumnHeader>Total Enquiries</Table.ColumnHeader>
-          </Table.Row>
           {data &&
             data.length > 0 &&
             data?.map((value, index) => {
               return (
                 <TableRow key={index}>
                   <TableCell>
-                    <Link
-                      href={
-                        "/dashboard/approved/" +
-                        router.college +
-                        `/${value.branch}`
-                      }
-                    >
-                      <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                        {value.branch}
-                      </div>
-                    </Link>
+                    <LinkBox asChild _hover={{ textDecor: "underline" }}>
+                      <Link
+                        href={
+                          "/dashboard/approved/" +
+                          params.college +
+                          `/${value.branch}`
+                        }
+                      >
+                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
+                          {value.branch}
+                        </div>
+                      </Link>
+                    </LinkBox>
                   </TableCell>
 
-                  {router.college === "KSIT" ||
-                  router.college === "KSDC" ||
-                  router.college === "KSSEM" ? (
+                  {params.college === "KSIT" ||
+                  params.college === "KSDC" ||
+                  params.college === "KSSEM" ? (
                     <>
                       <TableCell>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
@@ -127,6 +153,7 @@ export default function CollegeList() {
                       {value.filled_percentage} %
                     </h3>
                     <ProgressRoot
+                      colorPalette={"blue"}
                       size="sm"
                       defaultValue={value.filled_percentage}
                       striped
@@ -144,6 +171,6 @@ export default function CollegeList() {
             })}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </React.Fragment>
   );
 }

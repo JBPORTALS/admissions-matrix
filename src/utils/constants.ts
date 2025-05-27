@@ -14,3 +14,13 @@ export const COLLEGES = () => {
 export const ACADYEARS = createListCollection({
   items: [{ value: "2025", label: "2025-26" }],
 });
+
+export const collegesOptions = createListCollection({
+  items: [
+    { value: "KSIT", label: "KSIT" },
+    { value: "KSPT", label: "KSPT" },
+    { value: "KSPU", label: "KSPU" },
+    { value: "KSDC", label: "KSDC" },
+    { value: "KSSEM", label: "KSSEM" },
+  ],
+});

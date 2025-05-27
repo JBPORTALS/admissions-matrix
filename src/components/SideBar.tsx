@@ -18,7 +18,6 @@ import { useAppDispatch } from "@/hooks";
 import { updateAcadYear } from "@/store/admissions.slice";
 import { useRouter } from "next/navigation";
 import { ACADYEARS } from "@/utils/constants";
-import CheckStudentDetails from "./modals/CheckStudentDetails";
 import { toast } from "react-hot-toast";
 import {
   SelectContent,
@@ -54,8 +53,7 @@ export function SideBar() {
 
   return (
     <VStack
-      w={"2xs"}
-      px={"4"}
+      w={"3xs"}
       flexShrink={"0"}
       h={"100vh"}
       borderRightColor={"border"}
@@ -69,56 +67,68 @@ export function SideBar() {
       asChild
     >
       <aside>
-        <VStack py={"5"} w={"full"}>
-          {items.map((item) => (
-            <NavButton asChild active={pathname.startsWith(item.href)}>
-              <Link href={item.href}>
-                <item.icon />
-                {item.label}
-              </Link>
-            </NavButton>
-          ))}
-        </VStack>
-
-        <Separator color={"border"} />
-        <Heading fontSize={"xs"} color={"fg.muted"}>
-          ENQUIRY
-        </Heading>
-        <CheckStudentDetails>
-          <Button size={"sm"} width={"full"}>
-            <MdOutlineAdd />
-            New Enquiry
-          </Button>
-        </CheckStudentDetails>
-        <Separator />
-        <Heading fontSize={"xs"} color={"fg.muted"}>
-          ACADEMIC YEAR
-        </Heading>
-        <Field.Root>
-          <SelectRoot
-            value={[acadYear]}
-            collection={ACADYEARS}
-            onValueChange={(e) => {
-              dispatch(updateAcadYear(e.value));
-              toast.success(`Academic year changed to "${e.value}"`);
-              router.push("/dashboard");
-            }}
-            rounded={"full"}
-          >
-            <SelectControl>
-              <SelectTrigger>
-                <SelectValueText placeholder="Select Academic Year" />
-              </SelectTrigger>
-            </SelectControl>
-            <SelectContent>
-              {ACADYEARS.items.map((option) => (
-                <Select.Item item={option} key={option.value}>
-                  {option.label}
-                </Select.Item>
+        <VStack
+          asChild
+          position={"relative"}
+          w={"full"}
+          overflowY={"auto"}
+          overflowX={"hidden"}
+          overscroll={"contain"}
+          px={"3"}
+          py={"3"}
+          alignItems={"start"}
+        >
+          <nav>
+            <VStack w={"full"}>
+              {items.map((item) => (
+                <NavButton asChild active={pathname.startsWith(item.href)}>
+                  <Link href={item.href}>
+                    <item.icon />
+                    {item.label}
+                  </Link>
+                </NavButton>
               ))}
-            </SelectContent>
-          </SelectRoot>
-        </Field.Root>
+            </VStack>
+
+            <Separator color={"border"} />
+            <Heading fontSize={"xs"} color={"fg.muted"}>
+              ENQUIRY
+            </Heading>
+            <Button size={"sm"} width={"full"}>
+              <MdOutlineAdd />
+              New Enquiry
+            </Button>
+            <Separator />
+            <Heading fontSize={"xs"} color={"fg.muted"}>
+              ACADEMIC YEAR
+            </Heading>
+            <Field.Root>
+              <SelectRoot
+                value={[acadYear]}
+                collection={ACADYEARS}
+                onValueChange={(e) => {
+                  dispatch(updateAcadYear(e.value));
+                  toast.success(`Academic year changed to "${e.value}"`);
+                  router.push("/dashboard");
+                }}
+                rounded={"full"}
+              >
+                <SelectControl>
+                  <SelectTrigger>
+                    <SelectValueText placeholder="Select Academic Year" />
+                  </SelectTrigger>
+                </SelectControl>
+                <SelectContent>
+                  {ACADYEARS.items.map((option) => (
+                    <Select.Item item={option} key={option.value}>
+                      {option.label}
+                    </Select.Item>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
+            </Field.Root>
+          </nav>
+        </VStack>
       </aside>
     </VStack>
   );

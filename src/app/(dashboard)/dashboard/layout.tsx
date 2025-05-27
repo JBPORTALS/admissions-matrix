@@ -9,6 +9,7 @@ import {
   Grid,
   GridItem,
   VStack,
+  Stack,
 } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
@@ -33,22 +34,22 @@ export default function DashboardMainLayout(props: {
   children: React.ReactNode;
 }) {
   return (
-    <VStack gap={"0"} minH={"100vh"}>
+    <VStack gap={"0"} alignItems={"start"} minH={"100vh"}>
       <Header />
-      <Grid
-        gridAutoFlow={"row"}
-        h={"100svh"}
+      <HStack
+        alignItems={"start"}
+        justifyItems={"start"}
+        zIndex={1}
         w={"full"}
-        templateColumns="repeat(7, 1fr)"
+        flex={"1"}
       >
         {/** SideBar contents */}
-        <GridItem position={"relative"} h={"full"}>
-          <SideBar />
-        </GridItem>
+        <SideBar />
 
         {/** Main Content */}
-        <GridItem pl={"23"} colSpan={6} p={"5"} h={"full"} w={"full"}>
-          {/* <HStack justifyContent={"space-between"}>
+        <Box w={"full"} flex={"1"} asChild minW={"0"}>
+          <main>
+            {/* <HStack justifyContent={"space-between"}>
           <Heading size={"2xl"} color={"fg"}>
           {pathname.startsWith("/dashboard/approved")
           ? "Approved Details"
@@ -178,11 +179,19 @@ export default function DashboardMainLayout(props: {
                                       </HStack>
                                       </HStack> */}
 
-          <Box py={"5"} w={"full"}>
-            {props.children}
-          </Box>
-        </GridItem>
-      </Grid>
+            <Stack
+              py={"4"}
+              mx={"auto"}
+              px={"4"}
+              w={"full"}
+              flex={"1"}
+              maxW={"7xl"}
+            >
+              {props.children}
+            </Stack>
+          </main>
+        </Box>
+      </HStack>
     </VStack>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import {
+  Breadcrumb,
   LinkBox,
   Progress,
   Skeleton,
@@ -19,6 +20,7 @@ import {
   ProgressLabel,
   ProgressRoot,
 } from "@/components/ui/progress";
+import React from "react";
 
 export default function Home() {
   const { user } = useSupabase();
@@ -41,9 +43,26 @@ export default function Home() {
     );
 
   return (
-    <Stack h={"fit"} pb={"40"} w={"full"} justifyContent={"start"}>
-      <Table.Root px={"5"} striped size={"lg"}>
-        <Table.Body px={"5"}>
+    <React.Fragment>
+      {/* BreadCrumbs  */}
+      <Breadcrumb.Root>
+        <Breadcrumb.List>
+          <Breadcrumb.Item>
+            <Breadcrumb.CurrentLink>Overall</Breadcrumb.CurrentLink>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
+
+      {/* Main Table */}
+      <Table.Root
+        colorPalette={"gray"}
+        interactive
+        px={"5"}
+        variant={"outline"}
+        rounded={"lg"}
+        size={"lg"}
+      >
+        <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>College</Table.ColumnHeader>
             <Table.ColumnHeader textAlign={"center"}>
@@ -62,6 +81,8 @@ export default function Home() {
               Filled Percentage
             </Table.ColumnHeader>
           </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {data &&
             data.length > 0 &&
             data?.map((value, index) => {
@@ -85,7 +106,7 @@ export default function Home() {
                     {value.remaining_seats}
                   </Table.Cell>
                   <Table.Cell textAlign={"right"}>
-                    <ProgressRoot size={"xs"} striped>
+                    <ProgressRoot colorPalette={"blue"} size={"xs"} striped>
                       <ProgressLabel>{value.filled_percentage} %</ProgressLabel>
                       <ProgressBar defaultValue={value.filled_percentage} />
                     </ProgressRoot>
@@ -95,6 +116,6 @@ export default function Home() {
             })}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </React.Fragment>
   );
 }

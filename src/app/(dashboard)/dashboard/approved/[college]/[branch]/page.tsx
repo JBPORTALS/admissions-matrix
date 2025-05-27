@@ -1,42 +1,50 @@
 "use client";
-import AdmissionLayout from "@/components/layouts/AdmissionLayout";
-import { useAppDispatch } from "@/hooks";
-import { fetchSearchClass } from "@/store/admissions.slice";
-import { Center, Heading, Stack, VStack } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Breadcrumb, VStack } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { useParams } from "next/navigation";
-import ClassDataGrid from "@/components/layouts/ClassDataGrid";
-import { AgGridReact } from "ag-grid-react";
 import { trpc } from "@/utils/trpc-cleint";
-import { columns } from "@/components/mock-data/admission-meta";
+import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "./columns";
+import React from "react";
 
 export default function Home() {
-  const router = useParams();
-  const { data } = trpc.searchClass.useQuery({
+  const params = useParams<{ college: string; branch: string }>();
+  const { data, isLoading } = trpc.searchClass.useQuery({
     acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
-    branch: router.branch as string,
-    college: router.college as string,
+    branch: params.branch,
+    college: params.college,
   });
 
+  console.log(data);
+
   return (
-    <VStack h={"77vh"} w={"full"} pr={"3"} className="ag">
-      <VStack h={"80vh"} w={"100%"}>
-        {data?.data && data.data.length > 0 ? (
-          <AgGridReact
-            alwaysShowHorizontalScroll
-            animateRows={true}
-            className="w-full h-full  pb-6 ag-theme-material"
-            rowData={data.data as any}
-            columnDefs={columns as any}
-          />
-        ) : data && !data.ok ? (
-          <Center h={"80%"}>
-            <Heading size={"lg"}>{data?.data.msg}</Heading>
-          </Center>
-        ) : null}
-      </VStack>
-    </VStack>
+    <React.Fragment>
+      {/* BreadCrumbs  */}
+      <Breadcrumb.Root>
+        <Breadcrumb.List>
+          <Breadcrumb.Item>
+            <Breadcrumb.Link asChild>
+              <Link href={"/dashboard/approved"}>Overall</Link>
+            </Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator />
+          <Breadcrumb.Item>
+            <Breadcrumb.Link asChild>
+              <Link href={`/dashboard/approved/${params.college}`}>
+                {params.college}
+              </Link>
+            </Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator />
+          <Breadcrumb.Item>
+            <Breadcrumb.CurrentLink>{params.branch}</Breadcrumb.CurrentLink>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
+
+      <DataTable columns={columns} data={data?.data ?? []} />
+    </React.Fragment>
   );
 }

@@ -2,7 +2,6 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  fetchBranchList,
   fetchFeeQouted,
   fetchSearchClass,
   fetchSelectedMatrix,
@@ -12,36 +11,22 @@ import {
 } from "@/store/admissions.slice";
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
+  Field,
   Flex,
-  FormControl,
-  FormErrorMessage,
   Heading,
   HStack,
   Input,
   InputGroup,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Select,
   Textarea,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
-import IDrawer from "../ui/utils/IDrawer";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import {
-  AiOutlineArrowUp,
-  AiOutlineDelete,
-  AiOutlineFilePdf,
-} from "react-icons/ai";
+import { AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import IModal from "../ui/utils/IModal";
@@ -50,9 +35,29 @@ import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { exams } from "./ViewUnApprovedAdmModal";
 import { trpc } from "@/utils/trpc-cleint";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
+import { LuChevronUp, LuFileDown } from "react-icons/lu";
+import Link from "next/link";
+import {
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerRoot,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { collegesOptions } from "@/utils/constants";
+import {
+  SelectContent,
+  SelectItem,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from "../ui/select";
 
 interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
+  children: React.ReactNode;
   admissionno: string;
 }
 
@@ -83,11 +88,7 @@ export default function ViewAdmissionDetailsModal({
   const dispatch = useAppDispatch();
   const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
-  const {
-    open: isMenuOpen,
-    onOpen: onMenuOpen,
-    onClose: onMenuClose,
-  } = useDisclosure();
+
   const [state, setState] = useState({
     fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
     fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
@@ -233,970 +234,995 @@ export default function ViewAdmissionDetailsModal({
   };
 
   return (
-    <>
-      <IDrawer
-        isLoading={isLoading}
-        isDisabled={isLoading}
-        onSubmit={onsubmit}
-        buttonTitle="Save"
-        onClose={() => {
-          onClose();
-        }}
-        isOpen={open}
-        heading="Admission Details"
-      >
-        <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Application No.
-              </Heading>
-            </VStack>
-            <Input
-              readOnly
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.admission_id}
-              className={"shadow-md shadow-lightBrand"}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Enquiry Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.enquiry_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={new Date(selectedAdmissionDetails[0]?.enquiry_date)}
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {}}
-                  readOnly
-                />
-              </Box>
-            )}
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Register Number
-              </Heading>
-            </VStack>
-            <Input
-              readOnly
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.reg_no}
-              className={"shadow-md shadow-lightBrand"}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Name
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.name}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
-              }}
-            />
-          </Flex>
+    <DrawerRoot>
+      <DrawerTrigger asChild>{children}</DrawerTrigger>
 
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Student Phone No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.phone_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ phone_no: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Overall Percentage / CGPA
-              </Heading>
-            </VStack>
-            <InputGroup
-              endElement={"%"}
-              w={"60%"}
-              className={"shadow-md shadow-lightBrand"}
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Admission Details</DrawerTitle>
+        </DrawerHeader>
+
+        <DrawerBody asChild>
+          <VStack w={"full"} h={"full"} px={"5"} gap={"3"} py={"5"}>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Application No.
+                </Heading>
+              </VStack>
               <Input
+                readOnly
+                w={"60%"}
                 variant={"outline"}
                 bg={"white"}
-                type="number"
-                value={parseFloat(
-                  selectedAdmissionDetails[0]?.percentage
-                ).toString()}
-                onChange={(e) => {
-                  dispatch(
-                    updateSelectedMatrix({
-                      percentage:
-                        e.target.value == ""
-                          ? 0
-                          : parseInt(e.target.value) > 100
-                          ? Math.trunc(100)
-                          : parseFloat(e.target.value),
-                    })
-                  );
-                }}
+                value={selectedAdmissionDetails[0]?.admission_id}
+                className={"shadow-md shadow-lightBrand"}
               />
-            </InputGroup>
-          </Flex>
-          {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
-            <>
-              <Flex
-                className="w-full justify-between"
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <VStack flex={"1"} alignItems={"start"}>
-                  <Heading fontSize={"sm"} fontWeight={"medium"}>
-                    PCM Aggregate
-                  </Heading>
-                </VStack>
-                <InputGroup
-                  w={"60%"}
-                  endElement={"%"}
-                  className={"shadow-md shadow-lightBrand"}
-                >
-                  <Input
-                    variant={"outline"}
-                    bg={"white"}
-                    type="number"
-                    value={parseFloat(
-                      selectedAdmissionDetails[0]?.pcm
-                    ).toString()}
-                    onChange={(e) => {
-                      dispatch(
-                        updateSelectedMatrix({
-                          pcm:
-                            e.target.value == ""
-                              ? 0
-                              : parseInt(e.target.value) > 100
-                              ? Math.trunc(100)
-                              : parseFloat(e.target.value),
-                        })
-                      );
-                    }}
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Enquiry Date
+                </Heading>
+              </VStack>
+              {selectedAdmissionDetails[0]?.enquiry_date && (
+                <Box w={"60%"}>
+                  <ReactDatePicker
+                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                    selected={
+                      new Date(selectedAdmissionDetails[0]?.enquiry_date)
+                    }
+                    dateFormat={"dd/MM/yyyy"}
+                    onChange={(date) => {}}
+                    readOnly
                   />
-                </InputGroup>
-              </Flex>
-            </>
-          )}
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                College
-              </Heading>
-            </VStack>
-            <Select
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.college}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ college: e.target.value }));
-              }}
+                </Box>
+              )}
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              <option value={""}>Select College</option>
-              <option value={"KSIT"}>KSIT</option>
-              <option value={"KSPT"}>KSPT</option>
-              <option value={"KSPU"}>KSPU</option>
-              <option value={"KSDC"}>KSDC</option>
-              <option value={"KSSEM"}>KSSEM</option>
-            </Select>
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Branch
-              </Heading>
-            </VStack>
-            <FormControl
-              w={"60%"}
-              isInvalid={!selectedAdmissionDetails[0]?.branch}
-            >
-              <Select
-                w={"full"}
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Register Number
+                </Heading>
+              </VStack>
+              <Input
+                readOnly
+                w={"60%"}
                 variant={"outline"}
                 bg={"white"}
-                value={selectedAdmissionDetails[0]?.branch}
+                value={selectedAdmissionDetails[0]?.reg_no}
+                className={"shadow-md shadow-lightBrand"}
+              />
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Name
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
-                  dispatch(updateSelectedMatrix({ branch: e.target.value }));
+                  dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
                 }}
-              >
-                <option value={""}>Select Branch</option>
-                {branch_list &&
-                  branch_list.map((branch: any) => {
-                    return (
-                      <option key={branch.value} value={branch.value}>
-                        {branch.option}
-                      </option>
-                    );
-                  })}
-              </Select>
-              {selectedAdmissionDetails[0]?.branch == "" && (
-                <FormErrorMessage>Branch is required !</FormErrorMessage>
-              )}
-            </FormControl>
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Father Name
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.father_name}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ father_name: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Father Mobile No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.father_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ father_no: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Mother Name
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.mother_name}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ mother_name: e.target.value }));
-              }}
-            />
-          </Flex>
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Mother Mobile No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.mother_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ mother_no: e.target.value }));
-              }}
-            />
-          </Flex>
+              />
+            </Flex>
 
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Aadhar Card No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.aadhar_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ aadhar_no: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Pan Card No.
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.pan_no}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ pan_no: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Address
-              </Heading>
-            </VStack>
-            <Textarea
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.address}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ address: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                E-Mail
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.email}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ email: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Exam
-              </Heading>
-            </VStack>
-            <Select
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.exam}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ exam: e.target.value }));
-              }}
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              <option value={""}>Select Exam</option>
-              {exams.map((option, key) => (
-                <option key={key + option.value} value={option.value}>
-                  {option.option}
-                </option>
-              ))}
-            </Select>
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Rank
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.rank}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ rank: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Management Fee
-              </Heading>
-            </VStack>
-            <Input
-              readOnly
-              w={"60%"}
-              type={"number"}
-              variant={"outline"}
-              bg={"white"}
-              value={state.fee_quoted}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                setState((prev) => ({ ...prev, fee_quoted: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Fixed
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              type={"number"}
-              readOnly={!user?.can_update_total}
-              variant={"outline"}
-              bg={"white"}
-              value={state.fee_fixed}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                setState((prev) => ({ ...prev, fee_fixed: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Paid
-              </Heading>
-            </VStack>
-            <Input
-              min={0}
-              w={"60%"}
-              type={"number"}
-              variant={"outline"}
-              // readOnly={!user?.can_edit}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.fee_paid}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Fee Paid Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.paid_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={
-                    selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
-                      ? new Date()
-                      : new Date(selectedAdmissionDetails[0]?.paid_date)
-                  }
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {}}
-                  readOnly
-                />
-              </Box>
-            )}
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Mode / Remarks
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.remarks}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Remaining Fee
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              readOnly
-              type={"number"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.remaining_amount}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(
-                  updateSelectedMatrix({ remaining_amount: e.target.value })
-                );
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} w={"full"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Due Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.due_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  calendarClassName="z-30 bg-blue-200"
-                  todayButton={
-                    <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
-                      Today Date
-                    </Button>
-                  }
-                  className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={
-                    selectedAdmissionDetails[0]?.due_date !== "Invalid date" ||
-                    selectedAdmissionDetails[0]?.due_date.toString() ==
-                      "0000-00-00"
-                      ? new Date(selectedAdmissionDetails[0]?.due_date)
-                      : new Date()
-                  }
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Student Phone No.
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.phone_no}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ phone_no: e.target.value }));
+                }}
+              />
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Overall Percentage / CGPA
+                </Heading>
+              </VStack>
+              <InputGroup
+                endElement={"%"}
+                w={"60%"}
+                className={"shadow-md shadow-lightBrand"}
+              >
+                <Input
+                  variant={"outline"}
+                  bg={"white"}
+                  type="number"
+                  value={parseFloat(
+                    selectedAdmissionDetails[0]?.percentage
+                  ).toString()}
+                  onChange={(e) => {
                     dispatch(
                       updateSelectedMatrix({
-                        due_date: moment(date).format("yyyy-MM-DD"),
+                        percentage:
+                          e.target.value == ""
+                            ? 0
+                            : parseInt(e.target.value) > 100
+                            ? Math.trunc(100)
+                            : parseFloat(e.target.value),
                       })
                     );
                   }}
                 />
-              </Box>
+              </InputGroup>
+            </Flex>
+            {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
+              <>
+                <Flex
+                  className="w-full justify-between"
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                >
+                  <VStack flex={"1"} alignItems={"start"}>
+                    <Heading fontSize={"sm"} fontWeight={"medium"}>
+                      PCM Aggregate
+                    </Heading>
+                  </VStack>
+                  <InputGroup
+                    w={"60%"}
+                    endElement={"%"}
+                    className={"shadow-md shadow-lightBrand"}
+                  >
+                    <Input
+                      variant={"outline"}
+                      bg={"white"}
+                      type="number"
+                      value={parseFloat(
+                        selectedAdmissionDetails[0]?.pcm
+                      ).toString()}
+                      onChange={(e) => {
+                        dispatch(
+                          updateSelectedMatrix({
+                            pcm:
+                              e.target.value == ""
+                                ? 0
+                                : parseInt(e.target.value) > 100
+                                ? Math.trunc(100)
+                                : parseFloat(e.target.value),
+                          })
+                        );
+                      }}
+                    />
+                  </InputGroup>
+                </Flex>
+              </>
             )}
-          </Flex>
 
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Approved By
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              readOnly
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.approved_by}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {}}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Approved Date
-              </Heading>
-            </VStack>
-            {selectedAdmissionDetails[0]?.approved_date && (
-              <Box w={"60%"}>
-                <ReactDatePicker
-                  className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                  selected={
-                    new Date(selectedAdmissionDetails[0]?.approved_date)
-                  }
-                  dateFormat={"dd/MM/yyyy"}
-                  onChange={(date) => {}}
-                  readOnly
-                />
-              </Box>
-            )}
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Referred By
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.referred_by}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ referred_by: e.target.value }));
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Recommended By
-              </Heading>
-            </VStack>
-            <Input
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.recommended_by}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(
-                  updateSelectedMatrix({ recommended_by: e.target.value })
-                );
-              }}
-            />
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Hostel
-              </Heading>
-            </VStack>
-            <FormControl
-              w={"60%"}
-              isInvalid={!selectedAdmissionDetails[0]?.hostel}
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              <Select
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  College
+                </Heading>
+              </VStack>
+              <SelectRoot
+                w={"60%"}
+                collection={collegesOptions}
+                defaultValue={[selectedAdmissionDetails[0]?.college]}
+                onValueChange={(e) => {
+                  dispatch(updateSelectedMatrix({ college: e.value }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValueText placeholder="Select..." />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {collegesOptions.items.map((item) => (
+                    <SelectItem item={item} key={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Branch
+                </Heading>
+              </VStack>
+              <Field.Root
+                w={"60%"}
+                invalid={!selectedAdmissionDetails[0]?.branch}
+              >
+                <SelectRoot
+                  w={"60%"}
+                  collection={branch_list?.map((branch: any) => ({
+                    value: branch.value,
+                    label: branch.value,
+                  }))}
+                  defaultValue={[selectedAdmissionDetails[0]?.college]}
+                  onValueChange={(e) => {
+                    dispatch(updateSelectedMatrix({ college: e.value }));
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValueText placeholder="Select..." />
+                  </SelectTrigger>
+                  <option value={""}>Select Branch</option>
+                  {branch_list &&
+                    branch_list.map((branch: any) => {
+                      return (
+                        <option key={branch.value} value={branch.value}>
+                          {branch.option}
+                        </option>
+                      );
+                    })}
+                </SelectRoot>
+                {selectedAdmissionDetails[0]?.branch == "" && (
+                  <Field.ErrorText>Branch is required !</Field.ErrorText>
+                )}
+              </Field.Root>
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Father Name
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.father_name}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({ father_name: e.target.value })
+                  );
+                }}
+              />
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Father Mobile No.
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.father_no}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ father_no: e.target.value }));
+                }}
+              />
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Mother Name
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.mother_name}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({ mother_name: e.target.value })
+                  );
+                }}
+              />
+            </Flex>
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Mother Mobile No.
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.mother_no}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ mother_no: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Aadhar Card No.
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.aadhar_no}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ aadhar_no: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Pan Card No.
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.pan_no}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ pan_no: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Address
+                </Heading>
+              </VStack>
+              <Textarea
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.address}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ address: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  E-Mail
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.email}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ email: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Exam
+                </Heading>
+              </VStack>
+              <Select.Root
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.exam}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ exam: e.target.value }));
+                }}
+              >
+                <option value={""}>Select Exam</option>
+                {exams.map((option, key) => (
+                  <option key={key + option.value} value={option.value}>
+                    {option.option}
+                  </option>
+                ))}
+              </Select.Root>
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Rank
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.rank}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ rank: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Management Fee
+                </Heading>
+              </VStack>
+              <Input
+                readOnly
+                w={"60%"}
+                type={"number"}
+                variant={"outline"}
+                bg={"white"}
+                value={state.fee_quoted}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  setState((prev) => ({
+                    ...prev,
+                    fee_quoted: e.target.value,
+                  }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Fee Fixed
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                type={"number"}
+                readOnly={!user?.can_update_total}
+                variant={"outline"}
+                bg={"white"}
+                value={state.fee_fixed}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  setState((prev) => ({
+                    ...prev,
+                    fee_fixed: e.target.value,
+                  }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Fee Paid
+                </Heading>
+              </VStack>
+              <Input
+                min={0}
+                w={"60%"}
+                type={"number"}
+                variant={"outline"}
+                // readOnly={!user?.can_edit}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.fee_paid}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Fee Paid Date
+                </Heading>
+              </VStack>
+              {selectedAdmissionDetails[0]?.paid_date && (
+                <Box w={"60%"}>
+                  <ReactDatePicker
+                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                    selected={
+                      selectedAdmissionDetails[0]?.paid_date == "0000-00-00"
+                        ? new Date()
+                        : new Date(selectedAdmissionDetails[0]?.paid_date)
+                    }
+                    dateFormat={"dd/MM/yyyy"}
+                    onChange={(date) => {}}
+                    readOnly
+                  />
+                </Box>
+              )}
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Mode / Remarks
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.remarks}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ remarks: e.target.value }));
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Remaining Fee
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                readOnly
+                type={"number"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.remaining_amount}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({
+                      remaining_amount: e.target.value,
+                    })
+                  );
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} w={"full"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Due Date
+                </Heading>
+              </VStack>
+              {selectedAdmissionDetails[0]?.due_date && (
+                <Box w={"60%"}>
+                  <ReactDatePicker
+                    calendarClassName="z-30 bg-blue-200"
+                    todayButton={
+                      <Button size={"sm"} colorScheme="blue" variant={"ghost"}>
+                        Today Date
+                      </Button>
+                    }
+                    className="px-3 flex shadow-md read-only:shadow-none justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                    selected={
+                      selectedAdmissionDetails[0]?.due_date !==
+                        "Invalid date" ||
+                      selectedAdmissionDetails[0]?.due_date.toString() ==
+                        "0000-00-00"
+                        ? new Date(selectedAdmissionDetails[0]?.due_date)
+                        : new Date()
+                    }
+                    dateFormat={"dd/MM/yyyy"}
+                    onChange={(date) => {
+                      dispatch(
+                        updateSelectedMatrix({
+                          due_date: moment(date).format("yyyy-MM-DD"),
+                        })
+                      );
+                    }}
+                  />
+                </Box>
+              )}
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Approved By
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                readOnly
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.approved_by}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {}}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Approved Date
+                </Heading>
+              </VStack>
+              {selectedAdmissionDetails[0]?.approved_date && (
+                <Box w={"60%"}>
+                  <ReactDatePicker
+                    className="px-3 flex justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                    selected={
+                      new Date(selectedAdmissionDetails[0]?.approved_date)
+                    }
+                    dateFormat={"dd/MM/yyyy"}
+                    onChange={(date) => {}}
+                    readOnly
+                  />
+                </Box>
+              )}
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Referred By
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.referred_by}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({ referred_by: e.target.value })
+                  );
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Recommended By
+                </Heading>
+              </VStack>
+              <Input
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.recommended_by}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(
+                    updateSelectedMatrix({ recommended_by: e.target.value })
+                  );
+                }}
+              />
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Hostel
+                </Heading>
+              </VStack>
+              <Field.Root
+                w={"60%"}
+                invalid={!selectedAdmissionDetails[0]?.hostel}
+              >
+                <Select
+                  w={"full"}
+                  variant={"outline"}
+                  bg={"white"}
+                  value={selectedAdmissionDetails[0]?.hostel}
+                  className={"shadow-md shadow-lightBrand"}
+                  onChange={(e) => {
+                    dispatch(updateSelectedMatrix({ hostel: e.target.value }));
+                  }}
+                >
+                  <option value={"NO"}>NO</option>
+                  <option value={"YES"}>YES</option>
+                </Select>
+                {selectedAdmissionDetails[0]?.branch == "" && (
+                  <Field.ErrorText>Branch is required !</Field.ErrorText>
+                )}
+              </Field.Root>
+            </Flex>
+
+            <Flex
+              className="w-full justify-between"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              pb={"5"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading fontSize={"sm"} fontWeight={"medium"}>
+                  Status
+                </Heading>
+              </VStack>
+              <Input
+                readOnly
+                w={"60%"}
+                variant={"outline"}
+                bg={"white"}
+                value={selectedAdmissionDetails[0]?.status}
+                className={"shadow-md shadow-lightBrand"}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ remarks: e.target.value }));
+                }}
+              />
+            </Flex>
+            <VStack w={"full"}>
+              <Heading
+                fontSize={"sm"}
+                w={"full"}
+                className="w-3/4"
+                fontWeight={"medium"}
+              >
+                Counselled & Quoted By
+              </Heading>
+              <Textarea
                 w={"full"}
                 variant={"outline"}
                 bg={"white"}
-                value={selectedAdmissionDetails[0]?.hostel}
+                value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
-                  dispatch(updateSelectedMatrix({ hostel: e.target.value }));
+                  dispatch(
+                    updateSelectedMatrix({
+                      counselled_quoted_by: e.target.value,
+                    })
+                  );
                 }}
-              >
-                <option value={"NO"}>NO</option>
-                <option value={"YES"}>YES</option>
-              </Select>
-              {selectedAdmissionDetails[0]?.branch == "" && (
-                <FormErrorMessage>Branch is required !</FormErrorMessage>
-              )}
-            </FormControl>
-          </Flex>
-
-          <Flex
-            className="w-full justify-between"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            pb={"5"}
-          >
-            <VStack flex={"1"} alignItems={"start"}>
-              <Heading fontSize={"sm"} fontWeight={"medium"}>
-                Status
-              </Heading>
+              />
             </VStack>
-            <Input
-              readOnly
-              w={"60%"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.status}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(updateSelectedMatrix({ remarks: e.target.value }));
-              }}
-            />
-          </Flex>
-          <VStack w={"full"}>
-            <Heading
-              fontSize={"sm"}
-              w={"full"}
-              className="w-3/4"
-              fontWeight={"medium"}
-            >
-              Counselled & Quoted By
-            </Heading>
-            <Textarea
-              w={"full"}
-              variant={"outline"}
-              bg={"white"}
-              value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
-              className={"shadow-md shadow-lightBrand"}
-              onChange={(e) => {
-                dispatch(
-                  updateSelectedMatrix({ counselled_quoted_by: e.target.value })
-                );
-              }}
-            />
-          </VStack>
 
-          <HStack
-            zIndex={"sticky"}
-            position={"sticky"}
-            bottom={"0"}
-            py={"2"}
-            w={"full"}
-            className={"border-t border-t-lightgray bg-background"}
-          >
-            <IModal
-              heading="Are you sure ?"
-              isOpen={isDeleteOpen}
-              onClose={onDeleteClose}
-              colorBtn="red"
-              onSubmit={() => {
-                onDelete();
-                onDeleteClose();
-              }}
-              buttonTitle="Yes"
+            <HStack
+              zIndex={"sticky"}
+              position={"sticky"}
+              bottom={"0"}
+              py={"2"}
+              w={"full"}
+              className={"border-t border-t-lightgray bg-background"}
             >
-              <VStack py={"5"}>
-                <Heading size={"md"} fontWeight={"medium"}>
-                  You want to delete this record
-                </Heading>
-                <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
-                  {"This action can't be undo"}
-                </Heading>
-              </VStack>
-            </IModal>
-            <VStack w={"full"}>
-              {parseInt(selectedAdmissionDetails[0]?.remaining_amount) < 0 && (
-                <Alert status="warning">
-                  <AlertIcon />
-                  <Box>
-                    <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
-                    <AlertDescription fontSize={"smaller"}>
-                      Remaining Amount is less than zero. You still may continue
-                      to save the changes.
-                    </AlertDescription>
-                  </Box>
-                </Alert>
-              )}
-              <Menu
-                open={isMenuOpen}
-                placement="top"
-                matchWidth
-                closeOnSelect
-                boundary={"clippingParents"}
-                onClose={onMenuClose}
-                onOpen={onMenuOpen}
+              <IModal
+                heading="Are you sure ?"
+                isOpen={isDeleteOpen}
+                onClose={onDeleteClose}
+                colorBtn="red"
+                onSubmit={() => {
+                  onDelete();
+                  onDeleteClose();
+                }}
+                buttonTitle="Yes"
               >
-                <MenuButton
-                  as={Button}
-                  rightIcon={
-                    <FaChevronUp
-                      className={`transition-all duration-100 ${
-                        isMenuOpen ? "rotate-180" : "rotate-0"
-                      }`}
-                    />
-                  }
-                  w={"full"}
-                  colorScheme="purple"
-                >
-                  Download Document
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    icon={<AiOutlineFilePdf />}
-                    href={
-                      process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                      `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                    }
-                    target="_blank"
-                    colorScheme={"purple"}
+                <VStack py={"5"}>
+                  <Heading size={"md"} fontWeight={"medium"}>
+                    You want to delete this record
+                  </Heading>
+                  <Heading size={"md"} fontWeight={"sm"} color={"gray.600"}>
+                    {"This action can't be undo"}
+                  </Heading>
+                </VStack>
+              </IModal>
+              <VStack w={"full"}>
+                {parseInt(selectedAdmissionDetails[0]?.remaining_amount) <
+                  0 && (
+                  <Alert.Root status="warning">
+                    <Alert.Indicator />
+                    <Box>
+                      <Alert.Title fontSize={"small"}>Warning !</Alert.Title>
+                      <Alert.Description fontSize={"smaller"}>
+                        Remaining Amount is less than zero. You still may
+                        continue to save the changes.
+                      </Alert.Description>
+                    </Box>
+                  </Alert.Root>
+                )}
+                <MenuRoot>
+                  <MenuTrigger
+                    as={Button}
                     w={"full"}
+                    colorScheme="purple"
+                    asChild
                   >
-                    Counselling Form
-                  </MenuItem>
-                  {selectedAdmissionDetails[0]?.status === "APPROVED" && (
-                    <>
-                      <MenuItem
+                    <Button>Download Document</Button> <LuChevronUp />
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuItem
+                      asChild
+                      colorPalette={"purple"}
+                      w={"full"}
+                      value="counselling-form"
+                    >
+                      <Link
                         href={
                           process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                          `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
                         }
                         target="_blank"
-                        icon={<AiOutlineFilePdf />}
                       >
-                        Provisional
-                      </MenuItem>
-                      <MenuItem
-                        as={Link}
-                        icon={<AiOutlineFilePdf />}
-                        target="_blank"
-                        href={
-                          process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                          `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                        }
-                      >
-                        Fee Invoice
-                      </MenuItem>
-                    </>
-                  )}
-                </MenuList>
-              </Menu>
+                        <LuFileDown />
+                        <Box flex={"1"}>Counselling Form</Box>
+                      </Link>
+                    </MenuItem>
+                    {selectedAdmissionDetails[0]?.status === "APPROVED" && (
+                      <>
+                        <MenuItem asChild value="provisional">
+                          <Link
+                            href={
+                              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                              `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                            }
+                            target="_blank"
+                          >
+                            <LuFileDown />
+                            <Box flex={"1"}>Provisional</Box>
+                          </Link>
+                        </MenuItem>
+                        <MenuItem value="fee-invoice" asChild>
+                          {" "}
+                          <Link
+                            target="_blank"
+                            href={
+                              process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                              `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
+                            }
+                          >
+                            <LuFileDown />
+                            <Box flex={"1"}>Fee Invoice</Box>
+                          </Link>
+                        </MenuItem>
+                      </>
+                    )}
+                  </MenuContent>
+                </MenuRoot>
 
-              <Button
-                loading={isDeleting}
-                onClick={onDeleteOpen}
-                colorScheme={"red"}
-                w={"full"}
-              >
-                Delete
-                <AiOutlineDelete />
-              </Button>
-            </VStack>
-          </HStack>
-        </VStack>
-      </IDrawer>
-      {children({ onOpen })}
-    </>
+                <Button
+                  loading={isDeleting}
+                  onClick={onDeleteOpen}
+                  colorScheme={"red"}
+                  w={"full"}
+                >
+                  Delete
+                  <AiOutlineDelete />
+                </Button>
+              </VStack>
+            </HStack>
+          </VStack>
+        </DrawerBody>
+
+        <DrawerFooter>
+          <Button onClick={onsubmit} loading={isLoading}>
+            Save
+          </Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </DrawerRoot>
   );
 }
