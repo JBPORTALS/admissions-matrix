@@ -1,19 +1,7 @@
 "use client";
-import {
-  Breadcrumb,
-  LinkBox,
-  Progress,
-  Skeleton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-  VStack,
-} from "@chakra-ui/react";
+
+import { Breadcrumb, LinkBox, Skeleton, Table, VStack } from "@chakra-ui/react";
 import { trpc } from "@/utils/trpc-cleint";
-import { useSupabase } from "@/app/supabase-provider";
 import Link from "next/link";
 import {
   ProgressBar,
@@ -21,9 +9,10 @@ import {
   ProgressRoot,
 } from "@/components/ui/progress";
 import React from "react";
+import { useUser } from "@/utils/auth";
 
 export default function Home() {
-  const { user } = useSupabase();
+  const user = useUser();
   const { isLoading, data } = trpc.getOverallMatrix.useQuery(
     {
       acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
@@ -37,7 +26,7 @@ export default function Home() {
       <VStack gap={1} h={"full"} w={"full"}>
         <Skeleton w={"full"} h={"14"}></Skeleton>
         {new Array(8).fill(0).map((_, index) => {
-          return <Skeleton key={index} w={"full"} h={"20"}></Skeleton>;
+          return <Skeleton key={index} w={"full"} h={"10"}></Skeleton>;
         })}
       </VStack>
     );
@@ -45,7 +34,7 @@ export default function Home() {
   return (
     <React.Fragment>
       {/* BreadCrumbs  */}
-      <Breadcrumb.Root>
+      <Breadcrumb.Root size={"lg"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink>Overall</Breadcrumb.CurrentLink>

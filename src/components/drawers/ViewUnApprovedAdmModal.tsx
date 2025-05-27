@@ -30,7 +30,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
-import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
 import { AiOutlineDelete, AiOutlineDownload } from "react-icons/ai";
 import { toast } from "react-hot-toast";
@@ -1146,7 +1145,6 @@ export default function ViewUnApprovedAdmModal({
           </VStack>
         </VStack>
       </IDrawer>
-      {children({ onOpen })}
     </>
   );
 }

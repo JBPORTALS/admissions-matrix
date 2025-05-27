@@ -52,7 +52,7 @@ export default function UnApproved() {
 
   return (
     <div className="h-full">
-      <HStack
+      {/* <HStack
         justifyContent={"space-between"}
         className="w-full flex border-b py-2 space-x-3 px-5"
       >
@@ -120,7 +120,6 @@ export default function UnApproved() {
             "justify-start h-[91vh] items-start flex w-full overflow-scroll"
           }
         >
-          {/* displaying admin childrens */}
           {ubranch && ucollege && data.length > 0 ? (
             <AgGridReact
               alwaysShowHorizontalScroll
@@ -139,7 +138,7 @@ export default function UnApproved() {
             </Center>
           ) : null}
         </VStack>
-      </VStack>
+      </VStack> */}
     </div>
   );
 }

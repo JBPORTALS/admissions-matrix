@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/menu";
 import { Box, IconButton } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { LuEllipsis, LuEye, LuFileDown } from "react-icons/lu";
 
 export type Payment = {
@@ -22,6 +23,7 @@ export type Payment = {
   remaining_amount: string;
   referenced_by: string;
   approved_by: string;
+  acadyear: string;
 };
 
 /**
@@ -107,8 +109,16 @@ export const columns: ColumnDef<Payment>[] = [
                 <LuEye /> <Box flex={"1"}> View</Box>
               </MenuItem>
             </ViewAdmissionDetailsModal>
-            <MenuItem value="download-provisional">
-              <LuFileDown /> <Box flex={"1"}>Download Provisional</Box>
+            <MenuItem asChild value="download-provisional">
+              <Link
+                href={
+                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                  `downloadprovisional.php?admissionno=${props.row.original.admission_id}&acadyear=${props.row.original.acadyear}`
+                }
+                target="_blank"
+              >
+                <LuFileDown /> <Box flex={"1"}>Download Provisional</Box>
+              </Link>
             </MenuItem>
           </MenuContent>
         </MenuRoot>

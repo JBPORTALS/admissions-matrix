@@ -41,7 +41,7 @@ export default function CollegeList() {
   return (
     <React.Fragment>
       {/* BreadCrumbs  */}
-      <Breadcrumb.Root>
+      <Breadcrumb.Root size={"lg"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.Link asChild>
