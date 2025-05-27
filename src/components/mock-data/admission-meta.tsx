@@ -6,68 +6,47 @@ import {
 } from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
 import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
-import ViewHostelAdmissionDetailsModal from "../drawers/ViewHostelAdmissionDetailsModal";
 import { useAppSelector } from "@/store";
 import Link from "next/link";
 
-const CustomViewButton = (data: any) => {
-  return (
-    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
-        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
-      </ViewAdmissionDetailsModal>
-    </div>
-  );
-};
+// const CustomUnApproveViewButton = (data: any) => {
+//   return (
+//     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-green-500 h-full w-full">
+//       <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
+//         {({ onOpen }) => <AiOutlineCheckSquare onClick={onOpen} />}
+//       </ViewUnApprovedAdmModal>
+//     </div>
+//   );
+// };
 
-const CustomHostelViewButton = (data: any) => {
-  return (
-    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewHostelAdmissionDetailsModal admissionno={data.value.admission_id}>
-        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
-      </ViewHostelAdmissionDetailsModal>
-    </div>
-  );
-};
-
-const CustomUnApproveViewButton = (data: any) => {
-  return (
-    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-green-500 h-full w-full">
-      <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
-        {({ onOpen }) => <AiOutlineCheckSquare onClick={onOpen} />}
-      </ViewUnApprovedAdmModal>
-    </div>
-  );
-};
-
-const CustomSearchButton = (data: any) => {
-  return (
-    <div
-      className={
-        "flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl h-full w-full " +
-        (data.value.status == "APPROVED"
-          ? " text-green-500"
-          : " text-orange-500")
-      }
-    >
-      <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
-        {({ onOpen: VeiwAdOpen }) => (
-          <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
-            {({ onOpen: ViewUnAdOpen }) => (
-              <AiOutlineEye
-                onClick={() => {
-                  data.value.status == "APPROVED"
-                    ? VeiwAdOpen()
-                    : ViewUnAdOpen();
-                }}
-              />
-            )}
-          </ViewUnApprovedAdmModal>
-        )}
-      </ViewAdmissionDetailsModal>
-    </div>
-  );
-};
+// const CustomSearchButton = (data: any) => {
+//   return (
+//     <div
+//       className={
+//         "flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl h-full w-full " +
+//         (data.value.status == "APPROVED"
+//           ? " text-green-500"
+//           : " text-orange-500")
+//       }
+//     >
+//       <ViewAdmissionDetailsModal admissionno={data.value.admission_id}>
+//         {({ onOpen: VeiwAdOpen }) => (
+//           <ViewUnApprovedAdmModal admissionno={data.value.admission_id}>
+//             {({ onOpen: ViewUnAdOpen }) => (
+//               <AiOutlineEye
+//                 onClick={() => {
+//                   data.value.status == "APPROVED"
+//                     ? VeiwAdOpen()
+//                     : ViewUnAdOpen();
+//                 }}
+//               />
+//             )}
+//           </ViewUnApprovedAdmModal>
+//         )}
+//       </ViewAdmissionDetailsModal>
+//     </div>
+//   );
+// };
 
 const DownloadProvisional = (data: { value: any }) => {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
@@ -126,7 +105,7 @@ export const columns = [
     pinned: "left",
     headerName: "View",
     width: "90px",
-    cellRenderer: CustomViewButton,
+    // cellRenderer: CustomViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -259,7 +238,6 @@ export const hostelcolumns = [
     field: "",
     headerName: "View",
     width: "120px",
-    cellRenderer: CustomHostelViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -329,7 +307,7 @@ export const UnAprrovedColumns = [
     field: "",
     headerName: "Approve",
     width: "100px",
-    cellRenderer: CustomUnApproveViewButton,
+    // cellRenderer: CustomUnApproveViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -405,7 +383,7 @@ export const UnAprrovedColumnsWithRemarks = [
     field: "",
     headerName: "Approve",
     width: "100px",
-    cellRenderer: CustomUnApproveViewButton,
+    // cellRenderer: CustomUnApproveViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -419,7 +397,7 @@ export const SearchColumns = [
     headerName: "Actions",
     width: "120px",
     height: "80px",
-    cellRenderer: CustomSearchButton,
+    // cellRenderer: CustomSearchButton,
     valueGetter: (params: any) => {
       return params.data;
     },

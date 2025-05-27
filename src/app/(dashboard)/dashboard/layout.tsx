@@ -29,10 +29,16 @@ import {
 } from "@/components/ui/select";
 import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import Header from "@/components/header";
+import { auth } from "@/utils/auth-server";
+import { redirect } from "next/navigation";
 
-export default function DashboardMainLayout(props: {
+export default async function DashboardMainLayout(props: {
   children: React.ReactNode;
 }) {
+  const { isLoggedIn } = await auth();
+
+  if (!isLoggedIn) redirect("/signin");
+
   return (
     <VStack gap={"0"} alignItems={"start"} minH={"100vh"}>
       <Header />
