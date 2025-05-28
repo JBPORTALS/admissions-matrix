@@ -23,20 +23,20 @@ export default function Home() {
         px={"16"}
         py={"3"}
       >
-        <Box h={"8"} w={"28"} position={"relative"}>
-          <Image
-            quality={100}
-            alt={"ismart"}
-            src={"/nexuss.png"}
-            priority
-            sizes="24vh"
-            fill
-          />
-        </Box>
         <HStack gap={3}></HStack>
       </HStack>
       <Center h={"full"}>
-        <VStack gap={"5"} w={"50%"}>
+        <VStack gap={"5"} alignItems={"center"} w={"50%"}>
+          <Box h={"8"} w={"28"} position={"relative"}>
+            <Image
+              quality={100}
+              alt={"ismart"}
+              src={"/nexuss.png"}
+              priority
+              sizes="24vh"
+              fill
+            />
+          </Box>
           <Heading textAlign={"center"} size={"5xl"} fontWeight={"semibold"}>
             <Highlight
               styles={{

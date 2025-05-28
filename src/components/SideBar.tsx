@@ -99,9 +99,11 @@ export function SideBar() {
             <Heading fontSize={"xs"} color={"fg.muted"}>
               ENQUIRY
             </Heading>
-            <Button size={"sm"} width={"full"}>
-              <MdOutlineAdd />
-              New Enquiry
+            <Button size={"sm"} asChild width={"full"}>
+              <Link href={"/new-enquiry"}>
+                <MdOutlineAdd />
+                New Enquiry
+              </Link>
             </Button>
             <Separator />
             <Heading fontSize={"xs"} color={"fg.muted"}>

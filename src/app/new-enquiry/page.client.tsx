@@ -12,6 +12,7 @@ import {
 import { LuArrowLeft } from "react-icons/lu";
 import { StudentDetailsForm, StudentVerificationForm } from "./forms.client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const items = [
   {
@@ -49,6 +50,7 @@ const items = [
 
 export function PageClient() {
   const steps = useSteps({ defaultStep: 0, count: items.length });
+  const router = useRouter();
 
   return (
     <Steps.RootProvider
@@ -74,7 +76,12 @@ export function PageClient() {
       </Steps.List>
       <Stack w={"full"} spaceY={"5"} pb={"5"}>
         <HStack gap={"5"}>
-          <IconButton variant={"surface"} size={"sm"} rounded={"full"}>
+          <IconButton
+            onClick={() => router.back()}
+            variant={"surface"}
+            size={"sm"}
+            rounded={"full"}
+          >
             <LuArrowLeft />
           </IconButton>
           {items.map((step, index) => (
