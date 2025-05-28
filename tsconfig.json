@@ -6,7 +6,7 @@
     "allowJs": true,
     "jsx": "preserve",
     "noEmit": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "skipLibCheck": true,
     "strict": true,
     "incremental": true,
@@ -22,6 +22,6 @@
     "noUncheckedIndexedAccess": true,
     "checkJs": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [".", ".next/types/**/*.ts", ""],
   "exclude": ["node_modules"]
 }

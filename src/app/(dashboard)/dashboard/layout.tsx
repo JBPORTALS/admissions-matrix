@@ -18,7 +18,7 @@ import moment from "moment";
 import { BsFilter } from "react-icons/bs";
 import "react-datepicker/dist/react-datepicker.css";
 import MIFModal from "@/components/drawers/MIFModal";
-import { SideBar } from "@/components/sidebar";
+import { SideBar } from "@/components/side-bar";
 import {
   SelectContent,
   SelectItem,
