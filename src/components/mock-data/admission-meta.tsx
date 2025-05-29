@@ -5,7 +5,6 @@ import {
   AiOutlineEye,
 } from "react-icons/ai";
 import ViewAdmissionDetailsModal from "../drawers/ViewAdmissionDetailsModal";
-import ViewUnApprovedAdmModal from "../drawers/ViewUnApprovedAdmModal";
 import { useAppSelector } from "@/store";
 import Link from "next/link";
 

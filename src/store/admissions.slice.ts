@@ -430,6 +430,10 @@ export const updateMatrix = createAsyncThunk<
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
       const acadyear = state.admissions.acadYear;
+
+      if (!selected_Matrix[0])
+        return rejectWithValue({ msg: "Something went wrong" });
+
       formData.append("acadyear", acadyear);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
@@ -510,6 +514,10 @@ export const updateEnquiry = createAsyncThunk<
         .data as SelectedMatrix[];
       const name = payload.username;
       const acadyear = state.admissions.acadYear;
+
+      if (!selected_Matrix[0])
+        return rejectWithValue({ msg: "Something went wrong" });
+
       formData.append("acadyear", acadyear);
       formData.append("reg_no", selected_Matrix[0]?.reg_no);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);

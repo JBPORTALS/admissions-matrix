@@ -85,6 +85,7 @@ export const columns: ColumnDef<UnApproved>[] = [
           </MenuTrigger>
           <MenuContent>
             <ViewAdmissionDetailsModal
+              isUnapproved
               admissionno={props.row.original.admission_id}
             >
               <MenuItem value="view">

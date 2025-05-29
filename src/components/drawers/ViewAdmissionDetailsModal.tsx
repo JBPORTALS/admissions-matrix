@@ -1,3 +1,5 @@
+"use client";
+
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,9 +10,9 @@ import {
   SelectedMatrix,
   updateMatrix,
   updateSelectedMatrix,
+  updateToApprove,
 } from "@/store/admissions.slice";
 import {
-  Alert,
   Box,
   Button,
   createListCollection,
@@ -26,34 +28,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
-import { AiOutlineDelete } from "react-icons/ai";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { trpc } from "@/utils/trpc-cleint";
-import {
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-  MenuTriggerItem,
-} from "../ui/menu";
-import {
-  LuChevronLeft,
-  LuChevronRight,
-  LuChevronUp,
-  LuEllipsis,
-  LuFileDown,
-  LuTrash2,
-} from "react-icons/lu";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
+import { LuCheck, LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
 import Link from "next/link";
 import {
   DrawerBody,
@@ -96,41 +78,46 @@ import { format } from "date-fns";
 interface props {
   children: React.ReactNode;
   admissionno: string;
+  isUnapproved?: boolean;
 }
 
 export default function ViewAdmissionDetailsModal({
   children,
   admissionno,
+  isUnapproved,
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const { open, onToggle: onChangeOpen } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
-  const matrix = selectedAdmissionDetails[0];
 
   const isLoading = useAppSelector(
     (state) => state.admissions.selectedMatrix.pending
   ) as boolean;
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
+
+  const matrix = selectedAdmissionDetails[0];
+
+  // Get branch list
   const { data: branch_list } = trpc.retrieveBranchList.useQuery(
-    { acadYear, college: selectedAdmissionDetails[0]?.college },
+    { acadYear, college: matrix?.college },
     {
-      enabled: open && !!selectedAdmissionDetails[0]?.college,
+      enabled: open && !!matrix?.college,
     }
   );
+
   const dispatch = useAppDispatch();
-  const [dueDate, setDueDate] = useState(new Date());
   const { user } = useSupabase();
 
   const [state, setState] = useState({
-    fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
-    fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
+    fee_quoted: matrix?.fee_quoted,
+    fee_fixed: matrix?.fee_fixed,
   });
   const fee = useAppSelector((state) => state.admissions.fee);
   const params = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
-  const getAnchorRect = () => contentRef.current!.getBoundingClientRect();
   let intialRender = true;
 
   const branchCollection = useMemo(
@@ -149,27 +136,19 @@ export default function ViewAdmissionDetailsModal({
     if (open) {
       console.log("triggered");
       setState({
-        fee_fixed: selectedAdmissionDetails[0]?.fee_fixed,
-        fee_quoted: selectedAdmissionDetails[0]?.fee_quoted,
+        fee_fixed: matrix?.fee_fixed,
+        fee_quoted: matrix?.fee_quoted,
       });
       intialRender = false;
     }
-  }, [
-    open,
-    selectedAdmissionDetails[0]?.fee_fixed,
-    selectedAdmissionDetails[0]?.fee_quoted,
-  ]);
+  }, [open, matrix?.fee_fixed, matrix?.fee_quoted]);
 
   useEffect(() => {
-    if (
-      open &&
-      selectedAdmissionDetails[0]?.admission_id == admissionno &&
-      intialRender
-    ) {
+    if (open && matrix?.admission_id == admissionno && intialRender) {
       dispatch(
         fetchFeeQouted({
-          college: selectedAdmissionDetails[0]?.college,
-          branch: selectedAdmissionDetails[0]?.branch,
+          college: matrix?.college,
+          branch: matrix?.branch,
         })
       ).then((action) => {
         setState({
@@ -179,9 +158,9 @@ export default function ViewAdmissionDetailsModal({
       });
     }
   }, [
-    selectedAdmissionDetails[0]?.college,
-    selectedAdmissionDetails[0]?.branch,
-    selectedAdmissionDetails[0]?.admission_id,
+    matrix?.college,
+    matrix?.branch,
+    matrix?.admission_id,
     fee,
     dispatch,
     open,
@@ -189,28 +168,10 @@ export default function ViewAdmissionDetailsModal({
   ]);
 
   useEffect(() => {
-    if (
-      open &&
-      selectedAdmissionDetails[0]?.admission_id == admissionno &&
-      intialRender
-    ) {
+    if (open && matrix?.admission_id == admissionno && intialRender) {
       dispatch(updateSelectedMatrix({ branch: "" }));
     }
-  }, [
-    dispatch,
-    open,
-    selectedAdmissionDetails[0]?.admission_id,
-    selectedAdmissionDetails[0]?.college,
-  ]);
-
-  const runSetDueDate = useCallback(() => {
-    setDueDate(new Date(selectedAdmissionDetails[0]?.due_date + "T00:00:00Z"));
-    console.log(dueDate);
-  }, [selectedAdmissionDetails[0]?.due_date]);
-
-  useEffect(() => {
-    open && runSetDueDate();
-  }, [open]);
+  }, [dispatch, open, matrix?.admission_id, matrix?.college]);
 
   // Fetch selected matrix when dialog is open
   useEffect(() => {
@@ -221,7 +182,7 @@ export default function ViewAdmissionDetailsModal({
     setIsDeleting(true);
     try {
       const formData = new FormData();
-      formData.append("admissionno", selectedAdmissionDetails[0].admission_id);
+      formData.append("admissionno", matrix.admission_id);
       formData.append("user_college", user?.college!);
       formData.append("acadyear", acadYear);
       const response = await axios({
@@ -229,10 +190,10 @@ export default function ViewAdmissionDetailsModal({
         method: "POST",
         data: formData,
       });
-      dispatch(
+      await dispatch(
         fetchSearchClass({
-          college: selectedAdmissionDetails[0].college,
-          branch: selectedAdmissionDetails[0].branch,
+          college: matrix.college,
+          branch: matrix.branch,
         })
       );
       toast.success(response.data?.msg, { position: "top-right" });
@@ -245,20 +206,19 @@ export default function ViewAdmissionDetailsModal({
   // Update Selected Matrix
   useEffect(() => {
     open &&
-      selectedAdmissionDetails[0]?.admission_id == admissionno &&
+      matrix?.admission_id == admissionno &&
       dispatch(
         updateSelectedMatrix({
           remaining_amount: (
-            parseInt(state.fee_fixed) -
-            parseInt(selectedAdmissionDetails[0]?.fee_paid)
+            parseInt(state.fee_fixed) - parseInt(matrix?.fee_paid)
           ).toString(),
         })
       );
   }, [
     // eslint-disable-line
     state.fee_fixed, // eslint-disable-line
-    selectedAdmissionDetails[0]?.fee_paid, // eslint-disable-line
-    selectedAdmissionDetails[0]?.admission_id,
+    matrix?.fee_paid, // eslint-disable-line
+    matrix?.admission_id,
     admissionno,
     open,
     dispatch,
@@ -274,20 +234,36 @@ export default function ViewAdmissionDetailsModal({
     );
     params.college &&
       params.branch &&
-      dispatch(
+      (await dispatch(
         fetchSearchClass({
           college: params.college as string,
           branch: params.branch as string,
         })
-      );
+      ));
   };
 
+  async function approve() {
+    setIsApproving(true);
+    await dispatch(
+      updateToApprove({
+        username: user?.fullname!,
+        fee_fixed: state.fee_fixed,
+        fee_quoted: state.fee_quoted,
+        user_college: user?.college!,
+      })
+    );
+    setIsApproving(false);
+  }
+
   return (
-    <DrawerRoot open={open} onOpenChange={onChangeOpen} size={"sm"}>
+    <DrawerRoot open={open} onOpenChange={onChangeOpen} size={"md"}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
+
       <DrawerContent offset={"4"} rounded={"md"} ref={contentRef}>
         <DrawerHeader flexDir={"column"} alignItems={"start"} gap={"0"}>
-          <DrawerTitle>Admission Details</DrawerTitle>
+          <DrawerTitle>
+            {isUnapproved ? "Enquiry Details" : "Admission Details"}
+          </DrawerTitle>
           <DrawerDescription fontSize={"xs"}>
             Enquired on{" "}
             {matrix?.enquiry_date &&
@@ -322,7 +298,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 readOnly
                 w={"60%"}
-                value={selectedAdmissionDetails[0]?.admission_id}
+                value={matrix?.admission_id}
                 className={"shadow-md shadow-lightBrand"}
               />
             </Flex>
@@ -344,7 +320,7 @@ export default function ViewAdmissionDetailsModal({
                 placeholder="Not set yet."
                 readOnly
                 w={"60%"}
-                value={selectedAdmissionDetails[0]?.reg_no}
+                value={matrix?.reg_no}
                 className={"shadow-md shadow-lightBrand"}
               />
             </Flex>
@@ -365,7 +341,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.name}
+                value={matrix?.name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ name: e.target.value })); // eslint-disable-line
@@ -390,7 +366,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.phone_no}
+                value={matrix?.phone_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ phone_no: e.target.value }));
@@ -421,9 +397,7 @@ export default function ViewAdmissionDetailsModal({
                   variant={"outline"}
                   type="number"
                   textAlign={"right"}
-                  value={parseFloat(
-                    selectedAdmissionDetails[0]?.percentage
-                  ).toString()}
+                  value={parseFloat(matrix?.percentage).toString()}
                   onChange={(e) => {
                     dispatch(
                       updateSelectedMatrix({
@@ -440,7 +414,7 @@ export default function ViewAdmissionDetailsModal({
               </InputGroup>
             </Flex>
 
-            {selectedAdmissionDetails[0]?.course === "ENGINEERING" && (
+            {matrix?.course === "ENGINEERING" && (
               <>
                 <Flex
                   w="full"
@@ -465,9 +439,7 @@ export default function ViewAdmissionDetailsModal({
                       textAlign={"right"}
                       variant={"outline"}
                       type="number"
-                      value={parseFloat(
-                        selectedAdmissionDetails[0]?.pcm
-                      ).toString()}
+                      value={parseFloat(matrix?.pcm).toString()}
                       onChange={(e) => {
                         dispatch(
                           updateSelectedMatrix({
@@ -503,7 +475,7 @@ export default function ViewAdmissionDetailsModal({
               <SelectRoot
                 w={"60%"}
                 collection={collegesOptions}
-                value={[selectedAdmissionDetails[0]?.college]}
+                value={[matrix?.college]}
                 onValueChange={(e) => {
                   dispatch(updateSelectedMatrix({ college: e.value }));
                 }}
@@ -535,14 +507,11 @@ export default function ViewAdmissionDetailsModal({
                   Branch
                 </Heading>
               </VStack>
-              <Field.Root
-                w={"60%"}
-                invalid={!selectedAdmissionDetails[0]?.branch}
-              >
+              <Field.Root w={"60%"} invalid={!matrix?.branch}>
                 <SelectRoot
                   w={"full"}
                   collection={branchCollection}
-                  value={[selectedAdmissionDetails[0]?.branch]}
+                  value={[matrix?.branch]}
                   onValueChange={(e) => {
                     dispatch(updateSelectedMatrix({ branch: e.value }));
                   }}
@@ -563,7 +532,7 @@ export default function ViewAdmissionDetailsModal({
                     </SelectItemGroup>
                   </SelectContent>
                 </SelectRoot>
-                {selectedAdmissionDetails[0]?.branch == "" && (
+                {matrix?.branch == "" && (
                   <Field.ErrorText>Branch is required !</Field.ErrorText>
                 )}
               </Field.Root>
@@ -585,7 +554,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.father_name}
+                value={matrix?.father_name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -611,7 +580,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.father_no}
+                value={matrix?.father_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ father_no: e.target.value }));
@@ -635,7 +604,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.mother_name}
+                value={matrix?.mother_name}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -661,7 +630,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.mother_no}
+                value={matrix?.mother_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ mother_no: e.target.value }));
@@ -686,7 +655,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.aadhar_no}
+                value={matrix?.aadhar_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ aadhar_no: e.target.value }));
@@ -711,7 +680,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.pan_no}
+                value={matrix?.pan_no}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ pan_no: e.target.value }));
@@ -739,7 +708,7 @@ export default function ViewAdmissionDetailsModal({
                 rows={4}
                 variant={"outline"}
                 resize={"none"}
-                value={selectedAdmissionDetails[0]?.address}
+                value={matrix?.address}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ address: e.target.value }));
                 }}
@@ -763,7 +732,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.email}
+                value={matrix?.email}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ email: e.target.value }));
@@ -788,7 +757,7 @@ export default function ViewAdmissionDetailsModal({
               <SelectRoot
                 w={"60%"}
                 collection={examsOptions}
-                value={[selectedAdmissionDetails[0]?.exam]}
+                value={[matrix?.exam]}
                 className={"shadow-md shadow-lightBrand"}
                 onValueChange={(e) => {
                   dispatch(updateSelectedMatrix({ exam: e.value }));
@@ -824,7 +793,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.rank}
+                value={matrix?.rank}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ rank: e.target.value }));
@@ -913,7 +882,7 @@ export default function ViewAdmissionDetailsModal({
                 variant={"outline"}
                 // readOnly={!user?.can_edit}
 
-                value={selectedAdmissionDetails[0]?.fee_paid}
+                value={matrix?.fee_paid}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
@@ -935,13 +904,9 @@ export default function ViewAdmissionDetailsModal({
                   Fee Paid Date
                 </Heading>
               </VStack>
-              {selectedAdmissionDetails[0]?.paid_date && (
+              {matrix?.paid_date && (
                 <Box w={"60%"}>
-                  <Input
-                    type="date"
-                    value={selectedAdmissionDetails[0]?.paid_date}
-                    readOnly
-                  />
+                  <Input type="date" value={matrix?.paid_date} readOnly />
                 </Box>
               )}
             </Flex>
@@ -963,7 +928,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.remarks}
+                value={matrix?.remarks}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ remarks: e.target.value }));
@@ -990,7 +955,7 @@ export default function ViewAdmissionDetailsModal({
                 readOnly
                 type={"number"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.remaining_amount}
+                value={matrix?.remaining_amount}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -1016,11 +981,11 @@ export default function ViewAdmissionDetailsModal({
                   Due Date
                 </Heading>
               </VStack>
-              {selectedAdmissionDetails[0]?.due_date && (
+              {matrix?.due_date && (
                 <Box w={"60%"}>
                   <Input
                     type="date"
-                    value={selectedAdmissionDetails[0]?.due_date}
+                    value={matrix?.due_date}
                     onChange={(e) => {
                       dispatch(
                         updateSelectedMatrix({
@@ -1051,7 +1016,7 @@ export default function ViewAdmissionDetailsModal({
                 w={"60%"}
                 readOnly
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.approved_by}
+                value={matrix?.approved_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {}}
               />
@@ -1071,11 +1036,11 @@ export default function ViewAdmissionDetailsModal({
                   Approved Date
                 </Heading>
               </VStack>
-              {selectedAdmissionDetails[0]?.approved_date && (
+              {matrix?.approved_date && (
                 <Box w={"60%"}>
                   <Input
                     type="date"
-                    value={selectedAdmissionDetails[0]?.approved_date}
+                    value={matrix?.approved_date}
                     onChange={(date) => {}}
                     readOnly
                   />
@@ -1100,7 +1065,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.referred_by}
+                value={matrix?.referred_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -1127,7 +1092,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.recommended_by}
+                value={matrix?.recommended_by}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -1151,14 +1116,11 @@ export default function ViewAdmissionDetailsModal({
                   Hostel
                 </Heading>
               </VStack>
-              <Field.Root
-                w={"60%"}
-                invalid={!selectedAdmissionDetails[0]?.hostel}
-              >
+              <Field.Root w={"60%"} invalid={!matrix?.hostel}>
                 <SelectRoot
                   w={"full"}
                   collection={hostelOptions}
-                  value={[selectedAdmissionDetails[0]?.hostel]}
+                  value={[matrix?.hostel]}
                   onValueChange={(e) => {
                     dispatch(updateSelectedMatrix({ hostel: e.value }));
                   }}
@@ -1174,7 +1136,7 @@ export default function ViewAdmissionDetailsModal({
                     ))}
                   </SelectContent>
                 </SelectRoot>
-                {selectedAdmissionDetails[0]?.branch == "" && (
+                {matrix?.branch == "" && (
                   <Field.ErrorText>Branch is required !</Field.ErrorText>
                 )}
               </Field.Root>
@@ -1199,7 +1161,7 @@ export default function ViewAdmissionDetailsModal({
                 readOnly
                 w={"60%"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.status}
+                value={matrix?.status}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(updateSelectedMatrix({ remarks: e.target.value }));
@@ -1218,7 +1180,7 @@ export default function ViewAdmissionDetailsModal({
               <Textarea
                 w={"full"}
                 variant={"outline"}
-                value={selectedAdmissionDetails[0]?.counselled_quoted_by ?? ""}
+                value={matrix?.counselled_quoted_by ?? ""}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
@@ -1234,7 +1196,7 @@ export default function ViewAdmissionDetailsModal({
 
         <DrawerFooter justifyContent={"space-between"}>
           {/** More Actions */}
-          <MenuRoot>
+          <MenuRoot closeOnSelect={false}>
             <MenuTrigger asChild>
               <IconButton variant={"surface"} size={"sm"}>
                 <LuEllipsis />
@@ -1242,54 +1204,18 @@ export default function ViewAdmissionDetailsModal({
             </MenuTrigger>
 
             <MenuContent portalRef={contentRef}>
-              <MenuRoot positioning={{ placement: "left-start", gutter: 2 }}>
-                <MenuTriggerItem value="export">Download</MenuTriggerItem>
-
-                <MenuContent portalRef={contentRef}>
-                  <MenuItem asChild value="counselling-form">
-                    <Link
-                      href={
-                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                        `downloadapprovedenquiry.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                      }
-                      target="_blank"
-                    >
-                      <LuFileDown />
-                      <Box flex={"1"}>Counselling Form</Box>
-                    </Link>
-                  </MenuItem>
-
-                  {/* Only if matrix is approved */}
-                  {selectedAdmissionDetails[0]?.status === "APPROVED" && (
-                    <>
-                      <MenuItem asChild value="provisional">
-                        <Link
-                          href={
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            `downloadprovisional.php?admissionno=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                          }
-                          target="_blank"
-                        >
-                          <LuFileDown />
-                          <Box flex={"1"}>Provisional</Box>
-                        </Link>
-                      </MenuItem>
-                      <MenuItem value="fee-invoice" asChild>
-                        <Link
-                          target="_blank"
-                          href={
-                            process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                            `feeinvoice.php?id=${selectedAdmissionDetails[0]?.admission_id}&acadyear=${acadYear}&college=${selectedAdmissionDetails[0]?.college}`
-                          }
-                        >
-                          <LuFileDown />
-                          <Box flex={"1"}>Fee Invoice</Box>
-                        </Link>
-                      </MenuItem>
-                    </>
-                  )}
-                </MenuContent>
-              </MenuRoot>
+              <MenuItem asChild value="counselling-form">
+                <Link
+                  href={
+                    process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                    `searchenquiry.php?id=${matrix?.admission_id}&acadyear=${acadYear}&college=${matrix?.college}`
+                  }
+                  target="_blank"
+                >
+                  <LuFileDown />
+                  <Box flex={"1"}>Counselling Form</Box>
+                </Link>
+              </MenuItem>
 
               <DialogRoot role="alertdialog">
                 <DialogTrigger asChild>
@@ -1298,7 +1224,7 @@ export default function ViewAdmissionDetailsModal({
                     color="fg.error"
                     _hover={{ bg: "bg.error", color: "fg.error" }}
                   >
-                    Delete
+                    <LuTrash2 /> <Box flex={"1"}>Delete</Box>
                   </MenuItem>
                 </DialogTrigger>
 
@@ -1334,9 +1260,50 @@ export default function ViewAdmissionDetailsModal({
           </MenuRoot>
 
           <HStack>
-            <Button onClick={onsubmit} loading={isLoading}>
+            <Button variant={"surface"} onClick={onsubmit} loading={isLoading}>
               Save
             </Button>
+
+            {/** Only if matrix unapproved */}
+
+            {isUnapproved && (
+              <DialogRoot>
+                <DialogTrigger asChild>
+                  <MenuItem value="approve">
+                    <Button
+                      colorPalette={"green"}
+                      onClick={onsubmit}
+                      loading={isLoading}
+                    >
+                      Approve
+                    </Button>
+                  </MenuItem>
+                </DialogTrigger>
+                <DialogContent portalRef={contentRef}>
+                  <DialogHeader>
+                    <DialogTitle>Are you want to approve ?</DialogTitle>
+                  </DialogHeader>
+                  <DialogBody>
+                    <p>
+                      This will make the enquiry to approved and place in
+                      approved matrix section.
+                    </p>
+                  </DialogBody>
+
+                  <DialogFooter>
+                    <DialogActionTrigger asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogActionTrigger>
+                    <Button loading={isApproving} onClick={approve}>
+                      Approve
+                    </Button>
+                  </DialogFooter>
+                  <DialogCloseTrigger asChild>
+                    <CloseButton size="sm" />
+                  </DialogCloseTrigger>
+                </DialogContent>
+              </DialogRoot>
+            )}
           </HStack>
         </DrawerFooter>
 
