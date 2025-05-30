@@ -65,7 +65,7 @@ export default function SearchPage() {
         gap={0.5}
         w={"100vw"}
       >
-        {new Array(16).fill(0).map((value, index) => {
+        {new Array(16).fill(0).map((_, index) => {
           return <Skeleton w={"100%"} h={"12"} key={index} />;
         })}
       </VStack>

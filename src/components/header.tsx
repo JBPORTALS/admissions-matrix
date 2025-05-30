@@ -18,7 +18,7 @@ import {
   useDisclosure,
   VisuallyHidden,
 } from "@chakra-ui/react";
-import { LuLogOut, LuMailOpen, LuSearch } from "react-icons/lu";
+import { LuLogOut, LuMailOpen, LuSearch, LuX } from "react-icons/lu";
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -127,6 +127,20 @@ export function SearchCommandButton() {
     [filters]
   );
 
+  const isAdvanceFiltersApplied =
+    !!getFilterValue("src") ||
+    !!getFilterValue("en_date") ||
+    !!getFilterValue("ap_date");
+
+  const deleteFilterState = useCallback(
+    (name: string) => {
+      setFilters((prev) => {
+        return prev.filter((f) => f.name !== name);
+      });
+    },
+    [filters]
+  );
+
   const searchWithFilters = useCallback(() => {
     const params = new URLSearchParams();
 
@@ -196,12 +210,30 @@ export function SearchCommandButton() {
                 placeholder="Search here ..."
               />
             </InputGroup>
-            <Collapsible.Root>
-              <Collapsible.Trigger asChild>
-                <Button size={"xs"} px={"1"} h={"6"} variant={"ghost"}>
-                  Advance Search
-                </Button>
-              </Collapsible.Trigger>
+            <Collapsible.Root defaultOpen={isAdvanceFiltersApplied}>
+              <HStack justifyContent={"space-between"}>
+                <Collapsible.Trigger asChild>
+                  <Button size={"xs"} px={"1"} h={"6"} variant={"ghost"}>
+                    Advance Search
+                  </Button>
+                </Collapsible.Trigger>
+
+                {isAdvanceFiltersApplied && (
+                  <Button
+                    onClick={() => {
+                      deleteFilterState("src");
+                      deleteFilterState("en_date");
+                      deleteFilterState("ap_date");
+                    }}
+                    px={"1"}
+                    variant={"outline"}
+                    h={"6"}
+                    size={"xs"}
+                  >
+                    Clear <LuX />
+                  </Button>
+                )}
+              </HStack>
               <Collapsible.Content
                 display={"flex"}
                 flexDir={"column"}
@@ -218,6 +250,7 @@ export function SearchCommandButton() {
                     </Heading>
 
                     <Input
+                      value={getFilterValue("en_date")}
                       onChange={(e) =>
                         setFilterState("en_date", e.target.value)
                       }
@@ -232,6 +265,7 @@ export function SearchCommandButton() {
                       APPROVAL DATE
                     </Heading>
                     <Input
+                      value={getFilterValue("ap_date")}
                       onChange={(e) => {
                         setFilterState("ap_date", e.target.value);
                       }}
@@ -251,7 +285,11 @@ export function SearchCommandButton() {
                       <Button
                         size={"xs"}
                         textTransform={"capitalize"}
-                        variant={"ghost"}
+                        variant={
+                          getFilterValue("src") === item.value
+                            ? "surface"
+                            : "ghost"
+                        }
                         key={item.value}
                         onClick={() => {
                           setFilterState("src", item.value);
