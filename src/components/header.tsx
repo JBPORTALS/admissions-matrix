@@ -16,6 +16,7 @@ import {
   Box,
   Collapsible,
   useDisclosure,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import { LuLogOut, LuMailOpen, LuSearch } from "react-icons/lu";
 import {
@@ -32,7 +33,7 @@ import {
 import { Avatar } from "./ui/avatar";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { ColorModeButton } from "./ui/color-mode";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSignIn, useUser } from "@/utils/auth";
 import { useCallback, useEffect, useState } from "react";
 import { CloseButton } from "./ui/close-button";
@@ -104,6 +105,8 @@ const sourceOptions = createListCollection({
 
 export function SearchCommandButton() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [filters, setFilters] = useState<{ name: string; query: string }[]>([]);
 
   const setFilterState = useCallback(
@@ -136,6 +139,8 @@ export function SearchCommandButton() {
     router.push(
       `/dashboard/search/${new Date().getTime()}?${params.toString()}`
     );
+
+    setOpen(false);
   }, [filters]);
 
   const { open, setOpen, onToggle } = useDisclosure();
@@ -152,6 +157,10 @@ export function SearchCommandButton() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    searchParams.forEach((value, key) => setFilterState(key, value));
+  }, []);
+
   return (
     <DialogRoot open={open} onOpenChange={onToggle}>
       <DialogTrigger asChild>
@@ -163,7 +172,7 @@ export function SearchCommandButton() {
           justifyContent={"start"}
         >
           <LuSearch />
-          <Text>Search</Text>
+          <Text>{getFilterValue("query") ?? "Search"}</Text>
           <Kbd ml={"auto"}>CTRL+K</Kbd>
         </Button>
       </DialogTrigger>
@@ -172,82 +181,94 @@ export function SearchCommandButton() {
         <DialogHeader>
           <DialogTitle>Search Filters</DialogTitle>
         </DialogHeader>
-        <DialogBody spaceY={"3"} py={"0"}>
-          <InputGroup startElement={<LuSearch size={18} />}>
-            <Input
-              value={getFilterValue("query")}
-              onChange={(e) => setFilterState("query", e.target.value)}
-              size={"lg"}
-              placeholder="Search here ..."
-            />
-          </InputGroup>
-          <Collapsible.Root>
-            <Collapsible.Trigger asChild>
-              <Button size={"xs"} px={"1"} h={"6"} variant={"ghost"}>
-                Advance Search
-              </Button>
-            </Collapsible.Trigger>
-            <Collapsible.Content
-              display={"flex"}
-              flexDir={"column"}
-              gap={"5"}
-              py={"2"}
-              justifyContent={"space-between"}
-            >
-              <Separator w={"full"} />
-              <HStack>
-                {/** Enquiry Date */}
+        <DialogBody asChild spaceY={"3"}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              searchWithFilters();
+            }}
+          >
+            <InputGroup startElement={<LuSearch size={18} />}>
+              <Input
+                value={getFilterValue("query")}
+                onChange={(e) => setFilterState("query", e.target.value)}
+                size={"lg"}
+                placeholder="Search here ..."
+              />
+            </InputGroup>
+            <Collapsible.Root>
+              <Collapsible.Trigger asChild>
+                <Button size={"xs"} px={"1"} h={"6"} variant={"ghost"}>
+                  Advance Search
+                </Button>
+              </Collapsible.Trigger>
+              <Collapsible.Content
+                display={"flex"}
+                flexDir={"column"}
+                gap={"5"}
+                py={"2"}
+                justifyContent={"space-between"}
+              >
+                <Separator w={"full"} />
+                <HStack>
+                  {/** Enquiry Date */}
+                  <VStack alignItems={"start"} flex={"1"}>
+                    <Heading size={"xs"} fontWeight={"semibold"}>
+                      ENQUIRY DATE
+                    </Heading>
+
+                    <Input
+                      onChange={(e) =>
+                        setFilterState("en_date", e.target.value)
+                      }
+                      type="date"
+                      variant={"outline"}
+                    />
+                  </VStack>
+
+                  {/** Approval Date */}
+                  <VStack alignItems={"start"} flex={"1"}>
+                    <Heading size={"xs"} fontWeight={"semibold"}>
+                      APPROVAL DATE
+                    </Heading>
+                    <Input
+                      onChange={(e) => {
+                        setFilterState("ap_date", e.target.value);
+                      }}
+                      type="date"
+                      variant={"outline"}
+                    />
+                  </VStack>
+                </HStack>
+                {/** By Source */}
                 <VStack alignItems={"start"} flex={"1"}>
                   <Heading size={"xs"} fontWeight={"semibold"}>
-                    ENQUIRY DATE
+                    BY SOURCE
                   </Heading>
 
-                  <Input
-                    onChange={(e) => setFilterState("en_date", e.target.value)}
-                    type="date"
-                    variant={"outline"}
-                  />
+                  <Box spaceY={"2"}>
+                    {sourceOptions.items.map((item) => (
+                      <Button
+                        size={"xs"}
+                        textTransform={"capitalize"}
+                        variant={"ghost"}
+                        key={item.value}
+                        onClick={() => {
+                          setFilterState("src", item.value);
+                        }}
+                      >
+                        {item.label}
+                      </Button>
+                    ))}
+                  </Box>
                 </VStack>
-
-                {/** Approval Date */}
-                <VStack alignItems={"start"} flex={"1"}>
-                  <Heading size={"xs"} fontWeight={"semibold"}>
-                    APPROVAL DATE
-                  </Heading>
-                  <Input
-                    onChange={(e) => setFilterState("ap_date", e.target.value)}
-                    type="date"
-                    variant={"outline"}
-                  />
-                </VStack>
-              </HStack>
-              {/** By Source */}
-              <VStack alignItems={"start"} flex={"1"}>
-                <Heading size={"xs"} fontWeight={"semibold"}>
-                  BY SOURCE
-                </Heading>
-
-                <Box spaceY={"2"}>
-                  {sourceOptions.items.map((item) => (
-                    <Button
-                      size={"xs"}
-                      textTransform={"capitalize"}
-                      variant={"ghost"}
-                      key={item.value}
-                      onClick={() => setFilterState("src", item.value)}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </Box>
-              </VStack>
-            </Collapsible.Content>
-          </Collapsible.Root>
+                <DialogFooter>
+                  <Button type="submit">Apply</Button>
+                </DialogFooter>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </form>
         </DialogBody>
-
-        <DialogFooter>
-          <Button onClick={() => searchWithFilters()}>Search</Button>
-        </DialogFooter>
 
         <DialogCloseTrigger>
           <CloseButton size={"xs"} />

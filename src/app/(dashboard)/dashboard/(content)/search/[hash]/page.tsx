@@ -1,12 +1,12 @@
 "use client";
-import { SearchColumns } from "@/components/mock-data/admission-meta";
+import { DataTable } from "@/components/ui/data-table";
 import { useAppSelector } from "@/store";
 import { Center, Heading, Skeleton, VStack } from "@chakra-ui/react";
-import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { columns } from "./columns";
 
 export default function SearchPage() {
   const [data, setData] = useState<[]>();
@@ -16,29 +16,23 @@ export default function SearchPage() {
   const p = useParams();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
 
-  async function getSearchData(
-    type: "ENQUIRY" | "SOURCE" | "APPROVAL" | "QUERY",
-    date: string,
-    source: string,
-    query: string
-  ) {
+  const query = params.get("query") ?? "";
+  const en_date = params.get("en_date") ?? "";
+  const ap_date = params.get("ap_date") ?? "";
+  const src = params.get("src") ?? "";
+
+  async function getSearchData() {
     setIsLoading(true);
     setData([]);
     try {
       const formData = new FormData();
-      formData.append("date", date);
-      formData.append("source", source);
+      formData.append("en_date", en_date);
+      formData.append("ap_date", ap_date);
+      formData.append("src", src);
       formData.append("query", query);
       formData.append("acadyear", acadyear);
       const res = await axios(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `${
-            type == "ENQUIRY"
-              ? "searchbydate"
-              : type == "APPROVAL"
-              ? "searchbyapprovaldate"
-              : "searchbysource"
-          }.php`,
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + `findAll.php`,
         {
           method: "POST",
           data: formData,
@@ -51,25 +45,11 @@ export default function SearchPage() {
     setIsLoading(false);
   }
 
-  let render = 0;
-
   useEffect(() => {
-    render++;
-
-    if (render == 1) {
-      getSearchData(
-        params.get("type") as "SOURCE" | "ENQUIRY" | "APPROVAL" | "QUERY",
-        params.get("date")!,
-        params.get("source")!,
-        params.get("query")!
-      );
-      render++;
-    }
-
-    console.log(render);
+    getSearchData();
   }, [p.hash, params]);
 
-  if (!params.has("type") || params.get("type") == "")
+  if (!query && !en_date && !ap_date && !src)
     return (
       <Center h={"full"} pb={"36"}>
         <Heading size={"lg"}>Not Valid Search Request !</Heading>
@@ -109,19 +89,8 @@ export default function SearchPage() {
     );
 
   return (
-    <VStack
-      h={"80vh"}
-      overflow={"scroll"}
-      w={"full"}
-      className="ag-theme-material"
-    >
-      <AgGridReact
-        alwaysShowHorizontalScroll
-        animateRows={true}
-        className="w-full h-full ag-theme-material"
-        rowData={data as any}
-        columnDefs={SearchColumns as any}
-      />
-    </VStack>
+    <React.Fragment h={"80vh"} w={"full"}>
+      <DataTable columns={columns} data={data ?? []} />
+    </React.Fragment>
   );
 }
