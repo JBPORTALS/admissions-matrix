@@ -6,24 +6,19 @@ import {
   Input,
   Heading,
   Button,
-  IconButton,
   Text,
   Kbd,
-  SegmentGroup,
   VStack,
   Separator,
-  createListCollection,
   Box,
   Collapsible,
   useDisclosure,
-  VisuallyHidden,
 } from "@chakra-ui/react";
 import { LuLogOut, LuMailOpen, LuSearch, LuX } from "react-icons/lu";
 import {
   DialogBody,
   DialogCloseTrigger,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogRoot,
@@ -37,71 +32,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSignIn, useUser } from "@/utils/auth";
 import { useCallback, useEffect, useState } from "react";
 import { CloseButton } from "./ui/close-button";
-import { startOfToday, startOfYesterday } from "date-fns";
-import {
-  SelectContent,
-  SelectItem,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from "./ui/select";
-
-const sourceOptions = createListCollection({
-  items: [
-    {
-      label: "MANAGEMENT",
-      value: "MANAGEMENT",
-    },
-    {
-      label: "COLLEGE WEBSITE",
-      value: "COLLEGE WEBSITE",
-    },
-    {
-      label: "STUDENT REFERENCE",
-      value: "STUDENT REFERENCE",
-    },
-    {
-      label: "PARENT/RELATIVE REFERENCE",
-      value: "PARENT/RELATIVE REFERENCE",
-    },
-    {
-      label: "FACULTY REFERENCE",
-      value: "FACULTY REFERENCE",
-    },
-    {
-      label: "NEWS PAPER AD",
-      value: "NEWS PAPER AD",
-    },
-    {
-      label: "TV OR RADIO AD",
-      value: "TV OR RADIO AD",
-    },
-    {
-      label: "METRO BRANDING",
-      value: "METRO BRANDING",
-    },
-    {
-      label: "BUS BRANDING",
-      value: "BUS BRANDING",
-    },
-    {
-      label: "EDUCATION FAIR",
-      value: "EDUCATION FAIR",
-    },
-    {
-      label: "PHONE OR SMS OR WHATSAPP",
-      value: "PHONE OR SMS OR WHATSAPP",
-    },
-    {
-      label: "SOCAIL MEDIA",
-      value: "SOCAIL MEDIA",
-    },
-    {
-      label: "OTHERS",
-      value: "OTHERS",
-    },
-  ],
-});
+import { sourceOptions } from "@/utils/constants";
 
 export function SearchCommandButton() {
   const router = useRouter();

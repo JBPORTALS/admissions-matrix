@@ -76,3 +76,114 @@ export const genderOptions = createListCollection({
     { value: "OTHER", label: "Other" },
   ],
 });
+
+export const boardOptions = createListCollection({
+  items: [
+    {
+      label: "SSLC OR 10th",
+      value: "SSLC",
+    },
+    {
+      label: "PUC",
+      value: "PUC",
+    },
+    {
+      label: "CBSE",
+      value: "CBSE",
+    },
+    {
+      label: "ICSE",
+      value: "ICSE",
+    },
+    {
+      label: "OTHERS",
+      value: "OTHERS",
+    },
+  ],
+});
+
+export const courseOptions = createListCollection({
+  items: [
+    {
+      label: "PU",
+      value: "PU",
+    },
+    {
+      label: "DIPLOMA",
+      value: "DIPLOMA",
+    },
+    {
+      label: "MBA",
+      value: "MBA",
+    },
+    {
+      label: "MTECH",
+      value: "MTECH",
+    },
+    {
+      label: "DEGREE",
+      value: "DEGREE",
+    },
+    {
+      label: "ENGINEERING",
+      value: "ENGINEERING",
+    },
+  ],
+});
+
+export const sourceOptions = createListCollection({
+  items: [
+    {
+      label: "MANAGEMENT",
+      value: "MANAGEMENT",
+    },
+    {
+      label: "COLLEGE WEBSITE",
+      value: "COLLEGE WEBSITE",
+    },
+    {
+      label: "STUDENT REFERENCE",
+      value: "STUDENT REFERENCE",
+    },
+    {
+      label: "PARENT/RELATIVE REFERENCE",
+      value: "PARENT/RELATIVE REFERENCE",
+    },
+    {
+      label: "FACULTY REFERENCE",
+      value: "FACULTY REFERENCE",
+    },
+    {
+      label: "NEWS PAPER AD",
+      value: "NEWS PAPER AD",
+    },
+    {
+      label: "TV OR RADIO AD",
+      value: "TV OR RADIO AD",
+    },
+    {
+      label: "METRO BRANDING",
+      value: "METRO BRANDING",
+    },
+    {
+      label: "BUS BRANDING",
+      value: "BUS BRANDING",
+    },
+    {
+      label: "EDUCATION FAIR",
+      value: "EDUCATION FAIR",
+    },
+    {
+      label: "PHONE OR SMS OR WHATSAPP",
+      value: "PHONE OR SMS OR WHATSAPP",
+    },
+    {
+      label: "SOCAIL MEDIA",
+      value: "SOCAIL MEDIA",
+    },
+    {
+      label: "OTHERS",
+      value: "OTHERS",
+    },
+  ],
+});

@@ -10,7 +10,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
-import { StudentDetailsForm, StudentVerificationForm } from "./forms.client";
+import {
+  AcademicBackgroundForm,
+  CourseSelectionForm,
+  FacilitiesForm,
+  FamilyInfoSchema,
+  ReferalForm,
+  StudentDetailsForm,
+  StudentVerificationForm,
+} from "./forms.client";
 import React from "react";
 import { useRouter } from "next/navigation";
 
@@ -28,28 +36,36 @@ const items = [
     form: StudentDetailsForm,
   },
   {
+    title: "Course & College Preference",
+    description: "Choose the desired course, college, branch.",
+    form: CourseSelectionForm,
+  },
+  {
+    title: "Final Fee & Facilities",
+    description: "View applicable fees and facilities.",
+    form: FacilitiesForm,
+  },
+  {
     title: "Academic Background",
     description:
       "Enter the student's previous academic history including board, percentage, and category.",
-  },
-  {
-    title: "Course & College Preference",
-    description:
-      "Choose the desired course, college, branch, and view applicable fees and facilities.",
+    form: AcademicBackgroundForm,
   },
   {
     title: "Family Information",
     description: "Add guardian details like father’s and mother’s names.",
+    form: FamilyInfoSchema,
   },
   {
     title: "Referral & Internal Tracking",
     description:
       "Mention referral source, counselor's name, and recommendation if applicable.",
+    form: ReferalForm,
   },
 ];
 
 export function PageClient() {
-  const steps = useSteps({ defaultStep: 0, count: items.length });
+  const steps = useSteps({ defaultStep: 6, count: items.length });
   const router = useRouter();
 
   return (
