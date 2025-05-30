@@ -89,7 +89,7 @@ export default function SearchPage() {
     );
 
   return (
-    <React.Fragment h={"80vh"} w={"full"}>
+    <React.Fragment>
       <DataTable columns={columns} data={data ?? []} />
     </React.Fragment>
   );
