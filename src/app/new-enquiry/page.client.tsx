@@ -65,7 +65,7 @@ const items = [
 ];
 
 export function PageClient() {
-  const steps = useSteps({ defaultStep: 6, count: items.length });
+  const steps = useSteps({ defaultStep: 0, count: items.length });
   const router = useRouter();
 
   return (
