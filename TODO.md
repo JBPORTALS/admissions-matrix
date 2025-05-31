@@ -1,0 +1,4 @@
+- [x] Make new add enquiry page
+- [ ] Add Hostel and Bus tabs
+- [x] Refactor the history page
+- [ ] Search page redesign

@@ -8,19 +8,13 @@ import {
 } from "@/store/admissions.slice";
 import {
   Button,
-  FormControl,
-  FormLabel,
+  Field,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  Dialog,
   Select,
   SimpleGrid,
   VStack,
+  Portal,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -46,7 +40,7 @@ interface FormDataProps {
   type: string;
   label: string;
   max?: number;
-  isReadonly?: boolean;
+  readOnly?: boolean;
   option?: { value: string; option: string }[];
   value?: string | Date | undefined | null;
   onChange?: (e: string) => void;
@@ -278,7 +272,7 @@ export default function AddCouncelAddmissionModel({
       name: "fee_quoted",
       label: "Fee",
       type: "number",
-      isReadonly: true,
+      readOnly: true,
       value: feeOn,
     },
     {
@@ -537,168 +531,180 @@ export default function AddCouncelAddmissionModel({
   };
 
   return (
-    <Modal isOpen={isOpen} size={"6xl"} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Student Enquiry Form</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack w={"full"} h={"full"}>
-            <SimpleGrid
-              columns={3}
-              spacingX={"5"}
-              spacingY={"4"}
-              w={"900px"}
-              h={"full"}
-            >
-              {formData.map((field: FormDataProps, index) => {
-                if (
-                  (field.name == "exam" || field.name == "rank") &&
-                  !["ENGINEERING", "MBA", "DEGREE"].includes(
-                    state.course as string
-                  )
-                )
-                  return null;
-                else if (field.name == "pcm" && state.course !== "ENGINEERING")
-                  return null;
-                return (
-                  <FormControl
-                    key={index}
-                    display={"flex"}
-                    flexDir={"column"}
-                    w={"full"}
-                  >
-                    <FormLabel>{field.label}</FormLabel>
-                    {field.type == "select" ? (
-                      <>
-                        <Select
-                          boxShadow={"md"}
-                          bg={"white"}
-                          w={"64"}
-                          value={state[field.name] as string}
-                          onChange={(e) =>
-                            setState((prev) => ({
-                              ...prev,
-                              [field.name]: e.target.value,
-                            }))
-                          }
-                        >
-                          <option value={""}>Select {field.label}</option>
-                          {field.option &&
-                            field.option.map((opt) => (
-                              <option key={opt.value} value={opt.value}>
-                                {opt.option}
-                              </option>
-                            ))}
-                        </Select>
-                      </>
-                    ) : field.type == "date" ? (
-                      <ReactDatePicker
-                        className="px-3 py-2 border w-full rounded-md outline-brand"
-                        selected={field.value as Date}
-                        dateFormat={"dd/MM/yyyy"}
-                        onChange={(date) =>
-                          setState((prev) => ({
-                            ...prev,
-                            [field.name]: date,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <Input
-                        isReadOnly={field?.isReadonly}
-                        type={field.type}
-                        boxShadow={"md"}
-                        bg={"white"}
-                        w={"64"}
-                        maxLength={field?.max}
-                        value={
-                          field.value
-                            ? (field.value as string)
-                            : (state[field.name] as string)
-                        }
-                        onChange={(e) => {
-                          if (field.onChange) {
-                            field.onChange(e.target.value);
-                            return;
-                          }
-
-                          if (field.max && field.type == "number") {
-                            if (e.target.value.length <= field.max) {
-                              const value = Math.max(
-                                0,
-                                Math.min(
-                                  99999999999999999,
-                                  Number(e.target.value)
-                                )
-                              );
+    <Dialog.Root open={isOpen} size={"lg"} onOpenChange={onClose}>
+      <Portal>
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>Student Enquiry Form</Dialog.Header>
+            <Dialog.CloseTrigger />
+            <Dialog.Body>
+              <VStack w={"full"} h={"full"}>
+                <SimpleGrid
+                  columns={3}
+                  spaceX={"5"}
+                  spaceY={"4"}
+                  w={"900px"}
+                  h={"full"}
+                >
+                  {formData.map((field: FormDataProps, index) => {
+                    if (
+                      (field.name == "exam" || field.name == "rank") &&
+                      !["ENGINEERING", "MBA", "DEGREE"].includes(
+                        state.course as string
+                      )
+                    )
+                      return null;
+                    else if (
+                      field.name == "pcm" &&
+                      state.course !== "ENGINEERING"
+                    )
+                      return null;
+                    return (
+                      <Field.Root
+                        key={index}
+                        display={"flex"}
+                        flexDir={"column"}
+                        w={"full"}
+                      >
+                        <Field.Label>{field.label}</Field.Label>
+                        {field.type == "select" ? (
+                          <>
+                            <Select.Root
+                              boxShadow={"md"}
+                              bg={"white"}
+                              w={"64"}
+                              value={state[field.name] as string}
+                              onChange={(e) =>
+                                setState((prev) => ({
+                                  ...prev,
+                                  [field.name]: e.target.value,
+                                }))
+                              }
+                            >
+                              <option value={""}>Select {field.label}</option>
+                              {field.option &&
+                                field.option.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.option}
+                                  </option>
+                                ))}
+                            </Select.Root>
+                          </>
+                        ) : field.type == "date" ? (
+                          <ReactDatePicker
+                            className="px-3 py-2 border w-full rounded-md outline-brand"
+                            selected={field.value as Date}
+                            dateFormat={"dd/MM/yyyy"}
+                            onChange={(date) =>
                               setState((prev) => ({
                                 ...prev,
-                                [field.name]: value.toString(),
-                              }));
+                                [field.name]: date,
+                              }))
                             }
-                          } else if (
-                            field.type == "number" &&
-                            (field.name == "percentage" || field.name == "pcm")
-                          ) {
-                            const value = Math.max(
-                              0,
-                              Math.min(100.0, Number(e.target.value))
-                            );
-                            setState((prev) => ({
-                              ...prev,
-                              [field.name]: value.toString(),
-                            }));
-                          } else if (
-                            field.type == "number" &&
-                            field.name == "rank"
-                          ) {
-                            const value = Math.round(
-                              Math.max(
-                                0,
-                                Math.min(999999999, Number(e.target.value))
-                              )
-                            );
-                            setState((prev) => ({
-                              ...prev,
-                              [field.name]: value.toString(),
-                            }));
-                          } else if (
-                            field.type == "text" &&
-                            field.name == "cheque_no"
-                          ) {
-                            const result = e.target.value.replace(
-                              /[^a-z0-9A-Z]/gi,
-                              ""
-                            );
-                            setState((prev) => ({
-                              ...prev,
-                              [field.name]: result,
-                            }));
-                          } else {
-                            setState((prev) => ({
-                              ...prev,
-                              [field.name]: e.target.value,
-                            }));
-                          }
-                        }}
-                      />
-                    )}
-                  </FormControl>
-                );
-              })}
-            </SimpleGrid>
-          </VStack>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" variant={"ghost"} mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button colorScheme="facebook" variant="solid" onClick={onSubmit}>
-            Submit
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+                          />
+                        ) : (
+                          <Input
+                            readOnly={field?.readOnly}
+                            type={field.type}
+                            boxShadow={"md"}
+                            bg={"white"}
+                            w={"64"}
+                            maxLength={field?.max}
+                            value={
+                              field.value
+                                ? (field.value as string)
+                                : (state[field.name] as string)
+                            }
+                            onChange={(e) => {
+                              if (field.onChange) {
+                                field.onChange(e.target.value);
+                                return;
+                              }
+
+                              if (field.max && field.type == "number") {
+                                if (e.target.value.length <= field.max) {
+                                  const value = Math.max(
+                                    0,
+                                    Math.min(
+                                      99999999999999999,
+                                      Number(e.target.value)
+                                    )
+                                  );
+                                  setState((prev) => ({
+                                    ...prev,
+                                    [field.name]: value.toString(),
+                                  }));
+                                }
+                              } else if (
+                                field.type == "number" &&
+                                (field.name == "percentage" ||
+                                  field.name == "pcm")
+                              ) {
+                                const value = Math.max(
+                                  0,
+                                  Math.min(100.0, Number(e.target.value))
+                                );
+                                setState((prev) => ({
+                                  ...prev,
+                                  [field.name]: value.toString(),
+                                }));
+                              } else if (
+                                field.type == "number" &&
+                                field.name == "rank"
+                              ) {
+                                const value = Math.round(
+                                  Math.max(
+                                    0,
+                                    Math.min(999999999, Number(e.target.value))
+                                  )
+                                );
+                                setState((prev) => ({
+                                  ...prev,
+                                  [field.name]: value.toString(),
+                                }));
+                              } else if (
+                                field.type == "text" &&
+                                field.name == "cheque_no"
+                              ) {
+                                const result = e.target.value.replace(
+                                  /[^a-z0-9A-Z]/gi,
+                                  ""
+                                );
+                                setState((prev) => ({
+                                  ...prev,
+                                  [field.name]: result,
+                                }));
+                              } else {
+                                setState((prev) => ({
+                                  ...prev,
+                                  [field.name]: e.target.value,
+                                }));
+                              }
+                            }}
+                          />
+                        )}
+                      </Field.Root>
+                    );
+                  })}
+                </SimpleGrid>
+              </VStack>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button
+                colorScheme="blue"
+                variant={"ghost"}
+                mr={3}
+                onClick={onClose}
+              >
+                Close
+              </Button>
+              <Button colorScheme="facebook" variant="solid" onClick={onSubmit}>
+                Submit
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   );
 }
