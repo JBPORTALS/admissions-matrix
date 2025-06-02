@@ -1,12 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Blockquote,
   Box,
   Button,
   ButtonGroup,
-  Card,
-  CardHeader,
   Center,
   Container,
   HStack,
@@ -30,9 +27,7 @@ import {
   LuPlus,
   LuUserCog,
   LuWorkflow,
-  type LuType,
 } from "react-icons/lu";
-import React from "react";
 
 const ourSolutions = [
   { title: "Automatic Workflows", icon: LuWorkflow },
