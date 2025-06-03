@@ -187,3 +187,16 @@ export const sourceOptions = createListCollection({
     },
   ],
 });
+
+export const categoryOptions = createListCollection({
+  items: [
+    {
+      label: "REGULAR",
+      value: "REGULAR",
+    },
+    {
+      label: "LATERAL ENTRY",
+      value: "LATERAL_ENTRY",
+    },
+  ],
+});

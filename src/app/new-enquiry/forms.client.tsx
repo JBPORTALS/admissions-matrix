@@ -7,7 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
 import {
   SelectContent,
   SelectItem,
@@ -15,12 +14,16 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "@/components/ui/select";
+import { toaster } from "@/components/ui/toaster";
 import { useAppDispatch } from "@/hooks";
+import { useEnquiryStore } from "@/providers/enquiry-store-provider";
 import { useAppSelector } from "@/store";
 import { fetchBranchList, fetchCollegeList } from "@/store/admissions.slice";
 import {
   boardOptions,
+  categoryOptions,
   courseOptions,
+  examsOptions,
   genderOptions,
   sourceOptions,
 } from "@/utils/constants";
@@ -45,6 +48,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { LuBookA, LuBox, LuBuilding, LuBusFront } from "react-icons/lu";
@@ -57,22 +61,38 @@ const studentVerificationSchema = z.object({
 
   studentPhone: z
     .string()
-    .regex(phoneRegex, "Invalid mobile number")
-    .optional(),
+    .optional()
+    .refine((val) => !val || phoneRegex.test(val), {
+      message: "Invalid mobile number",
+    }),
 
-  fatherPhone: z.string().regex(phoneRegex, "Invalid mobile number").optional(),
+  fatherPhone: z
+    .string()
+    .optional()
+    .refine((val) => !val || phoneRegex.test(val), {
+      message: "Invalid mobile number",
+    }),
 
-  motherPhone: z.string().regex(phoneRegex, "Invalid mobile number").optional(),
+  motherPhone: z
+    .string()
+    .optional()
+    .refine((val) => !val || phoneRegex.test(val), {
+      message: "Invalid mobile number",
+    }),
 });
 
 export function StudentVerificationForm() {
+  const defaultValues = useEnquiryStore((state) => state.studentVerification);
   const form = useForm<z.infer<typeof studentVerificationSchema>>({
     resolver: zodResolver(studentVerificationSchema),
+    defaultValues,
   });
 
   const steps = useStepsContext();
+  const updateStore = useEnquiryStore((s) => s.update);
 
   async function onSubmit(values: z.infer<typeof studentVerificationSchema>) {
+    updateStore("studentVerification", values);
     steps.goToNextStep();
   }
 
@@ -166,6 +186,8 @@ const studentDetailsSchema = z.object({
 
   email: z.string().email("Invalid email address"),
 
+  studentPhone: z.string().regex(phoneRegex),
+
   address: z.string().min(5, "Address is too short"),
 
   city: z.string().min(2, "City is required"),
@@ -174,13 +196,27 @@ const studentDetailsSchema = z.object({
 });
 
 export function StudentDetailsForm() {
+  const defaultValues = useEnquiryStore((state) => state.studentDetails);
+  const studentPhone = useEnquiryStore(
+    (state) => state.studentVerification.studentPhone
+  );
   const form = useForm<z.infer<typeof studentDetailsSchema>>({
     resolver: zodResolver(studentDetailsSchema),
+    defaultValues,
   });
 
   const steps = useStepsContext();
+  const updateStore = useEnquiryStore((s) => s.update);
+
+  useEffect(() => {
+    if (studentPhone)
+      form.reset({
+        studentPhone,
+      });
+  }, [studentPhone, form.reset]);
 
   async function onSubmit(values: z.infer<typeof studentDetailsSchema>) {
+    updateStore("studentDetails", values);
     steps.goToNextStep();
   }
 
@@ -226,6 +262,20 @@ export function StudentDetailsForm() {
                       ))}
                     </SelectContent>
                   </SelectRoot>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="studentPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{"Student Phone Number"}</FormLabel>
+                  <InputGroup startAddon={"+ 91"}>
+                    <Input {...field} />
+                  </InputGroup>
                   <FormMessage />
                 </FormItem>
               )}
@@ -316,27 +366,83 @@ export function StudentDetailsForm() {
   );
 }
 
-const academicBackgroundSchema = z.object({
-  previousSchoolOrCollege: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Too long"),
+const academicBackgroundSchema = z
+  .object({
+    course: z.string(),
+    previousSchoolOrCollege: z
+      .string()
+      .min(2, "Name must be at least 2 characters")
+      .max(100, "Too long"),
 
-  board: z
-    .enum(["SSLC", "FEMALE", "OTHER"], { message: "Gender is required" })
-    .array(),
+    board: z
+      .enum(["SSLC", "FEMALE", "OTHER"], { message: "Gender is required" })
+      .array(),
 
-  overallPercentage: z.string().regex(/^\d{3}$/, "Invalid overall percentage"),
-});
+    overallPercentage: z
+      .string()
+      .min(1, "Required")
+      .refine((val) => !isNaN(parseInt(val)), {
+        message: "Must be a valid number",
+      })
+      .refine((val) => parseInt(val) >= 0 && parseInt(val) <= 100, {
+        message: "Percentage must be between 0 and 100",
+      }),
+
+    /** Only if the course selected to ENGINEERING */
+    pcmAggregate: z
+      .string()
+      .refine((val) => !isNaN(parseInt(val)), {
+        message: "Must be a valid number",
+      })
+      .refine((val) => parseInt(val) >= 0 && parseInt(val) <= 100, {
+        message: "PCM Aggregate must be between 0 and 100",
+      }),
+    exam: z.string().array(),
+    rank: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.course === "ENGINEERING") {
+      if (!data.pcmAggregate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "PCM Aggregate is required for ENGINEERING",
+          path: ["pcmAggregate"],
+        });
+      }
+
+      if (!data.exam || data.exam.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Exam is required for ENGINEERING",
+          path: ["exam"],
+        });
+      }
+
+      if (!data.rank) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Rank is required for ENGINEERING",
+          path: ["rank"],
+        });
+      }
+    }
+  });
 
 export function AcademicBackgroundForm() {
+  const defaultValues = useEnquiryStore((state) => state.academicBackground);
+  const course = useEnquiryStore((state) => state.courseSelection.course);
+
   const form = useForm<z.infer<typeof academicBackgroundSchema>>({
-    resolver: zodResolver(academicBackgroundSchema),
+    resolver: (values, ctx, opt) =>
+      zodResolver(academicBackgroundSchema)({ ...values, course }, ctx, opt),
+    defaultValues,
   });
 
   const steps = useStepsContext();
+  const updateStore = useEnquiryStore((s) => s.update);
 
   async function onSubmit(values: z.infer<typeof academicBackgroundSchema>) {
+    updateStore("academicBackground", values);
     steps.goToNextStep();
   }
 
@@ -395,6 +501,8 @@ export function AcademicBackgroundForm() {
                   <FormLabel>Overall Percentage / CGPA</FormLabel>
                   <NumberInput.Root
                     w={"full"}
+                    min={0}
+                    max={100}
                     disabled={field.disabled}
                     name={field.name}
                     value={field.value}
@@ -409,6 +517,88 @@ export function AcademicBackgroundForm() {
                 </FormItem>
               )}
             />
+
+            {course === "ENGINEERING" && (
+              <React.Fragment>
+                <FormField
+                  control={form.control}
+                  name="exam"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Exam</FormLabel>
+                      <SelectRoot
+                        name={field.name}
+                        value={field.value}
+                        collection={examsOptions}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        onInteractOutside={() => field.onBlur()}
+                      >
+                        <SelectTrigger>
+                          <SelectValueText placeholder="Select Exam" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {examsOptions.items.map((item) => (
+                            <SelectItem key={item.value} item={item}>
+                              {item.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectRoot>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="pcmAggregate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PCM Aggregate</FormLabel>
+                      <NumberInput.Root
+                        w={"full"}
+                        min={0}
+                        max={100}
+                        disabled={field.disabled}
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => {
+                          field.onChange(value);
+                        }}
+                      >
+                        <NumberInput.Control />
+                        <NumberInput.Input />
+                      </NumberInput.Root>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="rank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rank</FormLabel>
+                      <NumberInput.Root
+                        w={"full"}
+                        disabled={field.disabled}
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={({ value }) => {
+                          field.onChange(value);
+                        }}
+                      >
+                        <NumberInput.Control />
+                        <NumberInput.Input />
+                      </NumberInput.Root>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </React.Fragment>
+            )}
 
             <ButtonGroup>
               <Steps.PrevTrigger asChild>
@@ -434,9 +624,11 @@ const courseSelectionSchema = z.object({
 });
 
 export function CourseSelectionForm() {
+  const defaultValues = useEnquiryStore((state) => state.referal);
   const form = useForm<z.infer<typeof courseSelectionSchema>>({
     resolver: zodResolver(courseSelectionSchema),
     defaultValues: {
+      ...defaultValues,
       course: courseOptions.firstValue ?? "",
     },
   });
@@ -470,7 +662,10 @@ export function CourseSelectionForm() {
     dispatch(fetchBranchList({ college }));
   }, [college, dispatch]);
 
+  const updateStore = useEnquiryStore((s) => s.update);
+
   async function onSubmit(values: z.infer<typeof courseSelectionSchema>) {
+    updateStore("courseSelection", values);
     steps.goToNextStep();
   }
 
@@ -635,18 +830,17 @@ const facilitiesSchema = z.object({
 });
 
 export function FacilitiesForm() {
+  const defaultValues = useEnquiryStore((state) => state.facilities);
   const form = useForm<z.infer<typeof facilitiesSchema>>({
     resolver: zodResolver(facilitiesSchema),
-    defaultValues: {
-      hostelFacility: false,
-      busFacility: false,
-      fixedFee: 40000,
-    },
+    defaultValues,
   });
 
   const steps = useStepsContext();
+  const updateStore = useEnquiryStore((s) => s.update);
 
   async function onSubmit(values: z.infer<typeof facilitiesSchema>) {
+    updateStore("facilities", values);
     steps.goToNextStep();
   }
 
@@ -771,13 +965,33 @@ const familyInfoSchema = z.object({
 });
 
 export function FamilyInfoSchema() {
+  const familyInfo = useEnquiryStore((state) => state.familyInfo);
+  const studentVerification = useEnquiryStore(
+    (state) => state.studentVerification
+  );
   const form = useForm<z.infer<typeof familyInfoSchema>>({
     resolver: zodResolver(familyInfoSchema),
   });
 
   const steps = useStepsContext();
+  const updateStore = useEnquiryStore((s) => s.update);
+
+  useEffect(() => {
+    if (familyInfo && studentVerification) {
+      form.reset({
+        ...familyInfo,
+        fatherPhone: studentVerification.fatherPhone,
+        motherPhone: studentVerification.motherPhone,
+      });
+    }
+  }, [
+    studentVerification.fatherPhone,
+    studentVerification.motherPhone,
+    form.reset,
+  ]);
 
   async function onSubmit(values: z.infer<typeof familyInfoSchema>) {
+    updateStore("familyInfo", values);
     steps.goToNextStep();
   }
 
@@ -853,17 +1067,106 @@ const referalSchema = z.object({
   referalSource: z.string().min(1, "Required").array(),
   councelledBy: z.string().min(1, "Required"),
   recommendedBy: z.string().min(1, "Required"),
+  quotedBy: z.string().min(1, "Required"),
+  category: z.string().array(),
 });
 
 export function ReferalForm() {
+  const defaultValues = useEnquiryStore((state) => state.referal);
   const form = useForm<z.infer<typeof referalSchema>>({
     resolver: zodResolver(referalSchema),
+    defaultValues,
   });
+  const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const steps = useStepsContext();
 
+  const enquiryValues = useEnquiryStore((s) => s);
+
   async function onSubmit(values: z.infer<typeof referalSchema>) {
-    steps.goToNextStep();
+    try {
+      const fd = new FormData();
+
+      const {
+        studentVerification,
+        studentDetails,
+        courseSelection,
+        familyInfo,
+        facilities,
+        academicBackground,
+      } = enquiryValues;
+
+      /** Student Verification */
+      fd.append("reg_no", studentVerification.regno);
+
+      /** Student Details */
+      fd.append("name", studentDetails.studentName);
+      fd.append("email", studentDetails.email);
+      fd.append("gender", studentDetails.gender.at(0)!);
+      fd.append("phone", studentDetails.studentPhone);
+      fd.append("address", studentDetails.address);
+      fd.append("city", studentDetails.city);
+      fd.append("state", studentDetails.state);
+      fd.append("aadhar", studentDetails.aadharNumber);
+      fd.append("pan", studentDetails.panNumber);
+
+      /** Course Selection */
+      fd.append("course", courseSelection.course);
+      fd.append("college", courseSelection.college);
+      fd.append("branch", courseSelection.branch);
+
+      /** Final Fee & Facilities */
+      fd.append("fee_quoted", facilities.fixedFee.toString());
+      fd.append("hostel", facilities.hostelFacility ? "YES" : "NO");
+      fd.append("transport", facilities.busFacility ? "YES" : "NO");
+
+      /** Academic Background */
+      fd.append("school_college", academicBackground.previousSchoolOrCollege);
+      fd.append("pcm", academicBackground.pcmAggregate as string);
+      fd.append("board", academicBackground.board.at(0)!);
+      fd.append("exam", academicBackground.exam.at(0)!);
+      fd.append("rank", academicBackground.rank as string);
+      fd.append("percentage", academicBackground.overallPercentage);
+
+      /** Family Info */
+      fd.append("fname", familyInfo.fatherName);
+      fd.append("father_no", familyInfo.fatherPhone);
+      fd.append("mother_name", familyInfo.motherName);
+      fd.append("mother_no", familyInfo.motherPhone);
+
+      /** Referal Info */
+      fd.append("source", values.referalSource.at(0)!);
+      fd.append("counselled", values.councelledBy);
+      fd.append("quoted_by", values.quotedBy);
+      fd.append("recommended_by", values.recommendedBy);
+
+      fd.append("acadyear", process.env.NEXT_PUBLIC_ACADYEAR!);
+      fd.append("category", values.category.at(0)!);
+
+      const res = await axios(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "createenquiry.php",
+        {
+          data: fd,
+          method: "POST",
+        }
+      );
+
+      const link = document.createElement("a");
+      link.href =
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+        `downloadenquiry.php?id=${res.data?.id}&acadyear=${acadYear}`;
+      link.setAttribute("download", "Enquiry Copy.pdf");
+      link.setAttribute("target", "_blank");
+      document.body.appendChild(link);
+      link.click();
+      // @ts-ignore
+      setState(Object.keys(state).map((key: string) => ({ [key]: "" })));
+    } catch (e: any) {
+      console.log(e);
+      toaster.error({
+        title: e.response?.data?.msg ?? "Something went wrong",
+      });
+    }
   }
 
   return (
@@ -871,6 +1174,36 @@ export function ReferalForm() {
       <Form {...form}>
         <Box asChild spaceY={"6"}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <SelectRoot
+                    name={field.name}
+                    onBlur={field.onBlur}
+                    value={field.value}
+                    onValueChange={({ value }) => field.onChange(value)}
+                    collection={categoryOptions}
+                  >
+                    <SelectTrigger>
+                      <SelectValueText placeholder="Select Source of Aware" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {categoryOptions.items.map((item) => (
+                        <SelectItem item={item} key={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </SelectRoot>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="referalSource"
@@ -900,6 +1233,7 @@ export function ReferalForm() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="councelledBy"
@@ -924,15 +1258,46 @@ export function ReferalForm() {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="quotedBy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quoted By</FormLabel>
+                  <Input {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <ButtonGroup>
               <Steps.PrevTrigger asChild>
-                <Button variant={"subtle"}>Prev</Button>
+                <Button
+                  disabled={form.formState.isSubmitting}
+                  variant={"subtle"}
+                >
+                  Prev
+                </Button>
               </Steps.PrevTrigger>
-              <Button type="submit">Next</Button>
+              <Button loading={form.formState.isSubmitting} type="submit">
+                Next
+              </Button>
             </ButtonGroup>
           </form>
         </Box>
       </Form>
+
+      {/* <pre>{JSON.stringify(enquiryValues, undefined, 2)}</pre> */}
     </React.Fragment>
   );
 }
+
+export const enquiryRootSchema = z.object({
+  studentVerification: studentVerificationSchema,
+  studentDetails: studentDetailsSchema,
+  courseSelection: courseSelectionSchema,
+  facilities: facilitiesSchema,
+  academicBackground: academicBackgroundSchema,
+  familyInfo: familyInfoSchema,
+  referal: referalSchema,
+});

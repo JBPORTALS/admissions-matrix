@@ -18,5 +18,8 @@ export const system = createSystem(defaultConfig, {
     html: {
       colorPalette: "blue",
     },
+    input: {
+      _invalid: { bg: "bg.error" },
+    },
   },
 });
