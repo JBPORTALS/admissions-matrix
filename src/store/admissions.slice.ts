@@ -721,7 +721,11 @@ export interface BranchMatrix {
 }
 
 interface FeesIntialState {
-  fee: string;
+  fee: {
+    data: number;
+    pending: boolean;
+    error: null | string;
+  };
   acadYear: string;
   colleges: [];
   branch_admissions: {
@@ -780,7 +784,11 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
-  fee: "",
+  fee: {
+    data: 0,
+    pending: false,
+    error: null,
+  },
   acadYear: process.env.NEXT_PUBLIC_ACADYEAR!,
   colleges: [],
   branch_admissions: {
@@ -967,10 +975,16 @@ export const AdmissionsSlice = createSlice({
       state.branchlist.data = [];
     },
     [fetchFeeQouted.fulfilled.toString()]: (state, action) => {
-      state.fee = action.payload[0]?.fee;
+      state.fee.pending = false;
+      state.fee.data = parseInt(action.payload[0]?.fee);
+    },
+    [fetchFeeQouted.pending.toString()]: (state, action) => {
+      state.fee.pending = true;
     },
     [fetchFeeQouted.rejected.toString()]: (state, action) => {
-      state.fee = "";
+      state.fee.data = 0;
+      state.fee.pending = false;
+      state.fee.error = action.payload;
     },
     [fetchCollegeList.pending.toString()]: (state, action) => {
       state.collegeList.pending = true;

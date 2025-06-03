@@ -18,7 +18,11 @@ import { toaster } from "@/components/ui/toaster";
 import { useAppDispatch } from "@/hooks";
 import { useEnquiryStore } from "@/providers/enquiry-store-provider";
 import { useAppSelector } from "@/store";
-import { fetchBranchList, fetchCollegeList } from "@/store/admissions.slice";
+import {
+  fetchBranchList,
+  fetchCollegeList,
+  fetchFeeQouted,
+} from "@/store/admissions.slice";
 import {
   boardOptions,
   categoryOptions,
@@ -31,6 +35,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Center,
   CheckboxCard,
   Float,
   Heading,
@@ -42,6 +47,7 @@ import {
   RadioCard,
   SimpleGrid,
   Skeleton,
+  Spinner,
   Steps,
   Text,
   useStepsContext,
@@ -831,18 +837,40 @@ const facilitiesSchema = z.object({
 
 export function FacilitiesForm() {
   const defaultValues = useEnquiryStore((state) => state.facilities);
+  const college = useEnquiryStore((state) => state.courseSelection.college);
+  const branch = useEnquiryStore((state) => state.courseSelection.branch);
   const form = useForm<z.infer<typeof facilitiesSchema>>({
     resolver: zodResolver(facilitiesSchema),
     defaultValues,
   });
+  const fixedFee = useAppSelector((state) => state.admissions.fee.data);
+  const isLoading = useAppSelector((state) => state.admissions.fee.pending);
 
   const steps = useStepsContext();
   const updateStore = useEnquiryStore((s) => s.update);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (college && branch) {
+      dispatch(fetchFeeQouted({ college, branch }));
+    }
+  }, [college, branch]);
+
+  useEffect(() => {
+    form.reset({ fixedFee });
+  }, [fixedFee]);
 
   async function onSubmit(values: z.infer<typeof facilitiesSchema>) {
     updateStore("facilities", values);
     steps.goToNextStep();
   }
+
+  if (isLoading)
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
 
   return (
     <React.Fragment>
