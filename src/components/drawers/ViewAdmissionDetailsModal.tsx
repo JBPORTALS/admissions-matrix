@@ -115,7 +115,7 @@ export default function ViewAdmissionDetailsModal({
     fee_quoted: matrix?.fee_quoted,
     fee_fixed: matrix?.fee_fixed,
   });
-  const fee = useAppSelector((state) => state.admissions.fee);
+  const fee = useAppSelector((state) => state.admissions.fee.data.toString());
   const params = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
   let intialRender = true;
@@ -152,8 +152,8 @@ export default function ViewAdmissionDetailsModal({
         })
       ).then((action) => {
         setState({
-          fee_fixed: fee as string,
-          fee_quoted: fee as string,
+          fee_fixed: fee,
+          fee_quoted: fee,
         });
       });
     }
