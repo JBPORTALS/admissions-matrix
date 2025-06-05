@@ -23,14 +23,6 @@ export function SidebarClient() {
       .withOptions({ clearOnDefault: false, shallow: true })
   );
 
-  const [branch, setBranch] = useQueryState(
-    "br",
-    parseAsArrayOf(parseAsString)
-      .withDefault([collegesOptions.at(0)?.value ?? ""])
-      .withOptions({ clearOnDefault: false, shallow: true })
-  );
-
-  const dispatch = useAppDispatch();
   const branches = useAppSelector(
     (state) => state.admissions.branchlist.data as { value: string }[]
   );
@@ -38,19 +30,30 @@ export function SidebarClient() {
     (state) => state.admissions.branchlist.pending
   );
 
+  const [branch, setBranch] = useQueryState(
+    "br",
+    parseAsArrayOf(parseAsString).withDefault([]).withOptions({
+      clearOnDefault: false,
+      shallow: true,
+    })
+  );
+
+  const dispatch = useAppDispatch();
+
   const fetchBranches = useCallback(() => {
     if (college[0]) dispatch(fetchBranchList({ college: college[0] }));
   }, [college[0]]);
 
   // Ensure the default value is set in the URL on first load if it's missing
   useEffect(() => {
-    setCollege([collegesOptions.items[0]?.value ?? ""]);
+    if (!college[0]) setCollege([collegesOptions.items[0]?.value ?? ""]);
   }, [setCollege]);
 
   useEffect(() => {
-    if (!isBranchesLoading && !branch[0] && branches.length !== 0)
-      setBranch([branches.at(0)?.value ?? ""]);
-  }, [branches, isBranchesLoading]);
+    const firstBranchValue = branches.at(0)?.value;
+    if (!isBranchesLoading && branches[0] && firstBranchValue)
+      setBranch([firstBranchValue]);
+  }, [branches, college[0], isBranchesLoading]);
 
   useEffect(() => {
     fetchBranches();
