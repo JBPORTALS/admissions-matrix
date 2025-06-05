@@ -1217,6 +1217,35 @@ export default function ViewAdmissionDetailsModal({
                 </Link>
               </MenuItem>
 
+              {!isUnapproved && (
+                <>
+                  <MenuItem value="provisional" asChild>
+                    <Link
+                      href={
+                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                        `downloadprovisional.php?admissionno=${matrix?.admission_id}&acadyear=${acadYear}&college=${matrix?.college}`
+                      }
+                      target="_blank"
+                    >
+                      <LuFileDown />
+                      Provisional
+                    </Link>
+                  </MenuItem>
+                  <MenuItem asChild value="fee-history">
+                    <Link
+                      target="_blank"
+                      href={
+                        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                        `feeinvoice.php?id=${matrix?.admission_id}&acadyear=${acadYear}&college=${matrix?.college}`
+                      }
+                    >
+                      <LuFileDown />
+                      Fee History
+                    </Link>
+                  </MenuItem>
+                </>
+              )}
+
               <DialogRoot role="alertdialog">
                 <DialogTrigger asChild>
                   <MenuItem

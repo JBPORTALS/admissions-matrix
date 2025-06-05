@@ -380,9 +380,7 @@ const academicBackgroundSchema = z
       .min(2, "Name must be at least 2 characters")
       .max(100, "Too long"),
 
-    board: z
-      .enum(["SSLC", "FEMALE", "OTHER"], { message: "Gender is required" })
-      .array(),
+    board: z.string().array().min(1, "Required"),
 
     overallPercentage: z
       .string()
@@ -407,6 +405,7 @@ const academicBackgroundSchema = z
     rank: z.string(),
   })
   .superRefine((data, ctx) => {
+    console.log(data.course);
     if (data.course === "ENGINEERING") {
       if (!data.pcmAggregate) {
         ctx.addIssue({
@@ -439,13 +438,21 @@ export function AcademicBackgroundForm() {
   const course = useEnquiryStore((state) => state.courseSelection.course);
 
   const form = useForm<z.infer<typeof academicBackgroundSchema>>({
-    resolver: (values, ctx, opt) =>
-      zodResolver(academicBackgroundSchema)({ ...values, course }, ctx, opt),
-    defaultValues,
+    resolver: zodResolver(academicBackgroundSchema),
   });
 
   const steps = useStepsContext();
   const updateStore = useEnquiryStore((s) => s.update);
+
+  useEffect(() => {
+    form.reset(
+      {
+        ...defaultValues,
+        course,
+      },
+      { keepDirty: true }
+    );
+  }, [course, form.reset]);
 
   async function onSubmit(values: z.infer<typeof academicBackgroundSchema>) {
     updateStore("academicBackground", values);
@@ -454,6 +461,7 @@ export function AcademicBackgroundForm() {
 
   return (
     <React.Fragment>
+      <pre>{JSON.stringify(form.getValues(), undefined, 2)}</pre>
       <Form {...form}>
         <Box asChild spaceY="6">
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -831,8 +839,8 @@ export function CourseSelectionForm() {
 const facilitiesSchema = z.object({
   fixedFee: z.number(),
 
-  hostelFacility: z.boolean(),
-  busFacility: z.boolean(),
+  hostelFacility: z.boolean().default(false),
+  busFacility: z.boolean().default(false),
 });
 
 export function FacilitiesForm() {

@@ -50,8 +50,8 @@ export const defaultInitState: EnquiryState = {
     previousSchoolOrCollege: "",
     exam: [],
     course: "",
-    pcmAggregate: "",
-    rank: "",
+    pcmAggregate: "0",
+    rank: "0",
   },
   familyInfo: {
     fatherName: "",
