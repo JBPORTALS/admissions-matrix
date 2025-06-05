@@ -1,7 +1,24 @@
-import { createSystem, defaultConfig } from "@chakra-ui/react";
+import {
+  createSystem,
+  defaultConfig,
+  defineAnimationStyles,
+  defineConfig,
+} from "@chakra-ui/react";
+
+const animationStyles = defineAnimationStyles({
+  bounceFadeIn: {
+    value: {
+      animationName: "bounce, fade-in",
+      animationDuration: "1s",
+      animationTimingFunction: "ease-in-out",
+      animationIterationCount: "infinite",
+    },
+  },
+});
 
 export const system = createSystem(defaultConfig, {
   theme: {
+    animationStyles,
     tokens: {
       fonts: {
         heading: { value: `'Figtree', sans-serif` },
@@ -23,3 +40,5 @@ export const system = createSystem(defaultConfig, {
     },
   },
 });
+
+export default system;

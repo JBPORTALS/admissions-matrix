@@ -1,8 +1,13 @@
 "use client";
 import {
+  Button,
+  ButtonGroup,
+  Center,
+  EmptyState,
   Heading,
   Highlight,
   HStack,
+  Icon,
   IconButton,
   Stack,
   Steps,
@@ -21,6 +26,7 @@ import {
 } from "./forms.client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { LucideCheckCircle2 } from "lucide-react";
 
 const items = [
   {
@@ -100,6 +106,7 @@ export function PageClient() {
           >
             <LuArrowLeft />
           </IconButton>
+
           {items.map((step, index) => (
             <Steps.Content key={index} asChild index={index}>
               <Heading
@@ -119,11 +126,41 @@ export function PageClient() {
             </Steps.Content>
           ))}
         </HStack>
+
         {items.map((step, index) => (
           <Steps.Content key={index} index={index}>
             <React.Fragment>{step.form && <step.form />}</React.Fragment>
           </Steps.Content>
         ))}
+
+        {/** Final Step */}
+        <Steps.CompletedContent>
+          <EmptyState.Root>
+            <EmptyState.Content>
+              <Icon
+                color={"fg.success"}
+                data-state="open"
+                animationDuration="slowest"
+                animationStyle={"scale-fade-in"}
+              >
+                <LucideCheckCircle2 size={100} strokeWidth={1.25} />
+              </Icon>
+
+              <VStack>
+                <EmptyState.Title>Enquiry Added Successful</EmptyState.Title>
+                <EmptyState.Description>
+                  You can use this enquiry application number while student
+                  willing to pay the fee
+                </EmptyState.Description>
+              </VStack>
+              <ButtonGroup variant={"subtle"}>
+                <Button onClick={() => steps.resetStep()}>
+                  Create New One
+                </Button>
+              </ButtonGroup>
+            </EmptyState.Content>
+          </EmptyState.Root>
+        </Steps.CompletedContent>
       </Stack>
     </Steps.RootProvider>
   );
