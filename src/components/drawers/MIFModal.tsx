@@ -1,26 +1,21 @@
+"use client";
+
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchBaseColleges, fetchBranchList } from "@/store/admissions.slice";
 import {
   Button,
   Card,
-  CardBody,
-  CardHeader,
-  Center,
   Separator,
-  Heading,
   HStack,
   Input,
   InputGroup,
-  Text,
-  useDisclosure,
   VStack,
   Field,
   NativeSelect,
+  EmptyState,
 } from "@chakra-ui/react";
-import React, { useEffect, useState, useCallback } from "react";
-import IDrawer from "../ui/utils/IDrawer";
-import { AiOutlineSelect } from "react-icons/ai";
+import { useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Formik,
@@ -30,10 +25,16 @@ import {
 } from "formik";
 import * as Yup from "yup";
 import { toaster } from "../ui/toaster";
-
-interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => React.ReactElement;
-}
+import {
+  DrawerBody,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerRoot,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { LuSquareMousePointer } from "react-icons/lu";
 
 const Schema = Yup.object().shape({
   fee: Yup.number().required(),
@@ -55,8 +56,7 @@ let initialState = {
   comedk: "",
 };
 
-export default function MIFModal({ children }: props) {
-  const { open, onClose, onOpen } = useDisclosure();
+export function MIFModalButton() {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const updateDetails = useCallback<(values: FormikValues) => Promise<void>>(
@@ -98,23 +98,24 @@ export default function MIFModal({ children }: props) {
         await updateDetails(values);
       }}
     >
-      {() => (
-        <>
-          <IDrawer
-            hideFooter
-            onSubmit={() => {}}
-            buttonTitle="Save"
-            onClose={() => {
-              onClose();
-            }}
-            isOpen={open}
-            heading="⚙️ Manage Intake & Fee Settings"
-          >
+      <DrawerRoot size={"sm"}>
+        <DrawerTrigger asChild>
+          <Button>MIF Settings</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <VStack gap={"0"}>
+              <DrawerTitle>Manage Intake & Fee Settings</DrawerTitle>
+              <DrawerDescription>
+                Manage all colleges intake of admissions
+              </DrawerDescription>
+            </VStack>
+          </DrawerHeader>
+          <DrawerBody>
             <FormikContextProvider />
-          </IDrawer>
-          {children({ onOpen })}
-        </>
-      )}
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerRoot>
     </Formik>
   );
 }
@@ -183,7 +184,7 @@ const FormikContextProvider = () => {
   }, [values.intake, values.cet, values.comedk, setFieldValue]);
 
   return (
-    <VStack p={"5"}>
+    <VStack>
       {/* <pre>{JSON.stringify(errors)}</pre> */}
 
       <Field.Root>
@@ -211,28 +212,32 @@ const FormikContextProvider = () => {
               </option>
             ))}
           </NativeSelect.Field>
+          <NativeSelect.Indicator />
         </NativeSelect.Root>
       </Field.Root>
       <Separator size={"sm"} />
       {!values.branch || !values.college ? (
-        <Card.Root w={"full"} height={"40"}>
-          <CardBody>
-            <Center h={"full"} flexDirection={"column"}>
-              <AiOutlineSelect className="text-3xl" />
-              <Text bgSize={"sm"} px={8} textAlign={"center"}>
-                Select College & Branch to check the details
-              </Text>
-            </Center>
-          </CardBody>
-        </Card.Root>
+        <EmptyState.Root>
+          <EmptyState.Content>
+            <EmptyState.Indicator>
+              <LuSquareMousePointer />
+            </EmptyState.Indicator>
+            <VStack align={"center"}>
+              <EmptyState.Title textAlign={"center"}>
+                Select College & Branch
+              </EmptyState.Title>
+              <EmptyState.Description>
+                You need select the inputs to retrieve the data
+              </EmptyState.Description>
+            </VStack>
+          </EmptyState.Content>
+        </EmptyState.Root>
       ) : (
         <Card.Root w={"full"}>
-          <CardHeader>
-            <Heading color={"gray.600"} size={"md"}>
-              Details
-            </Heading>
-          </CardHeader>
-          <CardBody>
+          <Card.Header>
+            <Card.Title>Details</Card.Title>
+          </Card.Header>
+          <Card.Body>
             <VStack gap={"3"}>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Fee</b>{" "}
@@ -356,7 +361,7 @@ const FormikContextProvider = () => {
                 </Button>
               </HStack>
             </VStack>
-          </CardBody>
+          </Card.Body>
         </Card.Root>
       )}
     </VStack>
