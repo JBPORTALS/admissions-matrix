@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { RootState } from ".";
+import { toaster } from "@/components/ui/toaster";
 
 export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
@@ -893,7 +893,7 @@ export const AdmissionsSlice = createSlice({
     [fetchOverallHostel.rejected.toString()]: (state, action) => {
       state.overall_matrix.pending = false;
       state.overall_matrix.error = action.payload?.msg;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
     [fetchUnApprovedAdmissions.pending.toString()]: (state, action) => {
       state.unapproved_matrix.pending = true;
@@ -949,7 +949,7 @@ export const AdmissionsSlice = createSlice({
       state.selectedMatrix.pending = false;
       state.selectedMatrix.data = [];
       state.selectedMatrix.error = action.payload?.msg;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
     [fetchHistory.pending.toString()]: (state, action) => {
       state.seat_matrix.data = [];
@@ -1000,36 +1000,36 @@ export const AdmissionsSlice = createSlice({
       state.selectedMatrix.pending = true;
     },
     [updateMatrix.fulfilled.toString()]: (state, action) => {
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateMatrix.rejected.toString()]: (state, action) => {
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateEnquiry.pending.toString()]: (state, action) => {
       state.selectedMatrix.pending = true;
     },
     [updateEnquiry.fulfilled.toString()]: (state, action) => {
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateEnquiry.rejected.toString()]: (state, action) => {
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
-    [updateToApprove.pending.toString()]: (state, action) => {
+    [updateToApprove.pending.toString()]: (state) => {
       state.update_approve.pending = true;
     },
     [updateToApprove.fulfilled.toString()]: (state, action) => {
       state.update_approve.pending = false;
       state.update_approve.error = null;
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
     },
     [updateToApprove.rejected.toString()]: (state, action) => {
       state.update_approve.error = action.payload?.msg;
       state.update_approve.pending = false;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
   },
 });

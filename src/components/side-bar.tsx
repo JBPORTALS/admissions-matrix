@@ -18,7 +18,6 @@ import { useAppDispatch } from "@/hooks";
 import { updateAcadYear } from "@/store/admissions.slice";
 import { useRouter } from "next/navigation";
 import { ACADYEARS } from "@/utils/constants";
-import { toast } from "react-hot-toast";
 import {
   SelectContent,
   SelectRoot,
@@ -26,6 +25,7 @@ import {
   SelectValueText,
 } from "./ui/select";
 import { LuBuilding2, LuClock10, LuHistory, LuUserCheck } from "react-icons/lu";
+import { toaster } from "./ui/toaster";
 
 const items = [
   {
@@ -115,7 +115,9 @@ export function SideBar() {
                 collection={ACADYEARS}
                 onValueChange={(e) => {
                   dispatch(updateAcadYear(e.value));
-                  toast.success(`Academic year changed to "${e.value}"`);
+                  toaster.info({
+                    title: `Academic year changed to "${e.value}"`,
+                  });
                   router.push("/dashboard");
                 }}
                 rounded={"full"}

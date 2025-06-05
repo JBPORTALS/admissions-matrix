@@ -1,6 +1,5 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import "react-datepicker/dist/react-datepicker.css";
 import { fetchBaseColleges, fetchBranchList } from "@/store/admissions.slice";
 import {
   Button,
@@ -13,11 +12,11 @@ import {
   HStack,
   Input,
   InputGroup,
-  Select,
   Text,
   useDisclosure,
   VStack,
   Field,
+  NativeSelect,
 } from "@chakra-ui/react";
 import React, { useEffect, useState, useCallback } from "react";
 import IDrawer from "../ui/utils/IDrawer";
@@ -30,10 +29,10 @@ import {
   useFormikContext,
 } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-hot-toast";
+import { toaster } from "../ui/toaster";
 
 interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
+  children: ({ onOpen }: { onOpen: () => void }) => React.ReactElement;
 }
 
 const Schema = Yup.object().shape({
@@ -83,13 +82,9 @@ export default function MIFModal({ children }: props) {
         });
 
         if (response.status == 200)
-          toast.success("Seat Matrix Updated.", {
-            position: "bottom-center",
-          });
+          toaster.success({ title: "Seat Matrix Updated." });
       } catch (e: any) {
-        toast.error("Something went wrong!", {
-          position: "bottom-center",
-        });
+        toaster.error({ title: "Something went wrong!" });
       }
     },
     []
@@ -187,7 +182,7 @@ const FormikContextProvider = () => {
       setFieldValue("comedk", response.data[0].comedk ?? 0);
       setFieldValue("cet", response.data[0].cet ?? 0);
     } catch (e) {
-      toast.error("Something went wrong");
+      toaster.error({ title: "Something went wrong" });
     }
   }, [values.branch, values.college, values.category]);
 
@@ -209,25 +204,30 @@ const FormikContextProvider = () => {
 
       <Field.Root>
         <Field.Label>College</Field.Label>
-        <Select.Root name="college" onChange={handleChange}>
-          <option value={""}>Select</option>
-          {colleges.map((value: any, index) => (
-            <option value={value.value} key={value.value}>
-              {value.option}
-            </option>
-          ))}
-        </Select.Root>
+        <NativeSelect.Root>
+          <NativeSelect.Field name="college" onChange={handleChange}>
+            <option value={""}>Select</option>
+            {colleges.map((value: any, index) => (
+              <option value={value.value} key={value.value}>
+                {value.option}
+              </option>
+            ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
       </Field.Root>
       <Field.Root>
         <Field.Label>Branch</Field.Label>
-        <Select.Root name="branch" onChange={handleChange}>
-          <option value={""}>Select</option>
-          {branches.map((value: any, index) => (
-            <option value={value.value} key={value.value}>
-              {value.option}
-            </option>
-          ))}
-        </Select.Root>
+        <NativeSelect.Root>
+          <NativeSelect.Field name="branch" onChange={handleChange}>
+            <option value={""}>Select</option>
+            {branches.map((value: any, index) => (
+              <option value={value.value} key={value.value}>
+                {value.option}
+              </option>
+            ))}
+          </NativeSelect.Field>
+        </NativeSelect.Root>
       </Field.Root>
       <Separator size={"sm"} />
       {!values.branch || !values.college ? (
@@ -252,7 +252,7 @@ const FormikContextProvider = () => {
             <VStack gap={"3"}>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Fee</b>{" "}
-                <Field.Root isInvalid={!!touched.fee && !!errors.fee} w={"40"}>
+                <Field.Root invalid={!!touched.fee && !!errors.fee} w={"40"}>
                   <InputGroup startAddon={"₹"}>
                     <FormikField
                       as={Input}
@@ -272,7 +272,7 @@ const FormikContextProvider = () => {
                 <>
                   <HStack w={"full"} justifyContent={"space-between"}>
                     <b>Total Seats</b>
-                    <Field.Root isReadOnly w={"40"}>
+                    <Field.Root readOnly w={"40"}>
                       <FormikField
                         as={Input}
                         isReadOnly
@@ -286,7 +286,7 @@ const FormikContextProvider = () => {
                     <b>CET & SNQ</b>
                     <Field.Root
                       w={"40"}
-                      isInvalid={!!touched.cet && !!errors.cet}
+                      invalid={!!touched.cet && !!errors.cet}
                     >
                       <FormikField
                         as={Input}
@@ -303,7 +303,7 @@ const FormikContextProvider = () => {
                     <b>COMEDK</b>
                     <Field.Root
                       w={"40"}
-                      isInvalid={!!touched.comedk && !!errors.comedk}
+                      invalid={!!touched.comedk && !!errors.comedk}
                     >
                       <FormikField
                         as={Input}
@@ -322,7 +322,7 @@ const FormikContextProvider = () => {
                 <b>Management</b>
                 <Field.Root
                   w={"40"}
-                  isInvalid={!!touched.intake && !!errors.intake}
+                  invalid={!!touched.intake && !!errors.intake}
                 >
                   <FormikField
                     as={Input}
@@ -337,7 +337,7 @@ const FormikContextProvider = () => {
               </HStack>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Alloted Seats</b>
-                <Field.Root isReadOnly w={"40"}>
+                <Field.Root readOnly w={"40"}>
                   <FormikField
                     as={Input}
                     isReadOnly
@@ -349,7 +349,7 @@ const FormikContextProvider = () => {
               </HStack>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Remaining Seats</b>
-                <Field.Root isReadOnly w={"40"}>
+                <Field.Root readOnly w={"40"}>
                   <FormikField
                     as={Input}
                     isReadOnly

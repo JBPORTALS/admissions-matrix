@@ -30,12 +30,11 @@ import {
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { trpc } from "@/utils/trpc-cleint";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
-import { LuCheck, LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
+import { LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
 import Link from "next/link";
 import {
   DrawerBody,
@@ -74,6 +73,7 @@ import {
 } from "../ui/dialog";
 import { CloseButton } from "../ui/close-button";
 import { format } from "date-fns";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: React.ReactNode;
@@ -196,9 +196,9 @@ export default function ViewAdmissionDetailsModal({
           branch: matrix.branch,
         })
       );
-      toast.success(response.data?.msg, { position: "top-right" });
+      toaster.success({ title: response.data?.msg });
     } catch (e: any) {
-      toast.error(e.response?.data?.msg, { position: "top-right" });
+      toaster.error({ title: e.response?.data?.msg });
     }
     setIsDeleting(false);
   };

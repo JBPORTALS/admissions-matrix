@@ -1,23 +1,20 @@
 import { z } from "zod";
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Button, Input, Dialog, useDisclosure, Portal } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import AddCouncelAddmissionModel from "./AddCouncelAdmissionModal";
+import { ArrowRight } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { useAppSelector } from "@/store";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { useSearchParams } from "next/navigation";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: React.ReactNode;
@@ -84,15 +81,11 @@ export default function CheckStudentDetails({ children }: props) {
     } catch (e: unknown) {
       const error = e as AxiosError<any, any>;
       // console.log(error);
-      toast.error(
-        error.response?.data.msg
+      toaster.error({
+        title: error.response?.data.msg
           ? "Student Profile Already Exists"
           : "Network Error",
-        {
-          position: "top-center",
-          duration: 15000,
-        }
-      );
+      });
     }
   }
 
@@ -100,14 +93,6 @@ export default function CheckStudentDetails({ children }: props) {
 
   return (
     <>
-      <AddCouncelAddmissionModel
-        student_no={formValues.student_no}
-        father_no={formValues.father_no}
-        mother_no={formValues.mother_no}
-        reg_no={formValues.reg_no}
-        isOpen={open}
-        onClose={onClose}
-      />
       <Dialog.Root size={"lg"}>
         <Dialog.Trigger asChild>{children}</Dialog.Trigger>
         <Portal>
@@ -129,9 +114,7 @@ export default function CheckStudentDetails({ children }: props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Register Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="eg. 123CS19029" {...field} />
-                        </FormControl>
+                        <Input placeholder="eg. 123CS19029" {...field} />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -144,9 +127,7 @@ export default function CheckStudentDetails({ children }: props) {
                         <FormLabel>
                           {"Student Phone Number (optional)"}
                         </FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
+                        <Input type="number" {...field} />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -159,9 +140,7 @@ export default function CheckStudentDetails({ children }: props) {
                         <FormLabel>
                           {"Father Phone Number (optional)"}
                         </FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
+                        <Input type="number" {...field} />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -174,9 +153,7 @@ export default function CheckStudentDetails({ children }: props) {
                         <FormLabel>
                           {"Mother Phone Number (optional)"}
                         </FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
+                        <Input type="number" {...field} />
                         <FormMessage />
                       </FormItem>
                     )}
