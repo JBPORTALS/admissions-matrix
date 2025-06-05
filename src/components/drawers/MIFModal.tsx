@@ -34,7 +34,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
-import { LuSquareMousePointer } from "react-icons/lu";
+import { LuSettings2, LuSquareMousePointer } from "react-icons/lu";
+import { useUser } from "@/utils/auth";
 
 const Schema = Yup.object().shape({
   fee: Yup.number().required(),
@@ -58,6 +59,7 @@ let initialState = {
 
 export function MIFModalButton() {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const user = useUser();
 
   const updateDetails = useCallback<(values: FormikValues) => Promise<void>>(
     async (values) => {
@@ -89,6 +91,8 @@ export function MIFModalButton() {
     []
   );
 
+  if (user?.college !== "MANAGEMENT") return null;
+
   return (
     <Formik
       enableReinitialize
@@ -100,7 +104,9 @@ export function MIFModalButton() {
     >
       <DrawerRoot size={"sm"}>
         <DrawerTrigger asChild>
-          <Button>MIF Settings</Button>
+          <Button size={"xs"} variant={"subtle"}>
+            <LuSettings2 /> Manage Intake & Fee
+          </Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
@@ -127,7 +133,6 @@ const FormikContextProvider = () => {
     handleSubmit,
     isSubmitting,
     handleChange,
-    handleReset,
     isValid,
     touched,
     errors,
