@@ -56,7 +56,6 @@ let initialState = {
 };
 
 export default function MIFModal({ children }: props) {
-  const [isLoading, setIsLoading] = useState(false);
   const { open, onClose, onOpen } = useDisclosure();
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
@@ -103,8 +102,6 @@ export default function MIFModal({ children }: props) {
         <>
           <IDrawer
             hideFooter
-            isLoading={isLoading}
-            isDisabled={isLoading}
             onSubmit={() => {}}
             buttonTitle="Save"
             onClose={() => {
@@ -140,19 +137,6 @@ const FormikContextProvider = () => {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const dispatch = useAppDispatch();
-
-  const AddExtraFieldsRender = ({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) => {
-    if (
-      values.college === "KSIT" ||
-      values.college === "KSSEM" ||
-      values.college === "KSDC"
-    )
-      return <>{children}</>;
-  };
 
   useEffect(() => {
     dispatch(fetchBaseColleges());
