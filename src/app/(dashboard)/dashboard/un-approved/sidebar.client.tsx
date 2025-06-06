@@ -18,9 +18,10 @@ import { useCallback, useEffect } from "react";
 export function SidebarClient() {
   const [college, setCollege] = useQueryState(
     "col",
-    parseAsArrayOf(parseAsString)
-      .withDefault([collegesOptions.at(0)?.value ?? ""])
-      .withOptions({ clearOnDefault: false, shallow: true })
+    parseAsArrayOf(parseAsString).withDefault([]).withOptions({
+      clearOnDefault: false,
+      shallow: true,
+    })
   );
 
   const branches = useAppSelector(
@@ -46,7 +47,7 @@ export function SidebarClient() {
 
   // Ensure the default value is set in the URL on first load if it's missing
   useEffect(() => {
-    if (!college[0]) setCollege([collegesOptions.items[0]?.value ?? ""]);
+    if (!college[0]) setCollege([collegesOptions.firstValue ?? ""]);
   }, [setCollege]);
 
   useEffect(() => {
