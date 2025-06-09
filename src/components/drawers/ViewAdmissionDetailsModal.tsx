@@ -7,6 +7,7 @@ import {
   fetchFeeQouted,
   fetchSearchClass,
   fetchSelectedMatrix,
+  fetchUnApprovedAdmissions,
   SelectedMatrix,
   updateMatrix,
   updateSelectedMatrix,
@@ -95,7 +96,11 @@ export default function ViewAdmissionDetailsModal({
 }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const { open, onToggle: onChangeOpen } = useDisclosure();
+  const {
+    open,
+    onToggle: onChangeOpen,
+    onClose: closeDrawer,
+  } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data
   ) as SelectedMatrix[];
@@ -197,14 +202,28 @@ export default function ViewAdmissionDetailsModal({
         method: "POST",
         data: formData,
       });
-      await dispatch(
-        fetchSearchClass({
-          college: matrix.college,
-          branch: matrix.branch,
-        })
-      );
-      toaster.success({ title: response.data?.msg });
+
+      if (isUnapproved) {
+        //Fetch new unapproved details
+        await dispatch(
+          fetchUnApprovedAdmissions({
+            branch: matrix.branch,
+            college: matrix.college,
+          })
+        );
+      } else {
+        await dispatch(
+          fetchSearchClass({
+            college: matrix.college,
+            branch: matrix.branch,
+          })
+        );
+      }
+
+      toaster.info({ title: response.data?.msg });
+      closeDrawer();
     } catch (e: any) {
+      console.log(e);
       toaster.error({ title: e.response?.data?.msg });
     }
     setIsDeleting(false);
