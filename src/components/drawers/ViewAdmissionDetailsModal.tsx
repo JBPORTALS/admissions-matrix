@@ -33,7 +33,14 @@ import axios from "axios";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { trpc } from "@/utils/trpc-cleint";
-import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
+import {
+  MenuContent,
+  MenuContextTrigger,
+  MenuItem,
+  MenuItemGroup,
+  MenuRoot,
+  MenuTrigger,
+} from "../ui/menu";
 import { LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
 import Link from "next/link";
 import {
@@ -1218,7 +1225,7 @@ export default function ViewAdmissionDetailsModal({
               </MenuItem>
 
               {!isUnapproved && (
-                <>
+                <React.Fragment>
                   <MenuItem value="provisional" asChild>
                     <Link
                       href={
@@ -1243,7 +1250,7 @@ export default function ViewAdmissionDetailsModal({
                       Fee History
                     </Link>
                   </MenuItem>
-                </>
+                </React.Fragment>
               )}
 
               <DialogRoot role="alertdialog">
@@ -1298,15 +1305,13 @@ export default function ViewAdmissionDetailsModal({
             {isUnapproved && (
               <DialogRoot>
                 <DialogTrigger asChild>
-                  <MenuItem value="approve">
-                    <Button
-                      colorPalette={"green"}
-                      onClick={onsubmit}
-                      loading={isLoading}
-                    >
-                      Approve
-                    </Button>
-                  </MenuItem>
+                  <Button
+                    colorPalette={"green"}
+                    onClick={onsubmit}
+                    loading={isLoading}
+                  >
+                    Approve
+                  </Button>
                 </DialogTrigger>
                 <DialogContent portalRef={contentRef}>
                   <DialogHeader>

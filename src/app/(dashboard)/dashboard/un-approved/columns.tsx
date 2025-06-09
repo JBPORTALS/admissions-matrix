@@ -1,25 +1,9 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import {
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-} from "@/components/ui/menu";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarIcon,
-  Box,
-  HStack,
-  IconButton,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Avatar, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
-import { LuEllipsis, LuEye, LuFileDown } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 
 export type UnApproved = {
   admission_id: string;
@@ -74,37 +58,17 @@ export const columns: ColumnDef<UnApproved>[] = [
     header: "Phone No.",
   },
   {
-    id: "menu",
+    header: "View",
     cell(props) {
       return (
-        <MenuRoot closeOnSelect={false}>
-          <MenuTrigger>
-            <IconButton variant={"ghost"}>
-              <LuEllipsis />
-            </IconButton>
-          </MenuTrigger>
-          <MenuContent>
-            <ViewAdmissionDetailsModal
-              isUnapproved
-              admissionno={props.row.original.admission_id}
-            >
-              <MenuItem value="view">
-                <LuEye /> <Box flex={"1"}> View</Box>
-              </MenuItem>
-            </ViewAdmissionDetailsModal>
-            <MenuItem asChild value="download-provisional">
-              <Link
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `downloadprovisional.php?admissionno=${props.row.original.admission_id}&acadyear=${props.row.original.acadyear}`
-                }
-                target="_blank"
-              >
-                <LuFileDown /> <Box flex={"1"}>Download Provisional</Box>
-              </Link>
-            </MenuItem>
-          </MenuContent>
-        </MenuRoot>
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+          isUnapproved
+        >
+          <IconButton variant={"ghost"} aria-label="View">
+            <LuArrowRight />
+          </IconButton>
+        </ViewAdmissionDetailsModal>
       );
     },
   },
