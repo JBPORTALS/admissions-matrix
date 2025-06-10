@@ -184,11 +184,17 @@ const studentDetailsSchema = z.object({
 
   aadharNumber: z
     .string()
-    .regex(/^\d{12}$/, "Aadhar must be exactly 12 digits"),
+    .optional()
+    .refine((val) => !val || /^\d{12}$/.test(val), {
+      message: "Aadhar must be exactly 12 digits",
+    }),
 
   panNumber: z
     .string()
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Invalid PAN number format"),
+    .optional()
+    .refine((val) => !val || /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(val), {
+      message: "Invalid PAN number format",
+    }),
 
   email: z.string().email("Invalid email address"),
 
@@ -1145,8 +1151,8 @@ export function ReferalForm() {
       fd.append("address", studentDetails.address);
       fd.append("city", studentDetails.city);
       fd.append("state", studentDetails.state);
-      fd.append("aadhar", studentDetails.aadharNumber);
-      fd.append("pan", studentDetails.panNumber);
+      fd.append("aadhar", studentDetails.aadharNumber ?? "");
+      fd.append("pan", studentDetails.panNumber ?? "");
 
       /** Course Selection */
       fd.append("course", courseSelection.course);
