@@ -496,7 +496,7 @@ export default function ViewAdmissionDetailsModal({
                 collection={collegesOptions}
                 value={[matrix?.college]}
                 onValueChange={(e) => {
-                  dispatch(updateSelectedMatrix({ college: e.value }));
+                  dispatch(updateSelectedMatrix({ college: e.value[0] }));
                 }}
               >
                 <SelectTrigger>
@@ -532,7 +532,7 @@ export default function ViewAdmissionDetailsModal({
                   collection={branchCollection}
                   value={[matrix?.branch]}
                   onValueChange={(e) => {
-                    dispatch(updateSelectedMatrix({ branch: e.value }));
+                    dispatch(updateSelectedMatrix({ branch: e.value[0] }));
                   }}
                 >
                   <SelectTrigger>
