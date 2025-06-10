@@ -925,7 +925,15 @@ export default function ViewAdmissionDetailsModal({
               </VStack>
               {matrix?.paid_date && (
                 <Box w={"60%"}>
-                  <Input type="date" value={matrix?.paid_date} />
+                  <Input
+                    type="date"
+                    value={matrix?.paid_date}
+                    onChange={(e) =>
+                      dispatch(
+                        updateSelectedMatrix({ paid_date: e.target.value })
+                      )
+                    }
+                  />
                 </Box>
               )}
             </Flex>
