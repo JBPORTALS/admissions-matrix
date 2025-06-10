@@ -117,9 +117,7 @@ export function StudentVerificationForm() {
       steps.goToNextStep();
     } catch (e: any) {
       toaster.error({
-        title: e.response?.data.msg
-          ? "Student Profile Already Exists"
-          : "Network Error",
+        title: e.response?.data.msg ?? "Network Error",
       });
     }
   }
