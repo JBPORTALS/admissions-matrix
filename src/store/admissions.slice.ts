@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { RootState } from ".";
+import { toaster } from "@/components/ui/toaster";
 
 export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
@@ -430,6 +430,10 @@ export const updateMatrix = createAsyncThunk<
       const selected_Matrix = state.admissions.selectedMatrix
         .data as SelectedMatrix[];
       const acadyear = state.admissions.acadYear;
+
+      if (!selected_Matrix[0])
+        return rejectWithValue({ msg: "Something went wrong" });
+
       formData.append("acadyear", acadyear);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("name", selected_Matrix[0].name);
@@ -510,6 +514,10 @@ export const updateEnquiry = createAsyncThunk<
         .data as SelectedMatrix[];
       const name = payload.username;
       const acadyear = state.admissions.acadYear;
+
+      if (!selected_Matrix[0])
+        return rejectWithValue({ msg: "Something went wrong" });
+
       formData.append("acadyear", acadyear);
       formData.append("reg_no", selected_Matrix[0]?.reg_no);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
@@ -713,7 +721,11 @@ export interface BranchMatrix {
 }
 
 interface FeesIntialState {
-  fee: string;
+  fee: {
+    data: number;
+    pending: boolean;
+    error: null | string;
+  };
   acadYear: string;
   colleges: [];
   branch_admissions: {
@@ -772,7 +784,11 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
-  fee: "",
+  fee: {
+    data: 0,
+    pending: false,
+    error: null,
+  },
   acadYear: process.env.NEXT_PUBLIC_ACADYEAR!,
   colleges: [],
   branch_admissions: {
@@ -877,7 +893,7 @@ export const AdmissionsSlice = createSlice({
     [fetchOverallHostel.rejected.toString()]: (state, action) => {
       state.overall_matrix.pending = false;
       state.overall_matrix.error = action.payload?.msg;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
     [fetchUnApprovedAdmissions.pending.toString()]: (state, action) => {
       state.unapproved_matrix.pending = true;
@@ -933,7 +949,7 @@ export const AdmissionsSlice = createSlice({
       state.selectedMatrix.pending = false;
       state.selectedMatrix.data = [];
       state.selectedMatrix.error = action.payload?.msg;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
     [fetchHistory.pending.toString()]: (state, action) => {
       state.seat_matrix.data = [];
@@ -959,10 +975,16 @@ export const AdmissionsSlice = createSlice({
       state.branchlist.data = [];
     },
     [fetchFeeQouted.fulfilled.toString()]: (state, action) => {
-      state.fee = action.payload[0]?.fee;
+      state.fee.pending = false;
+      state.fee.data = parseInt(action.payload[0]?.fee);
+    },
+    [fetchFeeQouted.pending.toString()]: (state, action) => {
+      state.fee.pending = true;
     },
     [fetchFeeQouted.rejected.toString()]: (state, action) => {
-      state.fee = "";
+      state.fee.data = 0;
+      state.fee.pending = false;
+      state.fee.error = action.payload;
     },
     [fetchCollegeList.pending.toString()]: (state, action) => {
       state.collegeList.pending = true;
@@ -978,36 +1000,36 @@ export const AdmissionsSlice = createSlice({
       state.selectedMatrix.pending = true;
     },
     [updateMatrix.fulfilled.toString()]: (state, action) => {
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateMatrix.rejected.toString()]: (state, action) => {
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateEnquiry.pending.toString()]: (state, action) => {
       state.selectedMatrix.pending = true;
     },
     [updateEnquiry.fulfilled.toString()]: (state, action) => {
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
     [updateEnquiry.rejected.toString()]: (state, action) => {
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
       state.selectedMatrix.pending = false;
     },
-    [updateToApprove.pending.toString()]: (state, action) => {
+    [updateToApprove.pending.toString()]: (state) => {
       state.update_approve.pending = true;
     },
     [updateToApprove.fulfilled.toString()]: (state, action) => {
       state.update_approve.pending = false;
       state.update_approve.error = null;
-      toast.success(action.payload?.msg, { position: "top-right" });
+      toaster.success({ title: action.payload?.msg });
     },
     [updateToApprove.rejected.toString()]: (state, action) => {
       state.update_approve.error = action.payload?.msg;
       state.update_approve.pending = false;
-      toast.error(action.payload?.msg, { position: "top-right" });
+      toaster.error({ title: action.payload?.msg });
     },
   },
 });

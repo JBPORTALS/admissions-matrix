@@ -1,38 +1,41 @@
+"use client";
+
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import "react-datepicker/dist/react-datepicker.css";
 import { fetchBaseColleges, fetchBranchList } from "@/store/admissions.slice";
 import {
   Button,
   Card,
-  CardBody,
-  CardHeader,
-  Center,
-  Divider,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
+  Separator,
   HStack,
   Input,
   InputGroup,
-  InputLeftAddon,
-  Select,
-  Text,
-  useDisclosure,
-  useToast,
   VStack,
+  Field,
+  NativeSelect,
+  EmptyState,
 } from "@chakra-ui/react";
-import React, { useEffect, useState, useCallback } from "react";
-import IDrawer from "../ui/utils/IDrawer";
-import { AiOutlineSelect } from "react-icons/ai";
+import { useEffect, useCallback } from "react";
 import axios from "axios";
-import { Formik, Field, FormikValues, useFormikContext } from "formik";
+import {
+  Formik,
+  Field as FormikField,
+  FormikValues,
+  useFormikContext,
+} from "formik";
 import * as Yup from "yup";
-
-interface props {
-  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
-}
+import { toaster } from "../ui/toaster";
+import {
+  DrawerBody,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerRoot,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { LuSettings2, LuSquareMousePointer } from "react-icons/lu";
+import { useUser } from "@/utils/auth";
 
 const Schema = Yup.object().shape({
   fee: Yup.number().required(),
@@ -54,11 +57,9 @@ let initialState = {
   comedk: "",
 };
 
-export default function MIFModal({ children }: props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const toast = useToast();
+export function MIFModalButton() {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
+  const user = useUser();
 
   const updateDetails = useCallback<(values: FormikValues) => Promise<void>>(
     async (values) => {
@@ -82,27 +83,15 @@ export default function MIFModal({ children }: props) {
         });
 
         if (response.status == 200)
-          toast({
-            colorScheme: "blue",
-            variant: "subtle",
-            title: "Seat Matrix Updated.",
-            description: "Refresh the page to view the changes.",
-            position: "bottom",
-          });
+          toaster.success({ title: "Seat Matrix Updated." });
       } catch (e: any) {
-        toast({
-          colorScheme: "red",
-          variant: "subtle",
-          title: "Something went wrong!",
-          description:
-            "Your action could not be completed due to a server issue. Our Nexus team is currently working on resolving it.",
-          position: "bottom",
-          status: "error",
-        });
+        toaster.error({ title: "Something went wrong!" });
       }
     },
     []
   );
+
+  if (user?.college !== "MANAGEMENT") return null;
 
   return (
     <Formik
@@ -113,25 +102,26 @@ export default function MIFModal({ children }: props) {
         await updateDetails(values);
       }}
     >
-      {() => (
-        <>
-          <IDrawer
-            hideFooter
-            isLoading={isLoading}
-            isDisabled={isLoading}
-            onSubmit={() => {}}
-            buttonTitle="Save"
-            onClose={() => {
-              onClose();
-            }}
-            isOpen={isOpen}
-            heading="⚙️ Manage Intake & Fee Settings"
-          >
+      <DrawerRoot size={"sm"}>
+        <DrawerTrigger asChild>
+          <Button size={"xs"} variant={"subtle"}>
+            <LuSettings2 /> Manage Intake & Fee
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <VStack gap={"0"}>
+              <DrawerTitle>Manage Intake & Fee Settings</DrawerTitle>
+              <DrawerDescription>
+                Manage all colleges intake of admissions
+              </DrawerDescription>
+            </VStack>
+          </DrawerHeader>
+          <DrawerBody>
             <FormikContextProvider />
-          </IDrawer>
-          {children({ onOpen })}
-        </>
-      )}
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerRoot>
     </Formik>
   );
 }
@@ -143,7 +133,6 @@ const FormikContextProvider = () => {
     handleSubmit,
     isSubmitting,
     handleChange,
-    handleReset,
     isValid,
     touched,
     errors,
@@ -154,20 +143,6 @@ const FormikContextProvider = () => {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const dispatch = useAppDispatch();
-  const toast = useToast();
-
-  const AddExtraFieldsRender = ({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) => {
-    if (
-      values.college === "KSIT" ||
-      values.college === "KSSEM" ||
-      values.college === "KSDC"
-    )
-      return <>{children}</>;
-  };
 
   useEffect(() => {
     dispatch(fetchBaseColleges());
@@ -197,11 +172,7 @@ const FormikContextProvider = () => {
       setFieldValue("comedk", response.data[0].comedk ?? 0);
       setFieldValue("cet", response.data[0].cet ?? 0);
     } catch (e) {
-      toast({
-        title: "Something went wrong!",
-        status: "error",
-        colorScheme: "red",
-      });
+      toaster.error({ title: "Something went wrong" });
     }
   }, [values.branch, values.college, values.category]);
 
@@ -218,68 +189,76 @@ const FormikContextProvider = () => {
   }, [values.intake, values.cet, values.comedk, setFieldValue]);
 
   return (
-    <VStack p={"5"}>
+    <VStack>
       {/* <pre>{JSON.stringify(errors)}</pre> */}
 
-      <FormControl>
-        <FormLabel>College</FormLabel>
-        <Select name="college" onChange={handleChange}>
-          <option value={""}>Select</option>
-          {colleges.map((value: any, index) => (
-            <option value={value.value} key={value.value}>
-              {value.option}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl>
-        <FormLabel>Branch</FormLabel>
-        <Select name="branch" onChange={handleChange}>
-          <option value={""}>Select</option>
-          {branches.map((value: any, index) => (
-            <option value={value.value} key={value.value}>
-              {value.option}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-      <Divider size={"2"} />
+      <Field.Root>
+        <Field.Label>College</Field.Label>
+        <NativeSelect.Root>
+          <NativeSelect.Field name="college" onChange={handleChange}>
+            <option value={""}>Select</option>
+            {colleges.map((value: any, index) => (
+              <option value={value.value} key={value.value}>
+                {value.option}
+              </option>
+            ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      </Field.Root>
+      <Field.Root>
+        <Field.Label>Branch</Field.Label>
+        <NativeSelect.Root>
+          <NativeSelect.Field name="branch" onChange={handleChange}>
+            <option value={""}>Select</option>
+            {branches.map((value: any, index) => (
+              <option value={value.value} key={value.value}>
+                {value.option}
+              </option>
+            ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      </Field.Root>
+      <Separator size={"sm"} />
       {!values.branch || !values.college ? (
-        <Card w={"full"} height={"40"}>
-          <CardBody>
-            <Center h={"full"} flexDirection={"column"}>
-              <AiOutlineSelect className="text-3xl" />
-              <Text size={"sm"} px={8} textAlign={"center"}>
-                Select College & Branch to check the details
-              </Text>
-            </Center>
-          </CardBody>
-        </Card>
+        <EmptyState.Root>
+          <EmptyState.Content>
+            <EmptyState.Indicator>
+              <LuSquareMousePointer />
+            </EmptyState.Indicator>
+            <VStack align={"center"}>
+              <EmptyState.Title textAlign={"center"}>
+                Select College & Branch
+              </EmptyState.Title>
+              <EmptyState.Description>
+                You need select the inputs to retrieve the data
+              </EmptyState.Description>
+            </VStack>
+          </EmptyState.Content>
+        </EmptyState.Root>
       ) : (
-        <Card w={"full"}>
-          <CardHeader>
-            <Heading color={"gray.600"} size={"md"}>
-              Details
-            </Heading>
-          </CardHeader>
-          <CardBody>
+        <Card.Root w={"full"}>
+          <Card.Header>
+            <Card.Title>Details</Card.Title>
+          </Card.Header>
+          <Card.Body>
             <VStack gap={"3"}>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Fee</b>{" "}
-                <FormControl isInvalid={!!touched.fee && !!errors.fee} w={"40"}>
-                  <InputGroup>
-                    <InputLeftAddon>₹</InputLeftAddon>
-                    <Field
+                <Field.Root invalid={!!touched.fee && !!errors.fee} w={"40"}>
+                  <InputGroup startAddon={"₹"}>
+                    <FormikField
                       as={Input}
                       name={"fee"}
                       type="number "
                       textAlign={"right"}
                     />
                   </InputGroup>
-                  <FormErrorMessage fontSize={"xs"}>
+                  <Field.ErrorText fontSize={"xs"}>
                     {errors.fee}
-                  </FormErrorMessage>
-                </FormControl>
+                  </Field.ErrorText>
+                </Field.Root>
               </HStack>
               {values.college === "KSIT" ||
               values.college === "KSSEM" ||
@@ -287,98 +266,98 @@ const FormikContextProvider = () => {
                 <>
                   <HStack w={"full"} justifyContent={"space-between"}>
                     <b>Total Seats</b>
-                    <FormControl isReadOnly w={"40"}>
-                      <Field
+                    <Field.Root readOnly w={"40"}>
+                      <FormikField
                         as={Input}
                         isReadOnly
                         name={"total"}
                         type="number"
                         textAlign={"right"}
                       />
-                    </FormControl>
+                    </Field.Root>
                   </HStack>
                   <HStack w={"full"} justifyContent={"space-between"}>
                     <b>CET & SNQ</b>
-                    <FormControl
+                    <Field.Root
                       w={"40"}
-                      isInvalid={!!touched.cet && !!errors.cet}
+                      invalid={!!touched.cet && !!errors.cet}
                     >
-                      <Field
+                      <FormikField
                         as={Input}
                         name={"cet"}
                         type="number"
                         textAlign={"right"}
                       />
-                      <FormErrorMessage fontSize={"xs"}>
+                      <Field.ErrorText fontSize={"xs"}>
                         {errors.cet}
-                      </FormErrorMessage>
-                    </FormControl>
+                      </Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                   <HStack w={"full"} justifyContent={"space-between"}>
                     <b>COMEDK</b>
-                    <FormControl
+                    <Field.Root
                       w={"40"}
-                      isInvalid={!!touched.comedk && !!errors.comedk}
+                      invalid={!!touched.comedk && !!errors.comedk}
                     >
-                      <Field
+                      <FormikField
                         as={Input}
                         name={"comedk"}
                         type="number"
                         textAlign={"right"}
                       />
-                      <FormErrorMessage fontSize={"xs"}>
+                      <Field.ErrorText fontSize={"xs"}>
                         {errors.comedk}
-                      </FormErrorMessage>
-                    </FormControl>
+                      </Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                 </>
               ) : null}
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Management</b>
-                <FormControl
+                <Field.Root
                   w={"40"}
-                  isInvalid={!!touched.intake && !!errors.intake}
+                  invalid={!!touched.intake && !!errors.intake}
                 >
-                  <Field
+                  <FormikField
                     as={Input}
                     name={"intake"}
                     type="number"
                     textAlign={"right"}
                   />
-                  <FormErrorMessage fontSize={"xs"}>
+                  <Field.ErrorText fontSize={"xs"}>
                     {errors.intake}
-                  </FormErrorMessage>
-                </FormControl>
+                  </Field.ErrorText>
+                </Field.Root>
               </HStack>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Alloted Seats</b>
-                <FormControl isReadOnly w={"40"}>
-                  <Field
+                <Field.Root readOnly w={"40"}>
+                  <FormikField
                     as={Input}
                     isReadOnly
                     name={"alloted"}
                     type="number"
                     textAlign={"right"}
                   />
-                </FormControl>
+                </Field.Root>
               </HStack>
               <HStack w={"full"} justifyContent={"space-between"}>
                 <b>Remaining Seats</b>
-                <FormControl isReadOnly w={"40"}>
-                  <Field
+                <Field.Root readOnly w={"40"}>
+                  <FormikField
                     as={Input}
                     isReadOnly
                     type="number"
                     name="remaining"
                     textAlign={"right"}
                   />
-                </FormControl>
+                </Field.Root>
               </HStack>
 
               <HStack w={"full"}>
                 <Button
-                  isDisabled={!isValid}
-                  isLoading={isSubmitting}
+                  disabled={!isValid}
+                  loading={isSubmitting}
                   onClick={() => handleSubmit()}
                   colorScheme="facebook"
                   w={"full"}
@@ -387,8 +366,8 @@ const FormikContextProvider = () => {
                 </Button>
               </HStack>
             </VStack>
-          </CardBody>
-        </Card>
+          </Card.Body>
+        </Card.Root>
       )}
     </VStack>
   );

@@ -1,47 +1,20 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { z } from "zod";
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Heading,
-  Input,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Select,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import { Button, Input, Dialog, useDisclosure, Portal } from "@chakra-ui/react";
+import React, { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import AddCouncelAddmissionModel from "./AddCouncelAdmissionModal";
+import { ArrowRight } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { useAppSelector } from "@/store";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: React.ReactNode;
@@ -56,14 +29,13 @@ const formSchema = z.object({
 
 export default function CheckStudentDetails({ children }: props) {
   const searchParams = useSearchParams();
-  const toast = useToast();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
   const {
-    isOpen: isConfirmOpen,
+    open: isConfirmOpen,
     onClose: onConfirmClose,
     onOpen: onConfirmOpen,
   } = useDisclosure();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -109,15 +81,10 @@ export default function CheckStudentDetails({ children }: props) {
     } catch (e: unknown) {
       const error = e as AxiosError<any, any>;
       // console.log(error);
-      toast({
-        colorScheme: "red",
+      toaster.error({
         title: error.response?.data.msg
           ? "Student Profile Already Exists"
           : "Network Error",
-        description: error.response?.data.msg,
-        position: "top",
-        isClosable: true,
-        duration: 15000,
       });
     }
   }
@@ -126,95 +93,87 @@ export default function CheckStudentDetails({ children }: props) {
 
   return (
     <>
-      <AddCouncelAddmissionModel
-        student_no={formValues.student_no}
-        father_no={formValues.father_no}
-        mother_no={formValues.mother_no}
-        reg_no={formValues.reg_no}
-        isOpen={isOpen}
-        onClose={onClose}
-      />
-      <Button variant={"unstyled"} onClick={onConfirmOpen}>
-        {children}
-      </Button>
-      <Modal size={"lg"} isOpen={isConfirmOpen} onClose={onConfirmClose}>
-        <ModalOverlay />
-        <ModalContent>
-          {/* <ModalHeader>Student Data Already Exists</ModalHeader> */}
+      <Dialog.Root size={"lg"}>
+        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+        <Portal>
+          <Dialog.Positioner>
+            <Dialog.Backdrop />
+            <Dialog.Content>
+              {/* <Dialog.Header>Student Data Already Exists</Dialog.Header> */}
 
-          <ModalHeader>Verify the student details</ModalHeader>
-          <ModalCloseButton />
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6 p-6"
-            >
-              <FormField
-                control={form.control}
-                name="reg_no"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Register Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="eg. 123CS19029" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="student_no"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{"Student Phone Number (optional)"}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="father_no"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{"Father Phone Number (optional)"}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="mother_no"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{"Mother Phone Number (optional)"}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button
-                  loadingText={"Getting Verify"}
-                  isLoading={form.formState.isSubmitting}
-                  type="submit"
-                  colorScheme="facebook"
+              <Dialog.Header>Verify the student details</Dialog.Header>
+              <Dialog.CloseTrigger />
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6 p-6"
                 >
-                  Verify <ArrowRight className="h-4 ml-2 w-4" />
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </ModalContent>
-      </Modal>
+                  <FormField
+                    control={form.control}
+                    name="reg_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Register Number</FormLabel>
+                        <Input placeholder="eg. 123CS19029" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="student_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {"Student Phone Number (optional)"}
+                        </FormLabel>
+                        <Input type="number" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="father_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {"Father Phone Number (optional)"}
+                        </FormLabel>
+                        <Input type="number" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="mother_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {"Mother Phone Number (optional)"}
+                        </FormLabel>
+                        <Input type="number" {...field} />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Dialog.Footer>
+                    <Button
+                      loadingText={"Getting Verify"}
+                      loading={form.formState.isSubmitting}
+                      type="submit"
+                      colorScheme="facebook"
+                    >
+                      Verify <ArrowRight className="h-4 ml-2 w-4" />
+                    </Button>
+                  </Dialog.Footer>
+                </form>
+              </Form>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </>
   );
 }

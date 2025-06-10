@@ -1,18 +1,18 @@
+"use client";
+
 import {
   Drawer,
-  DrawerOverlay,
+  DrawerBackdrop,
   Button,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
   DrawerBody,
-  useDisclosure,
   HStack,
   Heading,
-  IconButton,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { IoMdClose } from "react-icons/io";
+import React from "react";
+import { CloseButton } from "../close-button";
 
 interface IDrawerProps {
   heading: string;
@@ -38,8 +38,8 @@ export default function IDrawer({
   hideFooter = false,
 }: IDrawerProps) {
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size={"sm"}>
-      <DrawerOverlay
+    <Drawer.Root open={isOpen} onOpenChange={onClose} size={"sm"}>
+      <DrawerBackdrop
         bg={"rgba(246,246,246,0.2)"}
         className={"backdrop-blur-sm"}
       />
@@ -50,13 +50,7 @@ export default function IDrawer({
         >
           <HStack w={"full"} justifyContent={"space-between"}>
             <Heading size={"sm"}>{heading}</Heading>
-            <IconButton
-              onClick={() => onClose()}
-              variant={"ghost"}
-              px={1}
-              aria-label="cross"
-              icon={<IoMdClose className="text-2xl text-gray-700" />}
-            />
+            <CloseButton />
           </HStack>
         </DrawerHeader>
         <DrawerBody className="px-0 bg-background" px={"0"} py={"0"}>
@@ -72,8 +66,8 @@ export default function IDrawer({
             </Button>
 
             <Button
-              isLoading={isLoading}
-              isDisabled={isDisabled}
+              loading={isLoading}
+              disabled={isDisabled}
               colorScheme={"blue"}
               onClick={async () => {
                 onSubmit && (await onSubmit());
@@ -84,6 +78,6 @@ export default function IDrawer({
           </DrawerFooter>
         )}
       </DrawerContent>
-    </Drawer>
+    </Drawer.Root>
   );
 }
