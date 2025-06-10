@@ -34,14 +34,7 @@ import axios from "axios";
 import moment from "moment";
 import { useSupabase } from "@/app/supabase-provider";
 import { trpc } from "@/utils/trpc-cleint";
-import {
-  MenuContent,
-  MenuContextTrigger,
-  MenuItem,
-  MenuItemGroup,
-  MenuRoot,
-  MenuTrigger,
-} from "../ui/menu";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
 import { LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
 import Link from "next/link";
 import {
@@ -932,7 +925,7 @@ export default function ViewAdmissionDetailsModal({
               </VStack>
               {matrix?.paid_date && (
                 <Box w={"60%"}>
-                  <Input type="date" value={matrix?.paid_date} readOnly />
+                  <Input type="date" value={matrix?.paid_date} />
                 </Box>
               )}
             </Flex>
