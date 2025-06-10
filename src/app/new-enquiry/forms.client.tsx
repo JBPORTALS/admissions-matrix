@@ -1125,8 +1125,6 @@ export function ReferalForm() {
 
   const enquiryValues = useEnquiryStore((s) => s);
 
-  const resetStore = useEnquiryStore((s) => s.reset);
-
   async function onSubmit(values: z.infer<typeof referalSchema>) {
     try {
       const fd = new FormData();
@@ -1203,8 +1201,6 @@ export function ReferalForm() {
       link.setAttribute("target", "_blank");
       document.body.appendChild(link);
       link.click();
-
-      resetStore();
       steps.goToNextStep();
     } catch (e: any) {
       console.log(e);

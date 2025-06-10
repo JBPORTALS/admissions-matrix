@@ -27,6 +27,7 @@ import {
 import React from "react";
 import { useRouter } from "next/navigation";
 import { LucideCheckCircle2 } from "lucide-react";
+import { useEnquiryStore } from "@/providers/enquiry-store-provider";
 
 const items = [
   {
@@ -73,6 +74,7 @@ const items = [
 export function PageClient() {
   const steps = useSteps({ defaultStep: 0, count: items.length });
   const router = useRouter();
+  const enquiryStore = useEnquiryStore((s) => s);
 
   return (
     <Steps.RootProvider
@@ -154,7 +156,12 @@ export function PageClient() {
                 </EmptyState.Description>
               </VStack>
               <ButtonGroup variant={"subtle"}>
-                <Button onClick={() => steps.resetStep()}>
+                <Button
+                  onClick={() => {
+                    enquiryStore.reset();
+                    steps.resetStep();
+                  }}
+                >
                   Create New One
                 </Button>
               </ButtonGroup>
