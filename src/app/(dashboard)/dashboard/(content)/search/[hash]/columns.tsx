@@ -1,16 +1,9 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import {
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-} from "@/components/ui/menu";
-import { Box, IconButton } from "@chakra-ui/react";
+import { IconButton, Tag } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
-import { LuEllipsis, LuEye, LuFileDown } from "react-icons/lu";
+import { LuArrowRight, LuCheck } from "react-icons/lu";
 
 export type Payment = {
   admission_id: string;
@@ -24,6 +17,7 @@ export type Payment = {
   referenced_by: string;
   approved_by: string;
   acadyear: string;
+  status: "APPROVED" | "NOT APPROVED";
 };
 
 export const columns: ColumnDef<Payment>[] = [
@@ -60,8 +54,27 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Payable",
   },
   {
-    accessorKey: "referred_by",
-    header: "Referred By",
+    accessorKey: "status",
+    header: "Status",
+    cell(props) {
+      const status = props.row.original.status;
+
+      if (status === "NOT APPROVED")
+        return (
+          <Tag.Root size={"lg"} colorPalette={"orange"} variant={"outline"}>
+            <Tag.Label>Not Approved</Tag.Label>
+          </Tag.Root>
+        );
+      if (status === "APPROVED")
+        return (
+          <Tag.Root size={"lg"} colorPalette={"blue"} variant={"surface"}>
+            <Tag.Label>Approved</Tag.Label>
+            <Tag.EndElement>
+              <LuCheck />
+            </Tag.EndElement>
+          </Tag.Root>
+        );
+    },
   },
   {
     accessorKey: "approved_by",
@@ -69,35 +82,17 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     id: "menu",
+    header: "View",
     cell(props) {
       return (
-        <MenuRoot closeOnSelect={false}>
-          <MenuTrigger>
-            <IconButton variant={"ghost"}>
-              <LuEllipsis />
-            </IconButton>
-          </MenuTrigger>
-          <MenuContent>
-            <ViewAdmissionDetailsModal
-              admissionno={props.row.original.admission_id}
-            >
-              <MenuItem value="view">
-                <LuEye /> <Box flex={"1"}> View</Box>
-              </MenuItem>
-            </ViewAdmissionDetailsModal>
-            <MenuItem asChild value="download-provisional">
-              <Link
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  `downloadprovisional.php?admissionno=${props.row.original.admission_id}&acadyear=${props.row.original.acadyear}`
-                }
-                target="_blank"
-              >
-                <LuFileDown /> <Box flex={"1"}>Download Provisional</Box>
-              </Link>
-            </MenuItem>
-          </MenuContent>
-        </MenuRoot>
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+          isUnapproved={props.row.original.status !== "APPROVED"}
+        >
+          <IconButton variant={"ghost"} aria-label="View">
+            <LuArrowRight />
+          </IconButton>
+        </ViewAdmissionDetailsModal>
       );
     },
   },
