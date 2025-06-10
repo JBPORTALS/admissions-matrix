@@ -96,10 +96,32 @@ export function StudentVerificationForm() {
 
   const steps = useStepsContext();
   const updateStore = useEnquiryStore((s) => s.update);
+  const acadYear = useAppSelector((s) => s.admissions.acadYear);
 
   async function onSubmit(values: z.infer<typeof studentVerificationSchema>) {
-    updateStore("studentVerification", values);
-    steps.goToNextStep();
+    try {
+      const fd = new FormData();
+      fd.append("acadyear", acadYear);
+      fd.append("reg_no", values.regno);
+      fd.append("student_no", values.studentPhone ?? "");
+      fd.append("mother_no", values.motherPhone ?? "");
+      fd.append("father_no", values.fatherPhone ?? "");
+
+      //Verify if student enquiry already exists or not
+      await axios(process.env.NEXT_PUBLIC_ADMISSIONS_URL + "verify.php", {
+        data: fd,
+        method: "POST",
+      });
+
+      updateStore("studentVerification", values);
+      steps.goToNextStep();
+    } catch (e: any) {
+      toaster.error({
+        title: e.response?.data.msg
+          ? "Student Profile Already Exists"
+          : "Network Error",
+      });
+    }
   }
 
   return (
@@ -146,8 +168,6 @@ export function StudentVerificationForm() {
               )}
             />
 
-            {/* <pre>{JSON.stringify(form.formState.errors, undefined, 2)}</pre> */}
-
             <FormField
               control={form.control}
               name="motherPhone"
@@ -163,7 +183,7 @@ export function StudentVerificationForm() {
             />
 
             <ButtonGroup>
-              <Button type="submit">Next</Button>
+              <Button type="submit">Verify</Button>
             </ButtonGroup>
           </form>
         </Box>
