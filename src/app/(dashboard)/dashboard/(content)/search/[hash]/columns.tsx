@@ -1,7 +1,7 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import { IconButton, Tag } from "@chakra-ui/react";
+import { IconButton, Link, Tag } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 
@@ -28,10 +28,30 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "admission_id",
     header: "App No.",
+    cell(props) {
+      return (
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+          isUnapproved={props.row.original.status !== "APPROVED"}
+        >
+          <Link>{props.row.getValue("admission_id")}</Link>
+        </ViewAdmissionDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "name",
     header: "Name",
+    cell(props) {
+      return (
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+          isUnapproved={props.row.original.status !== "APPROVED"}
+        >
+          <Link>{props.row.getValue("name")}</Link>
+        </ViewAdmissionDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "father_name",
@@ -61,13 +81,13 @@ export const columns: ColumnDef<Payment>[] = [
 
       if (status === "NOT APPROVED")
         return (
-          <Tag.Root size={"lg"} colorPalette={"orange"} variant={"outline"}>
+          <Tag.Root size={"sm"} colorPalette={"orange"} variant={"outline"}>
             <Tag.Label>Not Approved</Tag.Label>
           </Tag.Root>
         );
       if (status === "APPROVED")
         return (
-          <Tag.Root size={"lg"} colorPalette={"blue"} variant={"surface"}>
+          <Tag.Root size={"sm"} colorPalette={"blue"} variant={"surface"}>
             <Tag.Label>Approved</Tag.Label>
             <Tag.EndElement>
               <LuCheck />
