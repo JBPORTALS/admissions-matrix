@@ -8,7 +8,7 @@ import { SessionData } from "@/utils/session";
 
 type SupabaseContext = {
   supabase: SupabaseClient<any>;
-  user: SessionData | null;
+  user: (SessionData & { isLoaded: boolean }) | null;
 };
 
 const Context = createContext<SupabaseContext | undefined>(undefined);

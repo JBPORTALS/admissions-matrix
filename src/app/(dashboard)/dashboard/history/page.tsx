@@ -20,17 +20,15 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import Link from "next/link";
-import { useState } from "react";
+import { notFound, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 import { LuCalendar, LuFileDown } from "react-icons/lu";
 
 export default function UnApproved() {
-  const user = useSupabase();
-  const [ucollege, setCollege] = useState<string | undefined>(
-    ["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "")
-      ? ""
-      : user.user?.college
-  );
-
+  const { user } = useSupabase();
+  const currentUserCollege = user?.college ?? "";
+  const searchParmas = useSearchParams();
+  const college = searchParmas.get("col") ?? currentUserCollege;
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
   const {
@@ -38,73 +36,63 @@ export default function UnApproved() {
     isLoading,
     isError,
     error,
-  } = trpc.seatMatrix.useQuery(
-    { college: ucollege ?? "", acadYear },
-    {
-      enabled:
-        !!ucollege || ["MANAGEMENT", "KSPT"].includes(user.user?.college ?? ""),
-    }
-  );
+  } = trpc.seatMatrix.useQuery({ college, acadYear });
+
+  if (
+    !["MANAGEMENT", "KSPT"].includes(currentUserCollege) &&
+    college !== currentUserCollege &&
+    user?.isLoaded
+  )
+    return notFound();
 
   return (
-    <VStack w={"full"}>
+    <React.Fragment>
       {/** Header */}
       <HStack
         justifyContent={"space-between"}
         w={"full"}
-        borderBottomColor={"border"}
-        borderBottomWidth={"thin"}
-        h={"16"}
+        bg={"AppWorkspace/60"}
+        backdropFilter={"blur(5px)"}
+        alignItems={"center"}
+        h={"14"}
+        px={"3"}
+        rounded={"lg"}
+        shadow={"sm"}
+        position={"sticky"}
+        top={"20"}
+        zIndex={"banner"}
       >
-        <HStack>
-          {["MANAGEMENT", "KSPT"].includes(user.user?.college ?? "") && (
-            <ISelect
-              placeHolder="Select College"
-              value={ucollege}
-              onChange={(value) => setCollege(value)}
-              options={[
-                { value: "KSIT", option: "KSIT" },
-                { value: "KSPT", option: "KSPT" },
-                { value: "KSPU", option: "KSPU" },
-                { value: "KSDC", option: "KSDC" },
-                { value: "KSSEM", option: "KSSEM" },
-              ]}
-            />
-          )}
-          {ucollege && (
-            <Heading size={"lg"} color={"fg"} fontWeight={"semibold"}>
-              Seat Matrix - {ucollege}
-            </Heading>
-          )}
-        </HStack>
-        <Box>
-          {ucollege && (
-            <Button size={"sm"} asChild variant={"surface"}>
-              <Link
-                target="_blank"
-                href={
-                  process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-                  "seatmatrixdownload.php?college=" +
-                  ucollege
-                }
-              >
-                <LuFileDown /> Download Matrix
-              </Link>
-            </Button>
-          )}
-        </Box>
+        {college && (
+          <Heading size={"md"} color={"fg"} fontWeight={"semibold"}>
+            Seat Matrix History - {college}
+          </Heading>
+        )}
+        {college && (
+          <Button size={"sm"} asChild variant={"surface"}>
+            <Link
+              target="_blank"
+              href={
+                process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+                "seatmatrixdownload.php?college=" +
+                college
+              }
+            >
+              <LuFileDown /> Download Matrix
+            </Link>
+          </Button>
+        )}
       </HStack>
 
       <VStack
         w={"full"}
-        px={"5"}
-        pt={"5"}
+        py={"3"}
+        px={"4"}
         justifyContent={"start"}
         alignItems={"start"}
         gap={0}
       >
         {/* displaying admin childrens */}
-        {ucollege && user.user?.college && sdata && (
+        {college && user?.college && sdata && (
           <Timeline.Root size="lg" variant="subtle" maxW="2xl">
             {sdata.map((history: any, index) => {
               return (
@@ -179,9 +167,9 @@ export default function UnApproved() {
       )}
       {isLoading && (
         <Center h={"80%"}>
-          <Spinner size={"xl"} />
+          <Spinner color={"fg.muted"} size={"lg"} />
         </Center>
       )}
-    </VStack>
+    </React.Fragment>
   );
 }

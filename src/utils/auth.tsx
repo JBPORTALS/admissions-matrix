@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 export function useUser() {
   const [userId, setUserId] = React.useState(undefined);
   const user = trpc.getUser.useQuery(userId ?? "", { enabled: !!userId });
-
   const setUser = React.useCallback(async () => {
     // Fetch session
     const sessionResponse = await fetch(`/api/session`, {
@@ -29,7 +28,14 @@ export function useUser() {
     setUser();
   }, [user.data?.id]);
 
-  return user.data ?? null;
+  const session = user.data;
+
+  if (!session) return null;
+
+  return {
+    isLoaded: user.isFetched,
+    ...session,
+  };
 }
 
 export function useSignIn() {
