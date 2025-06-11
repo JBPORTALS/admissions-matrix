@@ -248,9 +248,7 @@ export function SearchCommandButton() {
 }
 
 export default function Header() {
-  const router = useRouter();
   const { signOut } = useSignIn();
-  const [query, setQuery] = useState<string>("");
   const user = useUser();
 
   return (
@@ -274,40 +272,6 @@ export default function Header() {
         </Heading>
       </HStack>
       <HStack w={"full"}>
-        {/* <InputGroup
-          endElement={
-            <IconButton
-              onClick={async () => {
-                router.push(
-                  `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
-                );
-              }}
-              colorScheme="facebook"
-              size={"md"}
-              variant={"ghost"}
-              aria-label="search"
-            >
-              <LuSearch />
-            </IconButton>
-          }
-          w={"full"}
-        >
-          <Input
-            onChange={(e) => setQuery(e.target.value)}
-            value={query}
-            w={"full"}
-            fontSize={"sm"}
-            type={"text"}
-            onKeyDown={(e) => {
-              if (e.key == "Enter")
-                router.push(
-                  `/dashboard/search/${new Date().getTime()}?query=${query}&type=QUERY`
-                );
-            }}
-            placeholder="Search Admission no./Student Name/Phone No."
-          />
-        </InputGroup> */}
-
         <SearchCommandButton />
       </HStack>
 
@@ -316,7 +280,7 @@ export default function Header() {
           <Heading size={"md"}>{user?.fullname}</Heading>
           <DialogRoot size={"sm"}>
             <DialogTrigger>
-              <Avatar size={"sm"} />
+              <Avatar size={"sm"} variant={"outline"} />
             </DialogTrigger>
 
             <DialogContent
