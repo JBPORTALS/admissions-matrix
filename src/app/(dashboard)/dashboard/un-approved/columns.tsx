@@ -1,7 +1,14 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import { Avatar, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import {
+  Avatar,
+  HStack,
+  IconButton,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
 
@@ -28,6 +35,16 @@ export const columns: ColumnDef<UnApproved>[] = [
   {
     accessorKey: "admission_id",
     header: "App No.",
+    cell(props) {
+      return (
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+          isUnapproved
+        >
+          <Link>{props.row.getValue("admission_id")}</Link>
+        </ViewAdmissionDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "name",
@@ -40,7 +57,12 @@ export const columns: ColumnDef<UnApproved>[] = [
             <Avatar.Icon />
           </Avatar.Root>
           <VStack gap={"0"} alignItems={"start"}>
-            <Text>{row.name}</Text>
+            <ViewAdmissionDetailsModal
+              admissionno={props.row.original.admission_id}
+              isUnapproved
+            >
+              <Link>{row.name}</Link>
+            </ViewAdmissionDetailsModal>
             <Text fontSize={"sm"} color={"fg.muted"}>
               {row.email}
             </Text>

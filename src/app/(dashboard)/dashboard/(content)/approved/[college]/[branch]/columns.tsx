@@ -1,7 +1,7 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
 
@@ -27,10 +27,28 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "admission_id",
     header: "App No.",
+    cell(props) {
+      return (
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+        >
+          <Link>{props.row.getValue("admission_id")}</Link>
+        </ViewAdmissionDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "name",
     header: "Name",
+    cell(props) {
+      return (
+        <ViewAdmissionDetailsModal
+          admissionno={props.row.original.admission_id}
+        >
+          <Link>{props.row.getValue("name")}</Link>
+        </ViewAdmissionDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "father_name",
