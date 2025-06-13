@@ -8,10 +8,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <HStack justifyContent={"space-between"} w={"full"}>
         <Box>
           <Heading size={"2xl"} fontWeight={"medium"}>
-            Bus Admissions Entry
+            Lateral Entry Seats
           </Heading>
           <Text fontSize={"sm"} color={"fg.muted"}>
-            {"Manage bus admission details of students."}
+            {
+              "Manage admission details of lateral entry students approved by the college."
+            }
           </Text>
         </Box>
 
