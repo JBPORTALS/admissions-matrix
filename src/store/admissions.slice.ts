@@ -436,6 +436,7 @@ export const updateMatrix = createAsyncThunk<
 
       formData.append("acadyear", acadyear);
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
+      formData.append("reg_no", selected_Matrix[0].reg_no);
       formData.append("name", selected_Matrix[0].name);
       formData.append("college", selected_Matrix[0].college);
       formData.append("branch", selected_Matrix[0].branch);
@@ -603,6 +604,7 @@ export const updateToApprove = createAsyncThunk<
       const acadyear = state.admissions.acadYear;
       formData.append("acadyear", acadyear);
       formData.append("name", selected_data.name);
+      formData.append("reg_no", selected_data.reg_no);
       formData.append("admissionno", selected_data.admission_id);
       formData.append("college", selected_data.college);
       formData.append("branch", selected_data.branch);

@@ -337,9 +337,11 @@ export default function ViewAdmissionDetailsModal({
               </VStack>
               <Input
                 placeholder="Not set yet."
-                readOnly
                 w={"60%"}
                 value={matrix?.reg_no}
+                onChange={(e) => {
+                  dispatch(updateSelectedMatrix({ reg_no: e.target.value })); // eslint-disable-line
+                }}
                 className={"shadow-md shadow-lightBrand"}
               />
             </Flex>
@@ -1325,11 +1327,7 @@ export default function ViewAdmissionDetailsModal({
             {isUnapproved && (
               <DialogRoot>
                 <DialogTrigger asChild>
-                  <Button
-                    colorPalette={"green"}
-                    onClick={onsubmit}
-                    loading={isLoading}
-                  >
+                  <Button colorPalette={"green"} loading={isApproving}>
                     Approve
                   </Button>
                 </DialogTrigger>

@@ -41,7 +41,7 @@ export default function CollegeList() {
   return (
     <React.Fragment>
       {/* BreadCrumbs  */}
-      <Breadcrumb.Root size={"lg"}>
+      <Breadcrumb.Root variant={"underline"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.Link asChild>
@@ -60,7 +60,6 @@ export default function CollegeList() {
         px={"5"}
         variant={"outline"}
         rounded={"lg"}
-        size={"lg"}
         colorPalette={"gray"}
       >
         <Table.Header>

@@ -24,7 +24,14 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "./ui/select";
-import { LuBuilding2, LuClock10, LuHistory, LuUserCheck } from "react-icons/lu";
+import {
+  LuBuilding2,
+  LuBusFront,
+  LuClock10,
+  LuCornerDownRight,
+  LuHistory,
+  LuUserCheck,
+} from "react-icons/lu";
 import { toaster } from "./ui/toaster";
 
 const items = [
@@ -39,9 +46,19 @@ const items = [
     icon: LuClock10,
   },
   {
+    label: "Lateral Entry",
+    href: "/dashboard/lateral-entry",
+    icon: LuCornerDownRight,
+  },
+  {
     label: "Hostel",
     href: "/dashboard/hostel",
     icon: LuBuilding2,
+  },
+  {
+    label: "Bus",
+    href: "/dashboard/bus",
+    icon: LuBusFront,
   },
   {
     label: "History",

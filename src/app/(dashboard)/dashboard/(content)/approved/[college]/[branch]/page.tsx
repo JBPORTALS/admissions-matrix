@@ -17,12 +17,10 @@ export default function Home() {
     college: params.college,
   });
 
-  console.log(data);
-
   return (
     <React.Fragment>
       {/* BreadCrumbs  */}
-      <Breadcrumb.Root size={"lg"}>
+      <Breadcrumb.Root variant={"underline"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.Link asChild>

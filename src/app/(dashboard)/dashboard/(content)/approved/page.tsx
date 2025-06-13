@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <React.Fragment>
       {/* BreadCrumbs  */}
-      <Breadcrumb.Root size={"lg"}>
+      <Breadcrumb.Root variant={"underline"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink>Overall</Breadcrumb.CurrentLink>
@@ -49,7 +49,6 @@ export default function Home() {
         px={"5"}
         variant={"outline"}
         rounded={"lg"}
-        size={"lg"}
       >
         <Table.Header>
           <Table.Row>
