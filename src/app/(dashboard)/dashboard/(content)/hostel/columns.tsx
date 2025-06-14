@@ -17,7 +17,7 @@ export type College = {
 export const columns: ColumnDef<College>[] = [
   {
     accessorKey: "college",
-    header: "College",
+    header: "Hostel",
     cell(props) {
       const original = props.row.original;
       const searchParams = useSearchParams();

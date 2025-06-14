@@ -46,6 +46,11 @@ const items = [
     icon: LuClock10,
   },
   {
+    label: "History",
+    href: "/dashboard/history",
+    icon: LuHistory,
+  },
+  {
     label: "Lateral Entry",
     href: "/dashboard/lateral-entry",
     icon: LuCornerDownRight,
@@ -59,11 +64,6 @@ const items = [
     label: "Bus",
     href: "/dashboard/bus",
     icon: LuBusFront,
-  },
-  {
-    label: "History",
-    href: "/dashboard/history",
-    icon: LuHistory,
   },
 ];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import HostelAdmissionDetailsDrawer from "@/components/drawers/hostel-admission-details-drawer";
 import { Link as ChakraLink, IconButton } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
@@ -25,8 +26,16 @@ export const columns: ColumnDef<College>[] = [
     cell(props) {
       const original = props.row.original;
 
-      return <ChakraLink>{original.name}</ChakraLink>;
+      return (
+        <HostelAdmissionDetailsDrawer>
+          <ChakraLink>{original.name}</ChakraLink>
+        </HostelAdmissionDetailsDrawer>
+      );
     },
+  },
+  {
+    accessorKey: "college",
+    header: "College",
   },
   {
     accessorKey: "branch",
@@ -49,9 +58,11 @@ export const columns: ColumnDef<College>[] = [
     header: "View",
     cell(props) {
       return (
-        <IconButton variant={"ghost"}>
-          <LuArrowRight />
-        </IconButton>
+        <HostelAdmissionDetailsDrawer>
+          <IconButton variant={"ghost"}>
+            <LuArrowRight />
+          </IconButton>
+        </HostelAdmissionDetailsDrawer>
       );
     },
   },
