@@ -115,6 +115,7 @@ export default function ViewAdmissionDetailsModal({
 
   const dispatch = useAppDispatch();
   const { user } = useSupabase();
+  const utils = trpc.useUtils();
 
   const [state, setState] = useState({
     fee_quoted: matrix?.fee_quoted,
@@ -204,6 +205,8 @@ export default function ViewAdmissionDetailsModal({
             college: matrix.college,
           })
         );
+
+        await utils.searchClass.invalidate();
       } else {
         await dispatch(
           fetchSearchClass({
@@ -259,6 +262,7 @@ export default function ViewAdmissionDetailsModal({
           branch: params.branch as string,
         })
       ));
+    await utils.searchClass.invalidate();
   };
 
   async function approve() {
