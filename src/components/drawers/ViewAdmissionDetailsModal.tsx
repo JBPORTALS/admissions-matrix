@@ -32,7 +32,6 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import moment from "moment";
-import { useSupabase } from "@/app/supabase-provider";
 import { trpc } from "@/utils/trpc-cleint";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
 import { LuEllipsis, LuFileDown, LuTrash2 } from "react-icons/lu";
@@ -75,6 +74,7 @@ import {
 import { CloseButton } from "../ui/close-button";
 import { format } from "date-fns";
 import { toaster } from "../ui/toaster";
+import { useUser } from "@/utils/auth";
 
 interface props {
   children: React.ReactNode;
@@ -114,7 +114,7 @@ export default function ViewAdmissionDetailsModal({
   );
 
   const dispatch = useAppDispatch();
-  const { user } = useSupabase();
+  const user = useUser();
   const utils = trpc.useUtils();
 
   const [state, setState] = useState({
@@ -247,22 +247,24 @@ export default function ViewAdmissionDetailsModal({
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
-    await dispatch(
-      updateMatrix({
-        fee_fixed: state.fee_fixed,
-        fee_quoted: state.fee_quoted,
-        user_college: user?.college!,
-      })
-    );
-    params.college &&
-      params.branch &&
-      (await dispatch(
-        fetchSearchClass({
-          college: params.college as string,
-          branch: params.branch as string,
+    if (user?.college) {
+      await dispatch(
+        updateMatrix({
+          fee_fixed: state.fee_fixed,
+          fee_quoted: state.fee_quoted,
+          user_college: user?.college,
         })
-      ));
-    await utils.searchClass.invalidate();
+      );
+      params.college &&
+        params.branch &&
+        (await dispatch(
+          fetchSearchClass({
+            college: params.college as string,
+            branch: params.branch as string,
+          })
+        ));
+      await utils.searchClass.invalidate();
+    }
   };
 
   async function approve() {
