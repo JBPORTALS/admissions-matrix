@@ -873,7 +873,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 type={"number"}
-                // readOnly={!user?.can_update_total}
+                readOnly={!user?.can_update_total}
                 variant={"outline"}
                 value={state.fee_fixed}
                 className={"shadow-md shadow-lightBrand"}
@@ -905,8 +905,6 @@ export default function ViewAdmissionDetailsModal({
                 w={"60%"}
                 type={"number"}
                 variant={"outline"}
-                // readOnly={!user?.can_edit}
-
                 value={matrix?.fee_paid}
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
