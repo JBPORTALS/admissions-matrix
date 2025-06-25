@@ -138,7 +138,7 @@ export function SearchCommandButton() {
                 value={getFilterValue("query")}
                 onChange={(e) => setFilterState("query", e.target.value)}
                 size={"lg"}
-                placeholder="Search here ..."
+                placeholder="Search here by Name, App. ID ..."
               />
             </InputGroup>
             <Collapsible.Root defaultOpen={isAdvanceFiltersApplied}>

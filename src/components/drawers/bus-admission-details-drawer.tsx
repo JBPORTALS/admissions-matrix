@@ -30,11 +30,6 @@ const busAdmissionSchema = z.object({
     .string()
     .min(10, "Must be 10 digits")
     .max(10, "Maximum 10 digits"),
-  motherName: z.string().min(2, "Required"),
-  motherPhone: z
-    .string()
-    .min(10, "Must be 10 digits")
-    .max(10, "Maximum 10 digits"),
   boardingPoint: z.string().min(2, "Required"),
   amount: z.string().min(2, "Required"),
 });
@@ -64,7 +59,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="appId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Application ID</FormLabel>
                   <Input readOnly {...field} />
                   <FormMessage />
@@ -76,7 +71,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Student Name</FormLabel>
                   <Input {...field} />
                   <FormMessage />
@@ -88,7 +83,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Student Phone</FormLabel>
                   <Input readOnly {...field} />
                   <FormMessage />
@@ -100,7 +95,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="college"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>College</FormLabel>
                   <Input readOnly {...field} />
                   <FormMessage />
@@ -112,7 +107,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="branch"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Branch</FormLabel>
                   <Input {...field} />
                   <FormMessage />
@@ -124,7 +119,7 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="fatherName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Father Name</FormLabel>
                   <Input readOnly {...field} />
                   <FormMessage />
@@ -136,32 +131,8 @@ export default function BusAdmissionDetailsDrawer({
               control={form.control}
               name="fatherPhone"
               render={({ field }) => (
-                <FormItem>
+                <FormItem readOnly>
                   <FormLabel>Father Phone</FormLabel>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="motherName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mother Name</FormLabel>
-                  <Input readOnly {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="motherPhone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mother Phone</FormLabel>
                   <Input {...field} />
                   <FormMessage />
                 </FormItem>

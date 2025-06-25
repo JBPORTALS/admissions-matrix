@@ -43,6 +43,23 @@ export const appRouter = router({
       console.log(data);
       return data as Matrix[];
     }),
+  getLateralOverallMatrix: procedure
+    .input(z.object({ acadyear: z.string(), college: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "leoverallmatrix.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as Matrix[];
+    }),
   retreiveBranchMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
     .query(async ({ input }) => {
@@ -51,6 +68,23 @@ export const appRouter = router({
       formData.append("college", input.college as string);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebranchmatrix.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      // console.log(response);
+      const data = await response.json();
+      return data as BranchMatrix[];
+    }),
+  retreiveLateralBranchMatrix: procedure
+    .input(z.object({ acadyear: z.string(), college: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college as string);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "lebranchmatrix.php",
         {
           method: "POST",
           body: formData,
@@ -75,6 +109,34 @@ export const appRouter = router({
       formData.append("branch", input.branch);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchclass.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as [] | any,
+        ok: response.ok,
+      };
+    }),
+
+  lateralSearchClass: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        college: z.string(),
+        branch: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college);
+      formData.append("branch", input.branch);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "leclasslist.php",
         {
           method: "POST",
           body: formData,
