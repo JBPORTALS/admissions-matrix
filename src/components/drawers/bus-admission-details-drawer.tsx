@@ -1,6 +1,13 @@
 "use client";
 
-import { Button, Center, Input, Separator, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  Input,
+  NumberInput,
+  Separator,
+  Spinner,
+} from "@chakra-ui/react";
 import {
   DrawerBackdrop,
   DrawerBody,
@@ -32,10 +39,10 @@ const busAdmissionSchema = z.object({
     .string()
     .min(10, "Must be 10 digits")
     .max(10, "Maximum 10 digits"),
-  boardingPoint: z.string().min(2, "Required"),
-  feeQuoted: z.string().min(2, "Required"),
-  feeFixed: z.string().min(2, "Required"),
-  feePaid: z.string().min(2, "Required"),
+  boardingPoint: z.string().min(1, "Required"),
+  feeQuoted: z.string().min(1, "Fee quoted can not not be empty"),
+  feeFixed: z.string().min(1, "Fee fixed can not be empty"),
+  feePaid: z.string().min(1, "Fee paid can not be empty"),
 });
 
 export default function BusAdmissionDetailsDrawer({
@@ -58,18 +65,20 @@ export default function BusAdmissionDetailsDrawer({
         feeQuoted: data.fee_quoted,
         appId: data.id,
         fatherName: data.fname,
-        fatherPhone: data.fphone_no,
+        fatherPhone: data.father_no,
         boardingPoint: data.boarding_point_id,
         branch: data.branch,
         college: data.college,
         name: data.name,
-        phone: data.sphone_no,
+        phone: data.phone_no,
       };
     },
     progressive: true,
   });
 
-  async function onSubmit(values: z.infer<typeof busAdmissionSchema>) {}
+  async function onSubmit(values: z.infer<typeof busAdmissionSchema>) {
+    alert("no errors");
+  }
 
   return (
     <DrawerRoot
@@ -80,7 +89,7 @@ export default function BusAdmissionDetailsDrawer({
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerBackdrop backdropFilter={"blur(5px)"} bg={"Background/40"} />
       <Form {...form}>
-        <DrawerContent>
+        <DrawerContent asChild>
           <DrawerHeader>
             <DrawerTitle>Bus Admission</DrawerTitle>
           </DrawerHeader>
@@ -89,145 +98,159 @@ export default function BusAdmissionDetailsDrawer({
               <Spinner />
             </Center>
           ) : (
-            <DrawerBody spaceY={"3"}>
-              <FormField
-                control={form.control}
-                name="appId"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>Application ID</FormLabel>
-                    <Input readOnly {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <React.Fragment>
+              <DrawerBody spaceY={"3"}>
+                <FormField
+                  control={form.control}
+                  name="appId"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>Application ID</FormLabel>
+                      <Input variant={"subtle"} readOnly {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>Student Name</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>Student Name</FormLabel>
+                      <Input variant={"subtle"} {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>Student Phone</FormLabel>
-                    <Input readOnly {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>Student Phone</FormLabel>
+                      <Input variant={"subtle"} readOnly {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="college"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>College</FormLabel>
-                    <Input readOnly {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="college"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>College</FormLabel>
+                      <Input variant={"subtle"} readOnly {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="branch"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>Branch</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="branch"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>Branch</FormLabel>
+                      <Input variant={"subtle"} {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="fatherName"
-                render={({ field }) => (
-                  <FormItem readOnly>
-                    <FormLabel>Father Name</FormLabel>
-                    <Input readOnly {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="fatherName"
+                  render={({ field }) => (
+                    <FormItem readOnly>
+                      <FormLabel>Father Name</FormLabel>
+                      <Input variant={"subtle"} readOnly {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="fatherPhone"
-                render={({ field }) => (
-                  <FormItem readOnly pb={"3.5"}>
-                    <FormLabel>Father Phone</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="fatherPhone"
+                  render={({ field }) => (
+                    <FormItem readOnly pb={"3.5"}>
+                      <FormLabel>Father Phone</FormLabel>
+                      <Input variant={"subtle"} {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Separator />
+                <Separator />
 
-              <FormField
-                control={form.control}
-                name="boardingPoint"
-                render={({ field }) => (
-                  <FormItem pt={"3.5"}>
-                    <FormLabel>Boarding Point</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="boardingPoint"
+                  render={({ field }) => (
+                    <FormItem pt={"3.5"}>
+                      <FormLabel>Boarding Point</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="feeQuoted"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fee Quoted</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="feeQuoted"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fee Quoted</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="feeFixed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fee Fixed</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="feeFixed"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fee Fixed</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="feePaid"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fee Paid</FormLabel>
-                    <Input {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </DrawerBody>
+                <FormField
+                  control={form.control}
+                  name="feePaid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fee Paid</FormLabel>
+                      <NumberInput.Root
+                        value={field.value}
+                        w={"full"}
+                        onValueChange={({ value }) => field.onChange(value)}
+                      >
+                        <NumberInput.Input
+                          name={field.name}
+                          onBlur={field.onBlur}
+                        />
+                      </NumberInput.Root>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </DrawerBody>
+              <DrawerFooter>
+                <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
+                  Save
+                </Button>
+              </DrawerFooter>
+            </React.Fragment>
           )}
-          <DrawerFooter>
-            <Button>Save</Button>
-          </DrawerFooter>
+
           <DrawerCloseTrigger>
             <CloseButton size={"sm"} />
           </DrawerCloseTrigger>

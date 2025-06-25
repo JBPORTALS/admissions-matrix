@@ -2,7 +2,6 @@ import { z } from "zod";
 import { procedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { SessionData } from "@/utils/session";
-import { BusStudent } from "@/app/(dashboard)/dashboard/(content)/bus/[college]/[branch]/columns";
 
 interface Matrix {
   allotted_seats: string;
@@ -24,6 +23,28 @@ interface BranchMatrix {
   cet: string;
   comedk: string;
   management: string;
+}
+
+type BusStudent = {
+  branch: string;
+  bus_fee: string;
+  fname: string;
+  fphone_no: string;
+  id: string;
+  name: string;
+  college: string;
+  sphone_no: string;
+};
+
+interface BusSingleStudent extends Omit<BusStudent, "fphone_no" | "sphone_no"> {
+  boarding_point_id: string;
+  fee_fixed: string;
+  fee_quoted: string;
+  fee_paid: string;
+  phone_no: string;
+  father_no: string;
+  bus_acad_year: string;
+  transport: string;
 }
 
 export const appRouter = router({
@@ -211,7 +232,7 @@ export const appRouter = router({
       const data = await response.json();
 
       return {
-        data: data as BusStudent,
+        data: data as BusSingleStudent,
         ok: response.ok,
       };
     }),
