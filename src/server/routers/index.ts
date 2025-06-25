@@ -237,6 +237,29 @@ export const appRouter = router({
       };
     }),
 
+  busRouteList: procedure.query(async () => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteslist.php",
+      {
+        method: "POST",
+      }
+    );
+    const data = await response.json();
+
+    return {
+      data: data as {
+        created_at: string;
+        driver_name: string;
+        driver_number: string;
+        id: string;
+        last_point: string;
+        route_no: string;
+        updated_at: string;
+      }[],
+      ok: response.ok,
+    };
+  }),
+
   busEditStudent: procedure
     .input(
       z.object({

@@ -4,6 +4,7 @@ import {
   Button,
   Center,
   Input,
+  NativeSelect,
   NumberInput,
   Separator,
   Spinner,
@@ -27,6 +28,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { useAppSelector } from "@/store";
+import { toaster } from "../ui/toaster";
 
 const busAdmissionSchema = z.object({
   appId: z.string().min(1, "Required"),
@@ -55,6 +57,15 @@ export default function BusAdmissionDetailsDrawer({
   const [open, onOpenChange] = useState(false);
   const utils = trpc.useUtils();
   const acadyear = useAppSelector((s) => s.admissions.acadYear);
+  const { data, isLoading } = trpc.busRouteList.useQuery(undefined, {
+    enabled: open,
+  });
+  const { mutateAsync: editBusStudent } = trpc.busEditStudent.useMutation({
+    onSuccess() {
+      toaster.info({ title: "Details updated" });
+      onOpenChange(false);
+    },
+  });
   const form = useForm<z.infer<typeof busAdmissionSchema>>({
     resolver: zodResolver(busAdmissionSchema),
     async defaultValues() {
@@ -77,7 +88,13 @@ export default function BusAdmissionDetailsDrawer({
   });
 
   async function onSubmit(values: z.infer<typeof busAdmissionSchema>) {
-    alert("no errors");
+    await editBusStudent({
+      acadyear,
+      amountFixed: values.feeFixed,
+      appId: values.appId,
+      boardingPointId: values.boardingPoint,
+    });
+    await utils.busViewStudent.invalidate();
   }
 
   return (
@@ -99,7 +116,7 @@ export default function BusAdmissionDetailsDrawer({
             </Center>
           ) : (
             <React.Fragment>
-              <DrawerBody spaceY={"3"}>
+              <DrawerBody spaceY={"6"}>
                 <FormField
                   control={form.control}
                   name="appId"
@@ -192,7 +209,16 @@ export default function BusAdmissionDetailsDrawer({
                   render={({ field }) => (
                     <FormItem pt={"3.5"}>
                       <FormLabel>Boarding Point</FormLabel>
-                      <Input {...field} />
+                      <NativeSelect.Root disabled={isLoading}>
+                        <NativeSelect.Field {...field}>
+                          {data?.data.map((r) => (
+                            <option value={r.id}>
+                              {r.route_no} - {r.last_point}
+                            </option>
+                          ))}
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator />
+                      </NativeSelect.Root>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -202,9 +228,9 @@ export default function BusAdmissionDetailsDrawer({
                   control={form.control}
                   name="feeQuoted"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem readOnly>
                       <FormLabel>Fee Quoted</FormLabel>
-                      <Input {...field} />
+                      <Input variant={"subtle"} {...field} />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -243,8 +269,16 @@ export default function BusAdmissionDetailsDrawer({
                   )}
                 />
               </DrawerBody>
-              <DrawerFooter>
-                <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
+              <DrawerFooter justifyContent={"space-between"}>
+                <Button w={"50%"} variant={"surface"} colorPalette={"red"}>
+                  Delete
+                </Button>
+                <Button
+                  w={"50%"}
+                  loading={form.formState.isSubmitting}
+                  type="submit"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
                   Save
                 </Button>
               </DrawerFooter>
