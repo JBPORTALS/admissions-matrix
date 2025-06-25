@@ -2,6 +2,7 @@ import { z } from "zod";
 import { procedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { SessionData } from "@/utils/session";
+import { BusStudent } from "@/app/(dashboard)/dashboard/(content)/bus/[college]/[branch]/columns";
 
 interface Matrix {
   allotted_seats: string;
@@ -60,6 +61,23 @@ export const appRouter = router({
       console.log(data);
       return data as Matrix[];
     }),
+  getBusOverallMatrix: procedure
+    .input(z.object({ acadyear: z.string(), college: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busoverallmatrix.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as Matrix[];
+    }),
   retreiveBranchMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
     .query(async ({ input }) => {
@@ -76,6 +94,28 @@ export const appRouter = router({
       // console.log(response);
       const data = await response.json();
       return data as BranchMatrix[];
+    }),
+  retreiveBusBranchMatrix: procedure
+    .input(z.object({ acadyear: z.string(), college: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college as string);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busbranchmatrix.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      // console.log(response);
+      const data = await response.json();
+      return data as {
+        branch: string;
+        allotted: string;
+        college: string;
+        total: string;
+      }[];
     }),
   retreiveLateralBranchMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
@@ -118,6 +158,92 @@ export const appRouter = router({
 
       return {
         data: data as [] | any,
+        ok: response.ok,
+      };
+    }),
+
+  busSearchClass: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        college: z.string(),
+        branch: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("college", input.college);
+      formData.append("branch", input.branch);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busclasslist.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as [] | any,
+        ok: response.ok,
+      };
+    }),
+
+  busViewStudent: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        appId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("appid", input.appId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstudentview.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as BusStudent,
+        ok: response.ok,
+      };
+    }),
+
+  busEditStudent: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        appId: z.string(),
+        boardingPointId: z.string(),
+        amountFixed: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("appid", input.appId);
+      formData.append("boarding_point_id", input.boardingPointId);
+      formData.append("amount_fixed", input.amountFixed);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstuddentedit.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const data = await response.json();
+
+      return {
         ok: response.ok,
       };
     }),

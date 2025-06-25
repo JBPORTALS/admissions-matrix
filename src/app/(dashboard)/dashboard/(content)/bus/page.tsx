@@ -13,7 +13,7 @@ import { useUser } from "@/utils/auth";
 
 export default function Home() {
   const user = useUser();
-  const { isLoading, data } = trpc.getOverallMatrix.useQuery(
+  const { isLoading, data } = trpc.getBusOverallMatrix.useQuery(
     {
       acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
       college: user?.college ?? "",

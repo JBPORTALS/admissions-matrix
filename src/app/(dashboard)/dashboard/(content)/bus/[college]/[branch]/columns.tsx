@@ -6,28 +6,29 @@ import { IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
 
-export type Payment = {
-  admission_id: string;
-  sl_no: string;
+export type BusStudent = {
+  branch: string;
+  bus_fee: string;
+  fname: string;
+  fphone_no: string;
+  id: string;
   name: string;
-  father_name: string;
-  phone_no: string;
+  college: string;
+  sphone_no: string;
+  boarding_point_id: string;
   fee_fixed: string;
+  fee_quoted: string;
   fee_paid: string;
-  remaining_amount: string;
-  referenced_by: string;
-  approved_by: string;
-  acadyear: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<BusStudent>[] = [
   {
-    accessorKey: "admission_id",
+    accessorKey: "id",
     header: "App No.",
     cell(props) {
       return (
-        <BusAdmissionDetailsDrawer>
-          <Link>{props.row.getValue("admission_id")}</Link>
+        <BusAdmissionDetailsDrawer appId={props.row.original.id}>
+          <Link>{props.row.getValue("id")}</Link>
         </BusAdmissionDetailsDrawer>
       );
     },
@@ -37,7 +38,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Name",
     cell(props) {
       return (
-        <BusAdmissionDetailsDrawer>
+        <BusAdmissionDetailsDrawer appId={props.row.original.id}>
           <Link>{props.row.getValue("name")}</Link>
         </BusAdmissionDetailsDrawer>
       );
@@ -45,19 +46,19 @@ export const columns: ColumnDef<Payment>[] = [
   },
 
   {
-    accessorKey: "phone_no",
+    accessorKey: "sphone_no",
     header: "Phone No.",
   },
   {
-    accessorKey: "fee_fixed",
-    header: "Boarding Point",
+    accessorKey: "bus_fee",
+    header: "Bus Fee",
   },
   {
     id: "menu",
     header: "View",
     cell(props) {
       return (
-        <BusAdmissionDetailsDrawer>
+        <BusAdmissionDetailsDrawer appId={props.row.original.id}>
           <IconButton variant={"ghost"} aria-label="View">
             <LuArrowRight />
           </IconButton>

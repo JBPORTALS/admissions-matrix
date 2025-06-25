@@ -18,7 +18,7 @@ import { ProgressBar, ProgressRoot } from "@/components/ui/progress";
 export default function CollegeList() {
   const params = useParams<{ college: string }>();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
-  const { data, isLoading } = trpc.retreiveBranchMatrix.useQuery({
+  const { data, isLoading } = trpc.retreiveBusBranchMatrix.useQuery({
     acadyear,
     college: params.college,
   });
@@ -90,13 +90,13 @@ export default function CollegeList() {
 
                   <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.allotted_seats}
+                      {value.allotted}
                     </div>
                   </TableCell>
 
                   <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total_enquiries}
+                      {value.total}
                     </div>
                   </TableCell>
                 </TableRow>
