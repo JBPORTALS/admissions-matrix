@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Heading>
       </Box>
       <Separator />
-      <HStack>
+      <HStack w={"full"} alignItems={"start"} gap={"8"}>
         <Navbar />
         {children}
       </HStack>

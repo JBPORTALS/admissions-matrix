@@ -22,7 +22,13 @@ const items = [
 export function Navbar() {
   const pathname = usePathname();
   return (
-    <VStack minW={"40"} gap={"2.5"}>
+    <VStack
+      minW={"40"}
+      justifyContent={"start"}
+      h={"full"}
+      alignItems={"start"}
+      gap={"2.5"}
+    >
       {items.map((item, i) => (
         <Button
           variant={pathname === item.href ? "subtle" : "ghost"}

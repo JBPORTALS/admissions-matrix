@@ -506,6 +506,52 @@ export const appRouter = router({
     };
   }),
 
+  hostelAdd: procedure
+    .input(
+      z.object({
+        hostelName: z.string().min(1, "Required"),
+        intake: z.string().min(1, "Required"),
+        gender: z.string().min(1, "Required"),
+        fee: z.string().min(1, "Required"),
+        address: z.string().min(2, "Required"),
+        wardenName: z.string().min(2, "Required"),
+        wardenNumber: z
+          .string()
+          .min(10, "Mobile number should be maximum 10 digits")
+          .max(10, "Mobile number should be maximum 10 digits"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("hostel_name", input.hostelName);
+      fd.append("intake", input.intake);
+      fd.append("gender", input.gender);
+      fd.append("fee", input.fee);
+      fd.append("address", input.address);
+      fd.append("warden_name", input.wardenName);
+      fd.append("warden_number", input.wardenNumber);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hosteladd.php",
+        {
+          method: "POST",
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          created_at: string;
+          driver_name: string;
+          driver_number: string;
+          id: string;
+          last_point: string;
+          route_no: string;
+          updated_at: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
+
   hostelList: procedure.query(async () => {
     const response = await fetch(
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostellist.php",
