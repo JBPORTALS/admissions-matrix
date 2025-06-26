@@ -557,6 +557,34 @@ export const appRouter = router({
       };
     }),
 
+  hostelDeleteStudent: procedure
+    .input(
+      z.object({
+        id: z.string(),
+        acadyear: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("id", input.id);
+      formData.append("acadyear", input.acadyear);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelstudnetdelete.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const data = await response.json();
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
   hostelAddStudent: procedure
     .input(
       z.object({

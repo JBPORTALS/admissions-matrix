@@ -28,6 +28,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { useAppSelector } from "@/store";
 import { toaster } from "../ui/toaster";
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 const hostelAdmissionSchema = z.object({
   appId: z.string().min(1, "Required"),
@@ -66,6 +76,16 @@ export default function HostelAdmissionDetailsDrawer({
       },
     }
   );
+
+  const { mutateAsync: hostelDeleteStudent, isPending } =
+    trpc.hostelDeleteStudent.useMutation({
+      async onSuccess() {
+        toaster.info({ title: "Details removed" });
+        await utils.getHostelMatrixBranch.invalidate();
+        onOpenChange(false);
+      },
+    });
+
   const form = useForm<z.infer<typeof hostelAdmissionSchema>>({
     resolver: zodResolver(hostelAdmissionSchema),
     mode: "onChange",
@@ -128,7 +148,7 @@ export default function HostelAdmissionDetailsDrawer({
             </Center>
           ) : (
             <React.Fragment>
-              <DrawerBody spaceY={"3"}>
+              <DrawerBody spaceY={"4.5"}>
                 <FormField
                   control={form.control}
                   name="appId"
@@ -246,10 +266,41 @@ export default function HostelAdmissionDetailsDrawer({
                   )}
                 />
               </DrawerBody>
-              {/* <pre>{JSON.stringify(form.formState.errors)}</pre> */}
 
               <DrawerFooter>
+                <DialogRoot>
+                  <DialogTrigger asChild>
+                    <Button w={"50%"} colorPalette={"red"} variant={"surface"}>
+                      Delete
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Are you sure?</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <p>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove your data from our
+                        systems.
+                      </p>
+                    </DialogBody>
+                    <DialogFooter>
+                      <DialogActionTrigger asChild>
+                        <Button variant={"outline"}>Close</Button>
+                      </DialogActionTrigger>
+                      <Button
+                        loading={isPending}
+                        onClick={() => hostelDeleteStudent({ acadyear, id })}
+                        colorPalette={"red"}
+                      >
+                        Delete
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </DialogRoot>
                 <Button
+                  w={"50%"}
                   loading={form.formState.isSubmitting}
                   onClick={form.handleSubmit(onSubmit)}
                 >
