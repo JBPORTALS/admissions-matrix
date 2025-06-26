@@ -408,12 +408,14 @@ export const appRouter = router({
       z.object({
         acadyear: z.string(),
         appId: z.string(),
+        college: z.string(),
       })
     )
     .query(async ({ input }) => {
       const formData = new FormData();
       formData.append("acadyear", input.acadyear);
       formData.append("admissionno", input.appId);
+      formData.append("college", input.college);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchstudent.php",
         {
@@ -534,6 +536,7 @@ export const appRouter = router({
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hosteladd.php",
         {
           method: "POST",
+          body: fd,
         }
       );
       const data = await response.json();
@@ -612,6 +615,32 @@ export const appRouter = router({
       formData.append("acadyear", input.acadyear);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelstudnetdelete.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const data = await response.json();
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
+  deleteHostel: procedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hosteldelete.php",
         {
           method: "POST",
           body: formData,

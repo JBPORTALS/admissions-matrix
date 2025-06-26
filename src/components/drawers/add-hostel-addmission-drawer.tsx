@@ -37,6 +37,7 @@ import { trpc } from "@/utils/trpc-cleint";
 import { useAppSelector } from "@/store";
 import { toaster } from "../ui/toaster";
 import { LuSearch } from "react-icons/lu";
+import { useUser } from "@/utils/auth";
 
 const hostelAdmissionSchema = z.object({
   appId: z.string().min(1, "Required"),
@@ -67,6 +68,7 @@ export default function AddHostelAdmissionDetailsDrawer({
     enabled: open,
   });
   const utils = trpc.useUtils();
+  const user = useUser();
   const form = useForm<z.infer<typeof hostelAdmissionSchema>>({
     resolver: zodResolver(hostelAdmissionSchema),
     mode: "onChange",
@@ -83,10 +85,11 @@ export default function AddHostelAdmissionDetailsDrawer({
   const searchApplication = useCallback(async () => {
     setIsStudentLoading(true);
     try {
-      if (form.getValues().appId) {
+      if (form.getValues().appId && user?.college) {
         const data = await utils.viewStudent.fetch({
           appId: form.getValues().appId,
           acadyear,
+          college: user.college,
         });
         setStudent(data.data[0]);
       }

@@ -64,7 +64,6 @@ export default function CollegeList() {
             </div>
           </Table.ColumnHeader>
           <Table.ColumnHeader>Allotted Seats</Table.ColumnHeader>
-          <Table.ColumnHeader>Total Enquiries</Table.ColumnHeader>
         </Table.Header>
         <Table.Body>
           {data &&
@@ -91,12 +90,6 @@ export default function CollegeList() {
                   <TableCell>
                     <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                       {value.allotted}
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                      {value.total}
                     </div>
                   </TableCell>
                 </TableRow>

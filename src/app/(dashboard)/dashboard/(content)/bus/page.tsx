@@ -57,9 +57,6 @@ export default function Home() {
             <Table.ColumnHeader textAlign={"center"}>
               Allotted Seats
             </Table.ColumnHeader>
-            <Table.ColumnHeader textAlign={"center"}>
-              Total Enquiries
-            </Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -77,9 +74,6 @@ export default function Home() {
                   </Table.Cell>
                   <Table.Cell textAlign={"center"}>
                     {value.allotted_seats}
-                  </Table.Cell>
-                  <Table.Cell textAlign={"center"}>
-                    {value.total_enquiries}
                   </Table.Cell>
                 </Table.Row>
               );

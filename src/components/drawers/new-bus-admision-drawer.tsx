@@ -38,6 +38,7 @@ import { trpc } from "@/utils/trpc-cleint";
 import { useAppSelector } from "@/store";
 import { toaster } from "../ui/toaster";
 import { LuSearch } from "react-icons/lu";
+import { useUser } from "@/utils/auth";
 
 const busAdmissionSchema = z.object({
   appId: z.string().min(1, "Required"),
@@ -74,6 +75,7 @@ export default function NewBusAdmissionDetailsDrawer({
   const form = useForm<z.infer<typeof busAdmissionSchema>>({
     resolver: zodResolver(busAdmissionSchema),
   });
+  const user = useUser();
 
   async function onSubmit(values: z.infer<typeof busAdmissionSchema>) {
     await addStudent({
@@ -88,10 +90,11 @@ export default function NewBusAdmissionDetailsDrawer({
   const searchApplication = useCallback(async () => {
     setIsStudentLoading(true);
     try {
-      if (form.getValues().appId) {
+      if (form.getValues().appId && user?.college) {
         const data = await utils.viewStudent.fetch({
           appId: form.getValues().appId,
           acadyear,
+          college: user.college,
         });
         setStudent(data.data[0]);
       }

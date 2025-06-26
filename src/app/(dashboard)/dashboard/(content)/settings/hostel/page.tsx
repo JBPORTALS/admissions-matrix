@@ -1,4 +1,6 @@
+import { EditHostelDrawer } from "@/components/drawers/edit-hostel-drawer";
 import NewHostelDrawer from "@/components/drawers/new-hostel-drawer";
+import DeleteHostelDialog from "@/components/modals/delete-hostel-dialog";
 import { api } from "@/utils/trpc-server";
 import {
   Box,
@@ -72,22 +74,27 @@ export default async function Page() {
               </Stack>
             </Card.Body>
             <Card.Footer>
-              <Button
-                variant={"surface"}
-                w={"50%"}
-                colorPalette={"red"}
-                size="sm"
-              >
-                Delete
-              </Button>
-              <Button
-                variant={"surface"}
-                colorPalette={"gray"}
-                w={"50%"}
-                size="sm"
-              >
-                Edit
-              </Button>
+              <DeleteHostelDialog id={hostel.id}>
+                <Button
+                  variant={"surface"}
+                  w={"50%"}
+                  colorPalette={"red"}
+                  size="sm"
+                >
+                  Delete
+                </Button>
+              </DeleteHostelDialog>
+
+              <EditHostelDrawer id={hostel.id}>
+                <Button
+                  variant={"surface"}
+                  colorPalette={"gray"}
+                  w={"50%"}
+                  size="sm"
+                >
+                  Edit
+                </Button>
+              </EditHostelDrawer>
             </Card.Footer>
           </Card.Root>
         ))}
