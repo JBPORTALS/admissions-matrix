@@ -1,6 +1,8 @@
-import { Box, Heading, HStack, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 import { GenderSegmentControl } from "./gender-segment-control";
+import { LuPlus } from "react-icons/lu";
+import AddHostelAdmissionDetailsDrawer from "@/components/drawers/add-hostel-addmission-drawer";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +17,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Text>
         </Box>
 
-        <GenderSegmentControl />
+        <HStack gap={"6"}>
+          <GenderSegmentControl />
+
+          <AddHostelAdmissionDetailsDrawer>
+            <Button>
+              New <LuPlus />
+            </Button>
+          </AddHostelAdmissionDetailsDrawer>
+        </HStack>
       </HStack>
       {children}
     </React.Fragment>

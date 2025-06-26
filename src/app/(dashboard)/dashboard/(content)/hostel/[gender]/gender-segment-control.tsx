@@ -14,20 +14,20 @@ export function GenderSegmentControl() {
 
   return (
     <SegmentGroup.Root
-      size={"lg"}
+      size={"md"}
       colorPalette={colorPalette}
       value={gender}
       onValueChange={({ value }) => {
         router.push(`/dashboard/hostel/${value}`);
       }}
     >
-      <SegmentGroup.Indicator bg={"colorPalette.solid"} />
+      <SegmentGroup.Indicator bg={"colorPalette.subtle"} />
       <SegmentGroup.Items
         items={[
           {
             value: "MALE",
             label: (
-              <HStack color={gender === "MALE" ? "white" : undefined}>
+              <HStack>
                 <FaMale />
                 Male
               </HStack>
@@ -36,7 +36,7 @@ export function GenderSegmentControl() {
           {
             value: "FEMALE",
             label: (
-              <HStack color={gender === "FEMALE" ? "white" : undefined}>
+              <HStack>
                 <FaFemale />
                 Female
               </HStack>
