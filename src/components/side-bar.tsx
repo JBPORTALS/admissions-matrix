@@ -30,6 +30,7 @@ import {
   LuClock10,
   LuCornerDownRight,
   LuHistory,
+  LuSettings,
   LuUserCheck,
 } from "react-icons/lu";
 import { toaster } from "./ui/toaster";
@@ -64,6 +65,11 @@ const items = [
     label: "Bus",
     href: "/dashboard/bus",
     icon: LuBusFront,
+  },
+  {
+    label: "Setttings",
+    href: "/dashboard/settings",
+    icon: LuSettings,
   },
 ];
 

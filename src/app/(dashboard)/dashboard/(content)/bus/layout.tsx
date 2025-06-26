@@ -1,4 +1,3 @@
-import { MIFModalButton } from "@/components/drawers/MIFModal";
 import { Box, Button, Heading, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
@@ -14,8 +13,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {"Manage bus admission details of students."}
           </Text>
         </Box>
-
-        <MIFModalButton />
       </HStack>
       {children}
     </React.Fragment>

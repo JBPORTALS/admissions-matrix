@@ -1,34 +1,25 @@
 "use client";
 
 import HostelAdmissionDetailsDrawer from "@/components/drawers/hostel-admission-details-drawer";
+import { HostelStudent } from "@/server/routers";
 import { Link as ChakraLink, IconButton } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
 
-export type College = {
-  college: string;
-  branch: string;
-  appId: string;
-  name: string;
-  phone: string;
-  fatherName: string;
-  fatherPhone: string;
-};
-
-export const columns: ColumnDef<College>[] = [
+export const columns: ColumnDef<HostelStudent>[] = [
   {
-    accessorKey: "appId",
+    accessorKey: "id",
     header: "App. ID",
   },
   {
-    accessorKey: "name",
+    accessorKey: "student_name",
     header: "Name",
     cell(props) {
       const original = props.row.original;
 
       return (
         <HostelAdmissionDetailsDrawer>
-          <ChakraLink>{original.name}</ChakraLink>
+          <ChakraLink>{original.student_name}</ChakraLink>
         </HostelAdmissionDetailsDrawer>
       );
     },
@@ -40,18 +31,6 @@ export const columns: ColumnDef<College>[] = [
   {
     accessorKey: "branch",
     header: "Branch",
-  },
-  {
-    accessorKey: "phone",
-    header: "Student Phone",
-  },
-  {
-    accessorKey: "fatherName",
-    header: "Father Name",
-  },
-  {
-    accessorKey: "fatherPhone",
-    header: "Father Phone",
   },
   {
     id: "view",

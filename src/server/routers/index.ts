@@ -47,6 +47,50 @@ interface BusSingleStudent extends Omit<BusStudent, "fphone_no" | "sphone_no"> {
   transport: string;
 }
 
+export type HostelCollege = {
+  id: string;
+  hostel_name: string;
+  intake: string;
+  gender: string;
+  fee: string;
+  address: string;
+  warden_name: string;
+  warden_number: string;
+  created_at: string;
+  updated_at: string;
+  total_students: 0;
+};
+
+export type HostelStudent = {
+  id: string;
+  appid: string;
+  reg_no: string;
+  student_name: string;
+  college: string;
+  branch: string;
+  fee_quoted: string;
+  fee_fixed: string;
+  fee_paid: string;
+  fee_balance: string;
+  acadyear: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Hostel = {
+  address: string;
+  created_at: string;
+  fee: string;
+  gender: string;
+  hostel_name: string;
+  id: string;
+  intake: string;
+  updated_at: string;
+  warden_name: string;
+  warden_number: string;
+};
+
 export const appRouter = router({
   getOverallMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
@@ -98,6 +142,56 @@ export const appRouter = router({
       const data = await response.json();
       console.log(data);
       return data as Matrix[];
+    }),
+  getHostelOverallMatrix: procedure
+    .input(z.object({ gender: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("gender", input.gender);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelmatrixoverall.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as HostelCollege[];
+    }),
+
+  getHostelMatrixBranch: procedure
+    .input(z.object({ hostelId: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("hostel_id", input.hostelId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelmatrixbranch.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as HostelStudent[];
+    }),
+
+  getHostelById: procedure
+    .input(z.object({ hostelId: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("id", input.hostelId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelview.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as Hostel;
     }),
   retreiveBranchMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))

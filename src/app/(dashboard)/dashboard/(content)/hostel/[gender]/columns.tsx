@@ -1,20 +1,12 @@
 "use client";
 
+import { HostelCollege } from "@/server/routers";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export type College = {
-  college: string;
-  totalApproved: string;
-  totalEnquiries: string;
-  overall: string;
-  available: string;
-  filledPercentage: number;
-};
-
-export const columns: ColumnDef<College>[] = [
+export const columns: ColumnDef<HostelCollege>[] = [
   {
     accessorKey: "college",
     header: "Hostel",
@@ -26,30 +18,30 @@ export const columns: ColumnDef<College>[] = [
       return (
         <ChakraLink asChild>
           <Link
-            href={`/dashboard/hostel/${original.college}${
-              queryString && "?" + queryString
-            }`}
+            href={`/dashboard/hostel/${original.gender.toUpperCase()}/${
+              original.id
+            }${queryString && "?" + queryString}`}
           >
-            {original.college}
+            {original.hostel_name}
           </Link>
         </ChakraLink>
       );
     },
   },
   {
-    accessorKey: "totalApproved",
+    accessorKey: "total_students",
     header: "Total Approved",
   },
   {
-    accessorKey: "totalEnquiries",
+    accessorKey: "total_students",
     header: "Total Enquiries",
   },
   {
-    accessorKey: "overall",
+    accessorKey: "fee",
     header: "Overall",
   },
   {
-    accessorKey: "available",
+    accessorKey: "intake",
     header: "Availalbe",
   },
   {
