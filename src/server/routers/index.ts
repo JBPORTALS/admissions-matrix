@@ -562,11 +562,7 @@ export const appRouter = router({
     const data = await response.json();
 
     return {
-      data: data as {
-        hostel_name: string;
-        id: string;
-        fee: string;
-      }[],
+      data: data as Hostel[],
       ok: response.ok,
     };
   }),
