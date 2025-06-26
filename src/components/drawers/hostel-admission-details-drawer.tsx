@@ -57,6 +57,7 @@ export default function HostelAdmissionDetailsDrawer({
   const { data: hostelList } = trpc.hostelList.useQuery(undefined, {
     enabled: open,
   });
+  const utils = trpc.useUtils();
   const { mutateAsync: editHostelStudent } = trpc.hostelEditStudent.useMutation(
     {
       onSuccess() {
@@ -104,6 +105,7 @@ export default function HostelAdmissionDetailsDrawer({
       acadyear,
       id,
     });
+    await utils.getHostelMatrixBranch.invalidate();
   }
 
   return (
@@ -248,7 +250,7 @@ export default function HostelAdmissionDetailsDrawer({
 
               <DrawerFooter>
                 <Button
-                  loading={form.formState.isLoading}
+                  loading={form.formState.isSubmitting}
                   onClick={form.handleSubmit(onSubmit)}
                 >
                   Save

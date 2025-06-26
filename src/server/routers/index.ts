@@ -457,6 +457,7 @@ export const appRouter = router({
         feeFixed: z.string(),
         feePaid: z.string(),
         feeBalance: z.string(),
+        createdBy: z.string(),
       })
     )
     .mutation(async ({ input }) => {
@@ -466,10 +467,12 @@ export const appRouter = router({
       formData.append("appid", input.appId);
       formData.append("hostel_id", input.hostelId);
       formData.append("fee_quoted", input.feeQuoted);
+      formData.append("fee_balance", input.feeBalance);
+      formData.append("created_by", input.createdBy);
       formData.append("fee_fixed", input.feeFixed);
       formData.append("fee_paid", input.feePaid);
       const response = await fetch(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstuddentedit.php",
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelstudnetedit.php",
         {
           method: "POST",
           body: formData,
