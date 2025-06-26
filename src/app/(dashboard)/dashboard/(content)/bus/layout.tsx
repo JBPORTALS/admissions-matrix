@@ -1,5 +1,7 @@
+import NewBusAdmissionDetailsDrawer from "@/components/drawers/new-bus-admision-drawer";
 import { Box, Button, Heading, HStack, Text } from "@chakra-ui/react";
 import React from "react";
+import { LuPlus } from "react-icons/lu";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +15,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {"Manage bus admission details of students."}
           </Text>
         </Box>
+
+        <NewBusAdmissionDetailsDrawer>
+          <Button>
+            New <LuPlus />
+          </Button>
+        </NewBusAdmissionDetailsDrawer>
       </HStack>
       {children}
     </React.Fragment>

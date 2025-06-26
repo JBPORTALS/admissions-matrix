@@ -331,6 +331,36 @@ export const appRouter = router({
       };
     }),
 
+  busAddStudent: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        appId: z.string(),
+        boardingPointId: z.string(),
+        amountFixed: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("appid", input.appId);
+      formData.append("boarding_point_id", input.boardingPointId);
+      formData.append("amount_fixed", input.amountFixed);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstudentadd.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as BusSingleStudent,
+        ok: response.ok,
+      };
+    }),
+
   hostelViewStudnet: procedure
     .input(
       z.object({
@@ -373,6 +403,62 @@ export const appRouter = router({
       };
     }),
 
+  viewStudent: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        appId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("admissionno", input.appId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchstudent.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status !== 200)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: data.data,
+        });
+
+      return {
+        data: data as any,
+        ok: response.ok,
+      };
+    }),
+
+  busRouteView: procedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteview.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          id: string;
+          feeQuoted: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
+
   busRouteList: procedure.query(async () => {
     const response = await fetch(
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteslist.php",
@@ -391,6 +477,30 @@ export const appRouter = router({
         last_point: string;
         route_no: string;
         updated_at: string;
+      }[],
+      ok: response.ok,
+    };
+  }),
+
+  busBoardingList: procedure.query(async () => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinglist.php",
+      {
+        method: "POST",
+      }
+    );
+    const data = await response.json();
+
+    return {
+      data: data as {
+        created_at: string;
+        driver_name: string;
+        driver_number: string;
+        id: string;
+        last_point: string;
+        route_no: string;
+        updated_at: string;
+        amount: string;
       }[],
       ok: response.ok,
     };
