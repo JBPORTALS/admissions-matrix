@@ -18,7 +18,7 @@ export const columns: ColumnDef<HostelStudent>[] = [
       const original = props.row.original;
 
       return (
-        <HostelAdmissionDetailsDrawer>
+        <HostelAdmissionDetailsDrawer id={original.id}>
           <ChakraLink>{original.student_name}</ChakraLink>
         </HostelAdmissionDetailsDrawer>
       );
@@ -37,7 +37,7 @@ export const columns: ColumnDef<HostelStudent>[] = [
     header: "View",
     cell(props) {
       return (
-        <HostelAdmissionDetailsDrawer>
+        <HostelAdmissionDetailsDrawer id={props.row.original.id}>
           <IconButton variant={"ghost"}>
             <LuArrowRight />
           </IconButton>

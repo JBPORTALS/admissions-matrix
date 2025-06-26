@@ -84,7 +84,6 @@ export default function BusAdmissionDetailsDrawer({
         phone: data.phone_no,
       };
     },
-    progressive: true,
   });
 
   async function onSubmit(values: z.infer<typeof busAdmissionSchema>) {

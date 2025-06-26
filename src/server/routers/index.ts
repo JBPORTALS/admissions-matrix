@@ -331,6 +331,48 @@ export const appRouter = router({
       };
     }),
 
+  hostelViewStudnet: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        id: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostelstudnetview.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          acadyear: string;
+          appid: string;
+          created_at: string;
+          created_by: string;
+          fee_balance: string;
+          fee_fixed: string;
+          fee_paid: string;
+          fee_quoted: string;
+          gender: string;
+          hostel_id: string;
+          hostel_name: string;
+          id: string;
+          reg_no: string;
+          student_name: string;
+          updated_at: string;
+        },
+        ok: response.ok,
+      };
+    }),
+
   busRouteList: procedure.query(async () => {
     const response = await fetch(
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteslist.php",
@@ -354,6 +396,24 @@ export const appRouter = router({
     };
   }),
 
+  hostelList: procedure.query(async () => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostellist.php",
+      {
+        method: "POST",
+      }
+    );
+    const data = await response.json();
+
+    return {
+      data: data as {
+        hostel_name: string;
+        id: string;
+      }[],
+      ok: response.ok,
+    };
+  }),
+
   busEditStudent: procedure
     .input(
       z.object({
@@ -369,6 +429,45 @@ export const appRouter = router({
       formData.append("appid", input.appId);
       formData.append("boarding_point_id", input.boardingPointId);
       formData.append("amount_fixed", input.amountFixed);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstuddentedit.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const data = await response.json();
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
+  hostelEditStudent: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        appId: z.string(),
+        id: z.string(),
+        hostelId: z.string(),
+        feeQuoted: z.string(),
+        feeFixed: z.string(),
+        feePaid: z.string(),
+        feeBalance: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("id", input.id);
+      formData.append("appid", input.appId);
+      formData.append("hostel_id", input.hostelId);
+      formData.append("fee_quoted", input.feeQuoted);
+      formData.append("fee_fixed", input.feeFixed);
+      formData.append("fee_paid", input.feePaid);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstuddentedit.php",
         {
