@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { toaster } from "../ui/toaster";
 
-const newHostelSchema = z.object({
+const newBusRouteSchema = z.object({
   hostelName: z.string().min(1, "Required"),
   intake: z.string().min(1, "Required"),
   gender: z.string().min(1, "Required"),
@@ -41,15 +41,11 @@ const newHostelSchema = z.object({
     .max(10, "Mobile number should be maximum 10 digits"),
 });
 
-export default function NewHostelDrawer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function NewHostelDrawer({ children }: { children: React.ReactNode }) {
   const [open, onOpenChange] = useState(false);
   const utils = trpc.useUtils();
-  const form = useForm<z.infer<typeof newHostelSchema>>({
-    resolver: zodResolver(newHostelSchema),
+  const form = useForm<z.infer<typeof newBusRouteSchema>>({
+    resolver: zodResolver(newBusRouteSchema),
     mode: "onChange",
   });
 
@@ -61,7 +57,7 @@ export default function NewHostelDrawer({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof newHostelSchema>) {
+  async function onSubmit(values: z.infer<typeof newBusRouteSchema>) {
     await hostelAdd(values);
   }
 

@@ -511,6 +511,44 @@ export const appRouter = router({
     };
   }),
 
+  busRouteAdd: procedure
+    .input(
+      z.object({
+        routeNo: z.string().min(1, "Required"),
+        lastPoint: z.string().min(1, "Required"),
+        driverName: z.string().min(1, "Required"),
+        driverNumber: z.string().min(1, "Required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("route_no", input.routeNo);
+      fd.append("last_point", input.lastPoint);
+      fd.append("driver_name", input.driverName);
+      fd.append("driver_phone", input.driverNumber);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteadd.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          created_at: string;
+          driver_name: string;
+          driver_number: string;
+          id: string;
+          last_point: string;
+          route_no: string;
+          updated_at: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
+
   busBoardingList: procedure.query(async () => {
     const response = await fetch(
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinglist.php",

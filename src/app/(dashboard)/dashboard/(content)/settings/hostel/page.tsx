@@ -1,5 +1,5 @@
 import { EditHostelDrawer } from "@/components/drawers/edit-hostel-drawer";
-import NewHostelDrawer from "@/components/drawers/new-hostel-drawer";
+import { NewHostelDrawer } from "@/components/drawers/new-hostel-drawer";
 import DeleteHostelDialog from "@/components/modals/delete-hostel-dialog";
 import { api } from "@/utils/trpc-server";
 import {
