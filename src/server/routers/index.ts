@@ -99,6 +99,17 @@ export type BusRoute = {
   route_no: string;
 };
 
+export type BusBoardingPoint = {
+  created_at: string;
+  driver_name: string;
+  driver_number: string;
+  id: string;
+  boarding_point: string;
+  route_no: string;
+  updated_at: string;
+  amount: string;
+};
+
 export const appRouter = router({
   getOverallMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
@@ -576,6 +587,91 @@ export const appRouter = router({
         ok: response.ok,
       };
     }),
+  busBoardingList: procedure
+    .input(z.object({ routeId: z.string() }))
+    .query(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("route_id", input.routeId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+          `busboardinglist.php?route_id=${input.routeId}`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as BusBoardingPoint[],
+        ok: response.ok,
+      };
+    }),
+  busBoardingPointView: procedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinview.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return data as BusBoardingPoint;
+    }),
+
+  busBoardingPointEdit: procedure
+    .input(
+      z.object({
+        id: z.string().min(1, "required"),
+        routeId: z.string().min(1, "required"),
+        boardingPoint: z.string().min(1, "Required"),
+        amount: z.string().min(1, "Required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("id", input.id);
+      fd.append("boarding_point", input.boardingPoint);
+      fd.append("amount", input.amount);
+      fd.append("route_id", input.routeId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardingedit.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
+  busBoardingPointDelete: procedure
+    .input(
+      z.object({
+        id: z.string().min(1, "required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardingdelete.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      return {
+        ok: response.ok,
+      };
+    }),
 
   busRouteDelete: procedure
     .input(
@@ -634,35 +730,6 @@ export const appRouter = router({
           last_point: string;
           route_no: string;
           updated_at: string;
-        }[],
-        ok: response.ok,
-      };
-    }),
-
-  busBoardingList: procedure
-    .input(z.object({ routeId: z.string() }))
-    .query(async ({ input }) => {
-      const fd = new FormData();
-      fd.append("route_id", input.routeId);
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `busboardinglist.php?route_id=${input.routeId}`,
-        {
-          method: "GET",
-        }
-      );
-      const data = await response.json();
-
-      return {
-        data: data as {
-          created_at: string;
-          driver_name: string;
-          driver_number: string;
-          id: string;
-          boarding_point: string;
-          route_no: string;
-          updated_at: string;
-          amount: string;
         }[],
         ok: response.ok,
       };

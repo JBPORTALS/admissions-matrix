@@ -75,7 +75,7 @@ export function AddBoardingPoint({ children }: { children: React.ReactNode }) {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intake</FormLabel>
+                  <FormLabel>Amount</FormLabel>
                   <NumberInput.Root
                     w={"full"}
                     name={field.name}

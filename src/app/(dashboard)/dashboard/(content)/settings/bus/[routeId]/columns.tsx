@@ -1,5 +1,6 @@
 "use client";
 import { EditBusRouteDrawer } from "@/components/drawers/edit-bus-route-drawer";
+import { ViewBoardingPoint } from "@/components/modals/view-boardingpoint-dialog";
 import { IconButton, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -46,7 +47,7 @@ export const columns: ColumnDef<BusRoute>[] = [
     id: "view-button",
     cell(props) {
       return (
-        <EditBusRouteDrawer id={props.row.original.id}>
+        <ViewBoardingPoint id={props.row.original.id}>
           <IconButton
             opacity={0}
             _groupHover={{ opacity: 1 }}
@@ -55,7 +56,7 @@ export const columns: ColumnDef<BusRoute>[] = [
           >
             <LuPanelLeft />
           </IconButton>
-        </EditBusRouteDrawer>
+        </ViewBoardingPoint>
       );
     },
   },
