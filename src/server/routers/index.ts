@@ -551,6 +551,32 @@ export const appRouter = router({
       };
     }),
 
+  busBoardingPointAdd: procedure
+    .input(
+      z.object({
+        routeId: z.string().min(1, "required"),
+        boardingPoint: z.string().min(1, "Required"),
+        amount: z.string().min(1, "Required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("boarding_point", input.boardingPoint);
+      fd.append("amount", input.amount);
+      fd.append("route_id", input.routeId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardingadd.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
   busRouteDelete: procedure
     .input(
       z.object({

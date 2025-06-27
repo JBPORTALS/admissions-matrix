@@ -4,6 +4,7 @@ import { Box, Breadcrumb, Button, Heading, HStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { LuPlus } from "react-icons/lu";
 import { columns } from "./columns";
+import { AddBoardingPoint } from "@/components/modals/add-boardingpoint-dialog";
 
 export default async function Page({
   params,
@@ -33,10 +34,12 @@ export default async function Page({
           </Breadcrumb.List>
         </Breadcrumb.Root>
 
-        <Button size={"xs"}>
-          <LuPlus />
-          New Boarding Point
-        </Button>
+        <AddBoardingPoint>
+          <Button size={"xs"}>
+            <LuPlus />
+            New Boarding Point
+          </Button>
+        </AddBoardingPoint>
       </HStack>
 
       <DataTable columns={columns} data={data.data} />

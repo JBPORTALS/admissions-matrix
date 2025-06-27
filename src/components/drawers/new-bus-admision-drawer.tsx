@@ -63,9 +63,12 @@ export default function NewBusAdmissionDetailsDrawer({
   const [isStudentLoading, setIsStudentLoading] = useState(false);
   const utils = trpc.useUtils();
   const acadyear = useAppSelector((s) => s.admissions.acadYear);
-  const { data, isLoading } = trpc.busBoardingList.useQuery(undefined, {
-    enabled: open,
-  });
+  const { data, isLoading } = trpc.busBoardingList.useQuery(
+    { routeId: "" },
+    {
+      enabled: open,
+    }
+  );
   const { mutateAsync: addStudent } = trpc.busAddStudent.useMutation({
     onSuccess() {
       toaster.info({ title: "Student details added" });
@@ -207,7 +210,7 @@ export default function NewBusAdmissionDetailsDrawer({
                             <option value={""}>Select</option>
                             {data?.data.map((r) => (
                               <option value={r.id}>
-                                {r.route_no} - {r.last_point}
+                                {r.route_no} - {r.boarding_point}
                               </option>
                             ))}
                           </NativeSelect.Field>
