@@ -619,9 +619,10 @@ export const appRouter = router({
       const fd = new FormData();
       fd.append("route_id", input.routeId);
       const response = await fetch(
-        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinglist.php",
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL +
+          `busboardinglist.php?route_id=${input.routeId}`,
         {
-          method: "POST",
+          method: "GET",
         }
       );
       const data = await response.json();
