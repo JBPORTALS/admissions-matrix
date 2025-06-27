@@ -613,29 +613,33 @@ export const appRouter = router({
       };
     }),
 
-  busBoardingList: procedure.query(async () => {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinglist.php",
-      {
-        method: "POST",
-      }
-    );
-    const data = await response.json();
+  busBoardingList: procedure
+    .input(z.object({ routeId: z.string() }))
+    .query(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("route_id", input.routeId);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busboardinglist.php",
+        {
+          method: "POST",
+        }
+      );
+      const data = await response.json();
 
-    return {
-      data: data as {
-        created_at: string;
-        driver_name: string;
-        driver_number: string;
-        id: string;
-        last_point: string;
-        route_no: string;
-        updated_at: string;
-        amount: string;
-      }[],
-      ok: response.ok,
-    };
-  }),
+      return {
+        data: data as {
+          created_at: string;
+          driver_name: string;
+          driver_number: string;
+          id: string;
+          boarding_point: string;
+          route_no: string;
+          updated_at: string;
+          amount: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
 
   hostelAdd: procedure
     .input(

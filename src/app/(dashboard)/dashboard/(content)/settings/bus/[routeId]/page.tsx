@@ -1,7 +1,9 @@
+import { DataTable } from "@/components/ui/data-table";
 import { api } from "@/utils/trpc-server";
 import { Box, Breadcrumb, Button, Heading, HStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { LuPlus } from "react-icons/lu";
+import { columns } from "./columns";
 
 export default async function Page({
   params,
@@ -10,6 +12,8 @@ export default async function Page({
 }) {
   const { routeId } = await params;
   const route = await api.busRouteView({ id: routeId });
+  const data = await api.busBoardingList({ routeId });
+
   return (
     <Box w={"full"} spaceY={"6"}>
       <HStack w={"full"} justifyContent={"space-between"}>
@@ -32,6 +36,8 @@ export default async function Page({
           New Boarding Point
         </Button>
       </HStack>
+
+      <DataTable columns={columns} data={data.data} />
     </Box>
   );
 }
