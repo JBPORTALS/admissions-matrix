@@ -177,6 +177,7 @@ export const appRouter = router({
       return data as HostelStudent[];
     }),
 
+  /** Get hostel details by id */
   getHostelById: procedure
     .input(z.object({ hostelId: z.string() }))
     .query(async ({ input }) => {
@@ -348,6 +349,32 @@ export const appRouter = router({
       formData.append("amount_fixed", input.amountFixed);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstudentadd.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as BusSingleStudent,
+        ok: response.ok,
+      };
+    }),
+
+  busStudentDelete: procedure
+    .input(
+      z.object({
+        appId: z.string(),
+        acadyear: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("appid", input.appId);
+      formData.append("acadyear", input.acadyear);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstudentdelete.php",
         {
           method: "POST",
           body: formData,
@@ -534,6 +561,55 @@ export const appRouter = router({
       fd.append("warden_number", input.wardenNumber);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hosteladd.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          created_at: string;
+          driver_name: string;
+          driver_number: string;
+          id: string;
+          last_point: string;
+          route_no: string;
+          updated_at: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
+
+  hostelEdit: procedure
+    .input(
+      z.object({
+        id: z.string().min(1, "Required"),
+        hostelName: z.string().min(1, "Required"),
+        intake: z.string().min(1, "Required"),
+        gender: z.string().min(1, "Required"),
+        fee: z.string().min(1, "Required"),
+        address: z.string().min(2, "Required"),
+        wardenName: z.string().min(2, "Required"),
+        wardenNumber: z
+          .string()
+          .min(10, "Mobile number should be maximum 10 digits")
+          .max(10, "Mobile number should be maximum 10 digits"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("id", input.id);
+      fd.append("hostel_name", input.hostelName);
+      fd.append("intake", input.intake);
+      fd.append("gender", input.gender);
+      fd.append("fee", input.fee);
+      fd.append("address", input.address);
+      fd.append("warden_name", input.wardenName);
+      fd.append("warden_number", input.wardenNumber);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hosteledit.php",
         {
           method: "POST",
           body: fd,

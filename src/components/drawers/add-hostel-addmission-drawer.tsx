@@ -285,7 +285,6 @@ export default function AddHostelAdmissionDetailsDrawer({
               </React.Fragment>
             ) : null}
           </React.Fragment>
-          <pre>{JSON.stringify(form.formState.errors, undefined, 2)}</pre>
 
           <DrawerCloseTrigger>
             <CloseButton size={"sm"} />

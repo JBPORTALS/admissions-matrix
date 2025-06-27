@@ -14,7 +14,12 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { formatDistanceToNowStrict, isValid } from "date-fns";
 import { LuPlus } from "react-icons/lu";
+
+function safeDate(dateStr: string): Date {
+  return new Date(dateStr.replace(" ", "T"));
+}
 
 export default async function Page() {
   const data = await api.hostelList();
@@ -38,10 +43,10 @@ export default async function Page() {
         w={"full"}
         gap={"5"}
         py={"6"}
-        minChildWidth="300px"
+        columns={3}
       >
         {data.data.map((hostel) => (
-          <Card.Root key={hostel.id} borderWidth="1px">
+          <Card.Root key={hostel.id} h={"full"} borderWidth="1px">
             <Card.Header>
               <Heading size="md">{hostel.hostel_name}</Heading>
               <Text fontSize="sm" color="gray.500">
@@ -68,9 +73,11 @@ export default async function Page() {
                 <Text fontSize="xs" color="gray.500">
                   Created: {new Date(hostel.created_at).toLocaleString()}
                 </Text>
-                <Text fontSize="xs" color="gray.500">
-                  Updated: {new Date(hostel.updated_at).toLocaleString()}
-                </Text>
+                {isValid(safeDate(hostel.updated_at)) && (
+                  <Text fontSize="xs" color="gray.500">
+                    Updated: {new Date(hostel.created_at).toLocaleString()}
+                  </Text>
+                )}
               </Stack>
             </Card.Body>
             <Card.Footer>

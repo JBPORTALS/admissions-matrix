@@ -2,10 +2,12 @@
 
 import {
   Button,
+  Center,
   Input,
   InputGroup,
   NativeSelect,
   NumberInput,
+  Spinner,
   Textarea,
 } from "@chakra-ui/react";
 import {
@@ -27,6 +29,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { toaster } from "../ui/toaster";
+import { useRouter } from "next/navigation";
 
 const editHostelSchema = z.object({
   hostelName: z.string().min(1, "Required"),
@@ -54,17 +57,37 @@ export function EditHostelDrawer({
     resolver: zodResolver(editHostelSchema),
     mode: "onChange",
   });
+  const router = useRouter();
 
-  const { mutateAsync: hostelAdd } = trpc.hostelAdd.useMutation({
+  const { data: hostel, isLoading } = trpc.getHostelById.useQuery(
+    { hostelId: id },
+    { enabled: open }
+  );
+
+  const { mutateAsync: hostelEdit } = trpc.hostelEdit.useMutation({
     async onSuccess() {
-      toaster.success({ title: "Hostel created" });
+      toaster.info({ title: "Hostel details updated" });
       await utils.hostelList.invalidate();
+      router.refresh();
       onOpenChange(false);
     },
   });
 
+  React.useEffect(() => {
+    if (open && hostel)
+      form.reset({
+        address: hostel.address,
+        hostelName: hostel.hostel_name,
+        wardenName: hostel.warden_name,
+        wardenNumber: hostel.warden_number,
+        fee: hostel.fee,
+        intake: hostel.intake,
+        gender: hostel.gender,
+      });
+  }, [open, hostel]);
+
   async function onSubmit(values: z.infer<typeof editHostelSchema>) {
-    await hostelAdd(values);
+    await hostelEdit({ ...values, id });
   }
 
   return (
@@ -81,125 +104,133 @@ export function EditHostelDrawer({
             <DrawerTitle>Edit Hostel</DrawerTitle>
           </DrawerHeader>
 
-          <DrawerBody spaceY={"6"}>
-            <FormField
-              control={form.control}
-              name="hostelName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hostel Name</FormLabel>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {isLoading ? (
+            <Center>
+              <Spinner />
+            </Center>
+          ) : (
+            <React.Fragment>
+              <DrawerBody spaceY={"6"}>
+                <FormField
+                  control={form.control}
+                  name="hostelName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostel Name</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="intake"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Intake</FormLabel>
-                  <NumberInput.Root
-                    w={"full"}
-                    name={field.name}
-                    onValueChange={({ value }) => field.onChange(value)}
-                    value={field.value}
-                  >
-                    <NumberInput.Input onBlur={field.onBlur} />
-                  </NumberInput.Root>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="intake"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Intake</FormLabel>
+                      <NumberInput.Root
+                        w={"full"}
+                        name={field.name}
+                        onValueChange={({ value }) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <NumberInput.Input onBlur={field.onBlur} />
+                      </NumberInput.Root>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <NativeSelect.Root>
-                    <NativeSelect.Field {...field}>
-                      <option value={""}>Select</option>
-                      <option value={"MALE"}>MALE</option>
-                      <option value={"FEMALE"}>FEMALE</option>
-                    </NativeSelect.Field>
-                    <NativeSelect.Indicator />
-                  </NativeSelect.Root>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <NativeSelect.Root>
+                        <NativeSelect.Field {...field}>
+                          <option value={""}>Select</option>
+                          <option value={"MALE"}>MALE</option>
+                          <option value={"FEMALE"}>FEMALE</option>
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator />
+                      </NativeSelect.Root>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hostel Address</FormLabel>
-                  <Textarea {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostel Address</FormLabel>
+                      <Textarea {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="fee"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Fee</FormLabel>
-                  <InputGroup startAddon={"₹"}>
-                    <NumberInput.Root
-                      w={"full"}
-                      name={field.name}
-                      onValueChange={({ value }) => field.onChange(value)}
-                      value={field.value}
-                    >
-                      <NumberInput.Input onBlur={field.onBlur} />
-                    </NumberInput.Root>
-                  </InputGroup>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="fee"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fee</FormLabel>
+                      <InputGroup startAddon={"₹"}>
+                        <NumberInput.Root
+                          w={"full"}
+                          name={field.name}
+                          onValueChange={({ value }) => field.onChange(value)}
+                          value={field.value}
+                        >
+                          <NumberInput.Input onBlur={field.onBlur} />
+                        </NumberInput.Root>
+                      </InputGroup>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="wardenName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Warden Name</FormLabel>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="wardenName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Warden Name</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="wardenNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Warden Phone</FormLabel>
-                  <InputGroup startAddon={"+91"}>
-                    <Input {...field} />
-                  </InputGroup>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </DrawerBody>
+                <FormField
+                  control={form.control}
+                  name="wardenNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Warden Phone</FormLabel>
+                      <InputGroup startAddon={"+91"}>
+                        <Input {...field} />
+                      </InputGroup>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </DrawerBody>
 
-          <DrawerFooter>
-            <Button
-              loading={form.formState.isSubmitting}
-              onClick={form.handleSubmit(onSubmit)}
-            >
-              Save
-            </Button>
-          </DrawerFooter>
+              <DrawerFooter>
+                <Button
+                  loading={form.formState.isSubmitting}
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  Save
+                </Button>
+              </DrawerFooter>
+            </React.Fragment>
+          )}
 
           <DrawerCloseTrigger>
             <CloseButton size={"sm"} />

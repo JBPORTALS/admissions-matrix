@@ -29,6 +29,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { useAppSelector } from "@/store";
 import { toaster } from "../ui/toaster";
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { useRouter } from "next/navigation";
 
 const busAdmissionSchema = z.object({
   appId: z.string().min(1, "Required"),
@@ -60,12 +71,24 @@ export default function BusAdmissionDetailsDrawer({
   const { data, isLoading } = trpc.busRouteList.useQuery(undefined, {
     enabled: open,
   });
+  const router = useRouter();
+
   const { mutateAsync: editBusStudent } = trpc.busEditStudent.useMutation({
     onSuccess() {
       toaster.info({ title: "Details updated" });
+      router.refresh();
       onOpenChange(false);
     },
   });
+  const { mutateAsync: deleteStudent, isPending } =
+    trpc.busStudentDelete.useMutation({
+      async onSuccess() {
+        toaster.info({ title: "Student deleted" });
+        await utils.busSearchClass.invalidate();
+        router.refresh();
+        onOpenChange(false);
+      },
+    });
   const form = useForm<z.infer<typeof busAdmissionSchema>>({
     resolver: zodResolver(busAdmissionSchema),
     async defaultValues() {
@@ -269,9 +292,37 @@ export default function BusAdmissionDetailsDrawer({
                 />
               </DrawerBody>
               <DrawerFooter justifyContent={"space-between"}>
-                <Button w={"50%"} variant={"surface"} colorPalette={"red"}>
-                  Delete
-                </Button>
+                <DialogRoot>
+                  <DialogTrigger asChild>
+                    <Button w={"50%"} colorPalette={"red"} variant={"surface"}>
+                      Delete
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Are you sure?</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <p>
+                        This action cannot be undone. This will permanently
+                        delete your bus student and remove your data from our
+                        systems.
+                      </p>
+                    </DialogBody>
+                    <DialogFooter>
+                      <DialogActionTrigger asChild>
+                        <Button variant={"outline"}>Close</Button>
+                      </DialogActionTrigger>
+                      <Button
+                        loading={isPending}
+                        onClick={() => deleteStudent({ acadyear, appId })}
+                        colorPalette={"red"}
+                      >
+                        Delete
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </DialogRoot>
                 <Button
                   w={"50%"}
                   loading={form.formState.isSubmitting}
