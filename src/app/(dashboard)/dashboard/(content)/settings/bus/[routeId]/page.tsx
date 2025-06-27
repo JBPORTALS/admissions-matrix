@@ -26,7 +26,9 @@ export default async function Page({
             </Breadcrumb.Item>
             <Breadcrumb.Separator />
             <Breadcrumb.Item>
-              <Breadcrumb.CurrentLink>{route.route_no}</Breadcrumb.CurrentLink>
+              <Breadcrumb.CurrentLink>
+                {route.route_no}-{route.last_point}
+              </Breadcrumb.CurrentLink>
             </Breadcrumb.Item>
           </Breadcrumb.List>
         </Breadcrumb.Root>

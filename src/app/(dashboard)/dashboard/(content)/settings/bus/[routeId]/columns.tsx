@@ -24,6 +24,9 @@ export const columns: ColumnDef<BusRoute>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
+    cell(props) {
+      return <span>₹{props.getValue() as string}</span>;
+    },
   },
   {
     accessorKey: "created_at",
