@@ -14,7 +14,7 @@ export default async function Page() {
         <Heading size={"2xl"}>All Routes</Heading>
 
         <NewBusRouteDrawer>
-          <Button size={"sm"}>
+          <Button size={"xs"}>
             <LuPlus />
             Add
           </Button>

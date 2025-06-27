@@ -1,8 +1,9 @@
 "use client";
 import { EditBusRouteDrawer } from "@/components/drawers/edit-bus-route-drawer";
-import { IconButton, Text } from "@chakra-ui/react";
+import { IconButton, Link as ChakraLink, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNowStrict } from "date-fns";
+import Link from "next/link";
 import { LuPanelLeft } from "react-icons/lu";
 
 type BusRoute = {
@@ -19,6 +20,15 @@ export const columns: ColumnDef<BusRoute>[] = [
   {
     accessorKey: "route_no",
     header: "Route No",
+    cell(props) {
+      return (
+        <ChakraLink asChild>
+          <Link href={`/dashboard/settings/bus/${props.row.original.id}`}>
+            {props.getValue() as string}
+          </Link>
+        </ChakraLink>
+      );
+    },
   },
   {
     accessorKey: "last_point",

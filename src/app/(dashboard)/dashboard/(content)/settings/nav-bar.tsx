@@ -8,6 +8,7 @@ const items = [
   {
     label: "College",
     href: "/dashboard/settings",
+    exact: true,
   },
   {
     label: "Hostel",
@@ -31,7 +32,15 @@ export function Navbar() {
     >
       {items.map((item, i) => (
         <Button
-          variant={pathname === item.href ? "subtle" : "ghost"}
+          variant={
+            (
+              item.exact
+                ? pathname === item.href
+                : pathname.startsWith(item.href)
+            )
+              ? "subtle"
+              : "ghost"
+          }
           colorPalette={"gray"}
           justifyContent={"start"}
           w={"full"}
