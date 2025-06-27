@@ -1,7 +1,9 @@
 "use client";
-import { Text } from "@chakra-ui/react";
+import { EditBusRouteDrawer } from "@/components/drawers/edit-bus-route-drawer";
+import { IconButton, Text } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNowStrict } from "date-fns";
+import { LuPanelLeft } from "react-icons/lu";
 
 type BusRoute = {
   created_at: string;
@@ -40,6 +42,24 @@ export const columns: ColumnDef<BusRoute>[] = [
             addSuffix: true,
           })}
         </Text>
+      );
+    },
+  },
+
+  {
+    id: "view-button",
+    cell(props) {
+      return (
+        <EditBusRouteDrawer id={props.row.original.id}>
+          <IconButton
+            opacity={0}
+            _groupHover={{ opacity: 1 }}
+            size={"sm"}
+            variant={"ghost"}
+          >
+            <LuPanelLeft />
+          </IconButton>
+        </EditBusRouteDrawer>
       );
     },
   },

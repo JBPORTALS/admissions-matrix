@@ -52,6 +52,7 @@ export function DataTable<TData, TValue>({
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <Table.Row
+              className="group"
               key={row.id}
               data-state={row.getIsSelected() && "selected"}
             >

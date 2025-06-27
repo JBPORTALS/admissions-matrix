@@ -91,6 +91,14 @@ export type Hostel = {
   warden_number: string;
 };
 
+export type BusRoute = {
+  id: string;
+  last_point: string;
+  driver_name: string;
+  driver_number: string;
+  route_no: string;
+};
+
 export const appRouter = router({
   getOverallMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
@@ -479,13 +487,7 @@ export const appRouter = router({
       );
       const data = await response.json();
 
-      return {
-        data: data as {
-          id: string;
-          feeQuoted: string;
-        }[],
-        ok: response.ok,
-      };
+      return data as BusRoute;
     }),
 
   busRouteList: procedure.query(async () => {
@@ -528,6 +530,68 @@ export const appRouter = router({
       fd.append("driver_phone", input.driverNumber);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteadd.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+      const data = await response.json();
+
+      return {
+        data: data as {
+          created_at: string;
+          driver_name: string;
+          driver_number: string;
+          id: string;
+          last_point: string;
+          route_no: string;
+          updated_at: string;
+        }[],
+        ok: response.ok,
+      };
+    }),
+
+  busRouteDelete: procedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("id", input.id);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busroutedelete.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      return {
+        ok: response.ok,
+      };
+    }),
+
+  busRouteEdit: procedure
+    .input(
+      z.object({
+        id: z.string().min(1, "Required"),
+        routeNo: z.string().min(1, "Required"),
+        lastPoint: z.string().min(1, "Required"),
+        driverName: z.string().min(1, "Required"),
+        driverNumber: z.string().min(1, "Required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const fd = new FormData();
+      fd.append("id", input.id);
+      fd.append("route_no", input.routeNo);
+      fd.append("last_point", input.lastPoint);
+      fd.append("driver_name", input.driverName);
+      fd.append("driver_phone", input.driverNumber);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteedit.php",
         {
           method: "POST",
           body: fd,

@@ -45,7 +45,7 @@ export function NewBusRouteDrawer({ children }: { children: React.ReactNode }) {
   });
 
   const router = useRouter();
-  const { mutateAsync: hostelAdd } = trpc.busRouteAdd.useMutation({
+  const { mutateAsync: busRouteAdd } = trpc.busRouteAdd.useMutation({
     async onSuccess() {
       toaster.success({ title: "Hostel created" });
       await utils.busRouteList.invalidate();
@@ -55,7 +55,7 @@ export function NewBusRouteDrawer({ children }: { children: React.ReactNode }) {
   });
 
   async function onSubmit(values: z.infer<typeof newHostelSchema>) {
-    await hostelAdd(values);
+    await busRouteAdd(values);
   }
 
   return (
@@ -69,7 +69,7 @@ export function NewBusRouteDrawer({ children }: { children: React.ReactNode }) {
       <DrawerContent>
         <Form {...form}>
           <DrawerHeader>
-            <DrawerTitle>New Hostel</DrawerTitle>
+            <DrawerTitle>New Bus Route</DrawerTitle>
           </DrawerHeader>
 
           <DrawerBody spaceY={"6"}>
