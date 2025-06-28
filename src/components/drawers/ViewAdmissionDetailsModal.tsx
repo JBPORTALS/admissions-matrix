@@ -181,7 +181,8 @@ export default function ViewAdmissionDetailsModal({
 
   // Fetch selected matrix when dialog is open
   useEffect(() => {
-    if (open) dispatch(fetchSelectedMatrix({ admissionno }));
+    if (open && user?.college)
+      dispatch(fetchSelectedMatrix({ admissionno, college: user.college }));
   }, [open]);
 
   const onDelete = async () => {
