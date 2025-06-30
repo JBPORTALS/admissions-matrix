@@ -587,7 +587,21 @@ export const appRouter = router({
         ok: response.ok,
       };
     }),
-  busBoardingList: procedure
+  busBoardingList: procedure.query(async () => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_ADMISSIONS_URL + `busboardinglist.php`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+
+    return {
+      data: data as BusBoardingPoint[],
+      ok: response.ok,
+    };
+  }),
+  busBoardingListByRouteId: procedure
     .input(z.object({ routeId: z.string() }))
     .query(async ({ input }) => {
       const fd = new FormData();

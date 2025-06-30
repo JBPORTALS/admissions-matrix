@@ -13,7 +13,7 @@ export default async function Page({
 }) {
   const { routeId } = await params;
   const route = await api.busRouteView({ id: routeId });
-  const data = await api.busBoardingList({ routeId });
+  const data = await api.busBoardingListByRouteId({ routeId });
 
   return (
     <Box w={"full"} spaceY={"6"}>
