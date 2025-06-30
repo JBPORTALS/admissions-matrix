@@ -373,10 +373,8 @@ export const appRouter = router({
           body: formData,
         }
       );
-      const data = await response.json();
 
       return {
-        data: data as BusSingleStudent,
         ok: response.ok,
       };
     }),
