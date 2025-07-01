@@ -3,11 +3,18 @@ import { trpc } from "./trpc-cleint";
 import { useRouter } from "next/navigation";
 import { SessionData } from "./session";
 
-export function useUser() {
+type SessionContextType = {
+  isLoaded: boolean;
+  user: SessionData | null;
+};
+
+const SessionContext = React.createContext<SessionContextType | null>(null);
+
+export function SessionProvider({ children }: { children: React.ReactNode }) {
   const utils = trpc.useUtils();
   const [isLoaded, setIsLoaded] = React.useState(false);
-
-  const [user, setUser] = React.useState<SessionData | null>(null);
+  /** Memoize the session data */
+  const [session, setSession] = React.useState<SessionData | null>(null);
 
   const fetchUser = React.useCallback(async () => {
     setIsLoaded(false);
@@ -27,13 +34,29 @@ export function useUser() {
     }
 
     const user = await utils.getUser.fetch(sessionData.id);
-    setUser(user ?? null);
+    setSession(user ?? null);
     setIsLoaded(true);
   }, []);
 
+  /** Fetch the session data */
   React.useEffect(() => {
     fetchUser();
   }, []);
+
+  return (
+    <SessionContext.Provider value={{ isLoaded, user: session ?? null }}>
+      {children}
+    </SessionContext.Provider>
+  );
+}
+
+export function useUser() {
+  const session = React.useContext(SessionContext);
+
+  if (!session) {
+    throw new Error("useUser must be used within a SessionProvider");
+  }
+  const { isLoaded, user } = session;
 
   return {
     isLoaded,
