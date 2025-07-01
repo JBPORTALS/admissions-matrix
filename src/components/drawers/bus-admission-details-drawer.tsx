@@ -96,7 +96,7 @@ export default function BusAdmissionDetailsDrawer({
       return {
         feeFixed: data.fee_fixed,
         feePaid: data.fee_paid,
-        feeQuoted: data.fee_quoted,
+        feeQuoted: data.route_amount,
         appId: data.id,
         fatherName: data.fname,
         fatherPhone: data.father_no,
@@ -234,7 +234,7 @@ export default function BusAdmissionDetailsDrawer({
                       <NativeSelect.Root disabled={isLoading}>
                         <NativeSelect.Field {...field}>
                           {data?.data.map((r) => (
-                            <option value={r.id}>
+                            <option value={r.id} key={r.id}>
                               {r.route_no} - {r.last_point}
                             </option>
                           ))}

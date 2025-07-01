@@ -39,7 +39,7 @@ type BusStudent = {
 interface BusSingleStudent extends Omit<BusStudent, "fphone_no" | "sphone_no"> {
   boarding_point_id: string;
   fee_fixed: string;
-  fee_quoted: string;
+  route_amount: string;
   fee_paid: string;
   phone_no: string;
   father_no: string;
