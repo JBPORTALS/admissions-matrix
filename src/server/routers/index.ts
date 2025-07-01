@@ -536,7 +536,7 @@ export const appRouter = router({
       fd.append("route_no", input.routeNo);
       fd.append("last_point", input.lastPoint);
       fd.append("driver_name", input.driverName);
-      fd.append("driver_phone", input.driverNumber);
+      fd.append("driver_number", input.driverNumber);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteadd.php",
         {
@@ -723,7 +723,7 @@ export const appRouter = router({
       fd.append("route_no", input.routeNo);
       fd.append("last_point", input.lastPoint);
       fd.append("driver_name", input.driverName);
-      fd.append("driver_phone", input.driverNumber);
+      fd.append("driver_number", input.driverNumber);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteedit.php",
         {
