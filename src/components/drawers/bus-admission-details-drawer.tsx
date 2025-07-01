@@ -94,8 +94,8 @@ export default function BusAdmissionDetailsDrawer({
     async defaultValues() {
       const { data } = await utils.busViewStudent.fetch({ appId, acadyear });
       return {
-        feeFixed: data.fee_fixed,
-        feePaid: data.fee_paid,
+        feeFixed: data.bus_fee,
+        feePaid: data.paid_fee,
         feeQuoted: data.route_amount,
         appId: data.id,
         fatherName: data.fname,
