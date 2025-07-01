@@ -1,6 +1,5 @@
 import "./globals.css";
 import { Providers } from "./providers";
-import SupabaseProvider from "./supabase-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata = {
@@ -16,9 +15,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <NuqsAdapter>
-          <Providers>
-            <SupabaseProvider>{children}</SupabaseProvider>
-          </Providers>
+          <Providers>{children}</Providers>
         </NuqsAdapter>
       </body>
     </html>
