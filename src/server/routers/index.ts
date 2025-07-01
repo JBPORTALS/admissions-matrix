@@ -865,6 +865,7 @@ export const appRouter = router({
         appId: z.string(),
         boardingPointId: z.string(),
         amountFixed: z.string(),
+        amountPaid: z.string(),
       })
     )
     .mutation(async ({ input }) => {
@@ -873,6 +874,7 @@ export const appRouter = router({
       formData.append("appid", input.appId);
       formData.append("boarding_point_id", input.boardingPointId);
       formData.append("amount_fixed", input.amountFixed);
+      formData.append("amount_paid", input.amountPaid);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busstuddentedit.php",
         {

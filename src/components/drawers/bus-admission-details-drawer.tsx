@@ -115,6 +115,7 @@ export default function BusAdmissionDetailsDrawer({
       amountFixed: values.feeFixed,
       appId: values.appId,
       boardingPointId: values.boardingPoint,
+      amountPaid: values.feePaid,
     });
     await utils.busViewStudent.invalidate();
   }

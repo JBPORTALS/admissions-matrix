@@ -1,7 +1,6 @@
 "use client";
 
 import BusAdmissionDetailsDrawer from "@/components/drawers/bus-admission-details-drawer";
-import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
 import { IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
