@@ -14,11 +14,20 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { formatDistanceToNowStrict, isValid } from "date-fns";
+import { format, isValid } from "date-fns";
 import { LuPlus } from "react-icons/lu";
 
-function safeDate(dateStr: string): Date {
-  return new Date(dateStr.replace(" ", "T"));
+// Helper function to safely parse and format dates
+function formatSafeDate(dateStr: string, formatStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    if (isValid(date)) {
+      return format(date, formatStr);
+    }
+    return "Invalid date";
+  } catch (error) {
+    return "Invalid date";
+  }
 }
 
 export default async function Page() {
@@ -71,13 +80,13 @@ export default async function Page() {
                   <strong>Warden No:</strong> {hostel.warden_number}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
-                  Created: {new Date(hostel.created_at).toLocaleString()}
+                  Created:{" "}
+                  {formatSafeDate(hostel.created_at, "dd MMM, yyyy hh:mm aa")}
                 </Text>
-                {isValid(safeDate(hostel.updated_at)) && (
-                  <Text fontSize="xs" color="gray.500">
-                    Updated: {new Date(hostel.created_at).toLocaleString()}
-                  </Text>
-                )}
+                <Text fontSize="xs" color="gray.500">
+                  Updated:{" "}
+                  {formatSafeDate(hostel.updated_at, "dd MMM, yyyy hh:mm aa")}
+                </Text>
               </Stack>
             </Card.Body>
             <Card.Footer>
