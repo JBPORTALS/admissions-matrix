@@ -1,11 +1,16 @@
 import React from "react";
 import { trpc } from "./trpc-cleint";
 import { useRouter } from "next/navigation";
+import { SessionData } from "./session";
 
 export function useUser() {
-  const [userId, setUserId] = React.useState(undefined);
-  const user = trpc.getUser.useQuery(userId ?? "", { enabled: !!userId });
-  const setUser = React.useCallback(async () => {
+  const utils = trpc.useUtils();
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  const [user, setUser] = React.useState<SessionData | null>(null);
+
+  const fetchUser = React.useCallback(async () => {
+    setIsLoaded(false);
     // Fetch session
     const sessionResponse = await fetch(`/api/session`, {
       credentials: "include",
@@ -21,20 +26,18 @@ export function useUser() {
       throw new Error("Invalid session data");
     }
 
-    setUserId(sessionData.id);
+    const user = await utils.getUser.fetch(sessionData.id);
+    setUser(user ?? null);
+    setIsLoaded(true);
   }, []);
 
   React.useEffect(() => {
-    setUser();
-  }, [user.data?.id]);
-
-  const session = user.data;
-
-  if (!session) return null;
+    fetchUser();
+  }, []);
 
   return {
-    isLoaded: user.isFetched,
-    ...session,
+    isLoaded,
+    ...user,
   };
 }
 

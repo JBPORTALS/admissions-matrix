@@ -1,12 +1,10 @@
 "use client";
 
-import { useSupabase } from "@/app/supabase-provider";
-import ISelect from "@/components/ui/utils/ISelect";
 import { useAppSelector } from "@/store";
+import { useUser } from "@/utils/auth";
 import { trpc } from "@/utils/trpc-cleint";
 import {
   Badge,
-  Box,
   Button,
   Center,
   FormatNumber,
@@ -21,11 +19,11 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { LuCalendar, LuFileDown } from "react-icons/lu";
 
 export default function UnApproved() {
-  const { user } = useSupabase();
+  const user = useUser();
   const currentUserCollege = user?.college ?? "";
   const searchParmas = useSearchParams();
   const college = searchParmas.get("col") ?? currentUserCollege;
