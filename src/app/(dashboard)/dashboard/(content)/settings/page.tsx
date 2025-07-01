@@ -154,11 +154,11 @@ const FormikContextProvider = () => {
     } catch (e) {
       toaster.error({ title: "Something went wrong" });
     }
-  }, [values.branch, values.college, values.category]);
+  }, [values.branch, values.college, values.category, acadYear, setFieldValue]);
 
   useEffect(() => {
     if (values.college && values.branch) fetchDetails();
-  }, [values.college, values.branch]);
+  }, [values.college, values.branch, fetchDetails]);
 
   useEffect(() => {
     setFieldValue("remaining", +(+values.intake - +values.alloted));
