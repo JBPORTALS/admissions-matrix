@@ -16,6 +16,7 @@ import {
   EmptyState,
   Heading,
   Text,
+  Center,
 } from "@chakra-ui/react";
 import React, { useEffect, useCallback } from "react";
 import axios from "axios";
@@ -81,10 +82,21 @@ export default function Page() {
         toaster.error({ title: "Something went wrong!" });
       }
     },
-    []
+    [acadYear]
   );
 
-  if (user?.college !== "MANAGEMENT") return null;
+  if (user?.college !== "MANAGEMENT")
+    return (
+      <Center w={"full"} h={"64"}>
+        <VStack>
+          <Heading>You don&apos;t have permission for this setting</Heading>
+          <Text color={"fg.muted"}>
+            If you need any changes contact your admin / office with respective
+            college to manage intake & fee.
+          </Text>
+        </VStack>
+      </Center>
+    );
 
   return (
     <Formik
