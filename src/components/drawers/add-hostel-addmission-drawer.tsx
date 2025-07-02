@@ -80,6 +80,9 @@ export default function AddHostelAdmissionDetailsDrawer({
       onOpenChange(false);
       form.reset();
     },
+    onError(error) {
+      toaster.error({ title: error.message });
+    },
   });
 
   const feePaid = form.watch().feePaid;

@@ -975,9 +975,13 @@ export const appRouter = router({
         }
       );
 
-      if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
       const data = await response.json();
+
+      if (!response.ok)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: data.msg,
+        });
 
       return {
         ok: response.ok,
