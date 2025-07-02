@@ -80,11 +80,11 @@ export function EditHostelDrawer({
         hostelName: hostel.hostel_name,
         wardenName: hostel.warden_name,
         wardenNumber: hostel.warden_number,
-        fee: hostel.fee,
+        fee: hostel.fee.toString(),
         intake: hostel.intake,
         gender: hostel.gender,
       });
-  }, [open, hostel]);
+  }, [open, hostel, form]);
 
   async function onSubmit(values: z.infer<typeof editHostelSchema>) {
     await hostelEdit({ ...values, id });

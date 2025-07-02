@@ -122,9 +122,10 @@ export default function AddHostelAdmissionDetailsDrawer({
 
   useEffect(() => {
     form.resetField("feeQuoted", {
-      defaultValue: hostelList?.data.find((v) => v.id == hostelId)?.fee ?? "",
-      keepTouched: true,
-      keepDirty: true,
+      defaultValue:
+        hostelList?.data.find((v) => v.id == hostelId)?.fee.toString() ?? "",
+      keepTouched: false,
+      keepDirty: false,
       keepError: false,
     });
   }, [feeFixed, feePaid, form, hostelList?.data, hostelId]);

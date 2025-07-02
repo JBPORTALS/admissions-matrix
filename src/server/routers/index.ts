@@ -81,7 +81,7 @@ export type HostelStudent = {
 export type Hostel = {
   address: string;
   created_at: string;
-  fee: string;
+  fee: number;
   gender: string;
   hostel_name: string;
   id: string;
