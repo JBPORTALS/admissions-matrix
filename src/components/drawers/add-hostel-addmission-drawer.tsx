@@ -82,12 +82,17 @@ export default function AddHostelAdmissionDetailsDrawer({
     },
   });
 
+  const feePaid = form.watch().feePaid;
+  const feeFixed = form.watch().feeFixed;
+  const appId = form.watch().appId;
+  const hostelId = form.watch().hostelId;
+
   const searchApplication = useCallback(async () => {
     setIsStudentLoading(true);
     try {
-      if (form.getValues().appId && user?.college) {
+      if (appId && user?.college) {
         const data = await utils.viewStudent.fetch({
-          appId: form.getValues().appId,
+          appId,
           acadyear,
           college: user.college,
         });
@@ -100,18 +105,15 @@ export default function AddHostelAdmissionDetailsDrawer({
       setStudent(undefined);
     }
     setIsStudentLoading(false);
-  }, [form.getValues().appId]);
+  }, [appId, acadyear, user.college, utils.viewStudent]);
 
   useEffect(() => {
     if (open) {
       form.resetField("feeBalance", {
-        defaultValue: (
-          parseInt(form.getValues().feeFixed) -
-          parseInt(form.getValues().feePaid)
-        ).toString(),
+        defaultValue: (parseInt(feeFixed) - parseInt(feePaid)).toString(),
       });
     }
-  }, [form.getValues().feeFixed, form.getValues().feePaid, open]);
+  }, [feeFixed, feePaid, open, form]);
 
   async function onSubmit(values: z.infer<typeof hostelAdmissionSchema>) {
     await addStudent({ acadyear, ...values });
@@ -120,14 +122,12 @@ export default function AddHostelAdmissionDetailsDrawer({
 
   useEffect(() => {
     form.resetField("feeQuoted", {
-      defaultValue:
-        hostelList?.data.find((v) => v.id === form.getValues().hostelId)?.fee ??
-        "",
+      defaultValue: hostelList?.data.find((v) => v.id == hostelId)?.fee ?? "",
       keepTouched: true,
       keepDirty: true,
       keepError: false,
     });
-  }, [form.watch().hostelId]);
+  }, [feeFixed, feePaid, form, hostelList?.data, hostelId]);
 
   return (
     <DrawerRoot
