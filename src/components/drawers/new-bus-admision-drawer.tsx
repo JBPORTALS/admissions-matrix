@@ -71,6 +71,9 @@ export default function NewBusAdmissionDetailsDrawer({
       toaster.info({ title: "Student details added" });
       onOpenChange(false);
     },
+    onError(error) {
+      toaster.error({ title: error.message });
+    },
   });
   const form = useForm<z.infer<typeof busAdmissionSchema>>({
     resolver: zodResolver(busAdmissionSchema),
@@ -87,12 +90,15 @@ export default function NewBusAdmissionDetailsDrawer({
     await utils.busViewStudent.invalidate();
   }
 
+  const boardingPoint = form.watch().boardingPoint;
+  const appId = form.getValues().appId;
+
   const searchApplication = useCallback(async () => {
     setIsStudentLoading(true);
     try {
-      if (form.getValues().appId && user?.college) {
+      if (appId && user?.college) {
         const data = await utils.viewStudent.fetch({
-          appId: form.getValues().appId,
+          appId,
           acadyear,
           college: user.college,
         });
@@ -105,18 +111,20 @@ export default function NewBusAdmissionDetailsDrawer({
       setStudent(undefined);
     }
     setIsStudentLoading(false);
-  }, [form.getValues().appId]);
+  }, [appId, user.college, acadyear, utils.viewStudent]);
 
   React.useEffect(() => {
-    if (form.getValues().boardingPoint) {
-      const boardingPoint = data?.data.find(
+    if (boardingPoint) {
+      const filterdBoardingPoint = data?.data.find(
         (v) => v.id === form.getValues().boardingPoint
       );
 
-      if (boardingPoint)
-        form.resetField("feeQuoted", { defaultValue: boardingPoint.amount });
+      if (filterdBoardingPoint)
+        form.resetField("feeQuoted", {
+          defaultValue: filterdBoardingPoint.amount,
+        });
     }
-  }, [form.getValues().boardingPoint]);
+  }, [boardingPoint, data?.data, form]);
 
   return (
     <DrawerRoot
@@ -201,34 +209,12 @@ export default function NewBusAdmissionDetailsDrawer({
                     name="boardingPoint"
                     render={({ field }) => (
                       <FormItem pt={"3.5"}>
-                        <FormLabel>Route</FormLabel>
-                        <NativeSelect.Root disabled={isLoading}>
-                          <NativeSelect.Field {...field}>
-                            <option value={""}>Select</option>
-                            {data?.data?.map((r) => (
-                              <option value={r.id}>
-                                {r.route_no} - {r.boarding_point}
-                              </option>
-                            ))}
-                          </NativeSelect.Field>
-                          <NativeSelect.Indicator />
-                        </NativeSelect.Root>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="boardingPoint"
-                    render={({ field }) => (
-                      <FormItem pt={"3.5"}>
                         <FormLabel>Boarding Point</FormLabel>
                         <NativeSelect.Root disabled={isLoading}>
                           <NativeSelect.Field {...field}>
                             <option value={""}>Select</option>
                             {data?.data?.map((r) => (
-                              <option value={r.id}>
+                              <option key={r.id} value={r.id}>
                                 {r.route_no} - {r.boarding_point}
                               </option>
                             ))}

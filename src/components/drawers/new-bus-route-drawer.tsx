@@ -52,6 +52,9 @@ export function NewBusRouteDrawer({ children }: { children: React.ReactNode }) {
       router.refresh();
       onOpenChange(false);
     },
+    onError(error) {
+      toaster.error({ title: error.message });
+    },
   });
 
   async function onSubmit(values: z.infer<typeof newHostelSchema>) {
