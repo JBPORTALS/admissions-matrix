@@ -521,6 +521,7 @@ export const appRouter = router({
         created_at: string;
         driver_name: string;
         driver_number: string;
+        total_boarding_points: number;
         id: string;
         last_point: string;
         route_no: string;
@@ -620,7 +621,7 @@ export const appRouter = router({
       fd.append("route_id", input.routeId);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL +
-          `busboardinglist.php?route_id=${input.routeId}`,
+          `busboardinglistbyrouteid.php?route_id=${input.routeId}`,
         {
           method: "GET",
         }

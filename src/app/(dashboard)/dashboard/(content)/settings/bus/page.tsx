@@ -8,6 +8,8 @@ import { NewBusRouteDrawer } from "@/components/drawers/new-bus-route-drawer";
 export default async function Page() {
   const data = await api.busRouteList();
 
+  console.log(data);
+
   return (
     <Box w={"full"} spaceY={"6"}>
       <HStack w={"full"} justifyContent={"space-between"}>

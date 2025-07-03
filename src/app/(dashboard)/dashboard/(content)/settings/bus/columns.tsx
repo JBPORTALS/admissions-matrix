@@ -35,6 +35,10 @@ export const columns: ColumnDef<BusRoute>[] = [
     header: "Last Point",
   },
   {
+    accessorKey: "total_boarding_points",
+    header: "Total Boarding Points",
+  },
+  {
     accessorKey: "driver_name",
     header: "Driver Name",
   },
