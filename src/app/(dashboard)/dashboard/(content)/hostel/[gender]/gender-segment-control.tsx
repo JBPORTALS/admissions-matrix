@@ -1,32 +1,33 @@
 "use client";
 
-import { genderSearchParams } from "@/utils/searchParms";
 import { HStack, SegmentGroup } from "@chakra-ui/react";
-import { useQueryStates } from "nuqs";
+import { useParams, useRouter } from "next/navigation";
+import React from "react";
 import { FaFemale, FaMale } from "react-icons/fa";
 
 export function GenderSegmentControl() {
-  const [{ gender }, setGender] = useQueryStates(genderSearchParams);
+  const { gender } = useParams<{ gender: "MALE" | "FEMALE" }>();
+  const router = useRouter();
 
   // Dynamically switch color palette based on gender
   const colorPalette = gender === "MALE" ? "blue" : "pink";
 
   return (
     <SegmentGroup.Root
-      size={"lg"}
+      size={"md"}
       colorPalette={colorPalette}
       value={gender}
-      onValueChange={({ value }) =>
-        setGender({ gender: value as "MALE" | "FEMALE" })
-      }
+      onValueChange={({ value }) => {
+        router.push(`/dashboard/hostel/${value}`);
+      }}
     >
-      <SegmentGroup.Indicator bg={"colorPalette.solid"} />
+      <SegmentGroup.Indicator bg={"colorPalette.subtle"} />
       <SegmentGroup.Items
         items={[
           {
             value: "MALE",
             label: (
-              <HStack color={gender === "MALE" ? "white" : undefined}>
+              <HStack>
                 <FaMale />
                 Male
               </HStack>
@@ -35,7 +36,7 @@ export function GenderSegmentControl() {
           {
             value: "FEMALE",
             label: (
-              <HStack color={gender === "FEMALE" ? "white" : undefined}>
+              <HStack>
                 <FaFemale />
                 Female
               </HStack>

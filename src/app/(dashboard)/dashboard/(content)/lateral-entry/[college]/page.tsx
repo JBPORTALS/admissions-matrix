@@ -18,7 +18,7 @@ import { ProgressBar, ProgressRoot } from "@/components/ui/progress";
 export default function CollegeList() {
   const params = useParams<{ college: string }>();
   const acadyear = useAppSelector((state) => state.admissions.acadYear);
-  const { data, error } = trpc.retreiveBranchMatrix.useQuery({
+  const { data, error } = trpc.retreiveLateralBranchMatrix.useQuery({
     acadyear,
     college: params.college,
   });

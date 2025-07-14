@@ -11,7 +11,7 @@ import React from "react";
 
 export default function Home() {
   const params = useParams<{ college: string; branch: string }>();
-  const { data, isLoading } = trpc.searchClass.useQuery({
+  const { data, isLoading } = trpc.busSearchClass.useQuery({
     acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
     branch: params.branch,
     college: params.college,

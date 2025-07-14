@@ -7,6 +7,7 @@ export const fetchSelectedMatrix = createAsyncThunk<
   SelectedMatrix[],
   {
     admissionno: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -23,6 +24,7 @@ export const fetchSelectedMatrix = createAsyncThunk<
       const acadyear = state.admissions.acadYear;
       formData.append("acadyear", acadyear);
       formData.append("admissionno", payload.admissionno);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "searchstudent.php",
         method: "POST",

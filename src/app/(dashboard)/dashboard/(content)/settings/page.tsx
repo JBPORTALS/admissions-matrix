@@ -14,8 +14,11 @@ import {
   Field,
   NativeSelect,
   EmptyState,
+  Heading,
+  Text,
+  Center,
 } from "@chakra-ui/react";
-import { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Formik,
@@ -24,16 +27,7 @@ import {
   useFormikContext,
 } from "formik";
 import * as Yup from "yup";
-import { toaster } from "../ui/toaster";
-import {
-  DrawerBody,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerRoot,
-  DrawerTitle,
-  DrawerTrigger,
-} from "../ui/drawer";
+import { toaster } from "@/components/ui/toaster";
 import { LuSettings2, LuSquareMousePointer } from "react-icons/lu";
 import { useUser } from "@/utils/auth";
 
@@ -57,7 +51,7 @@ let initialState = {
   comedk: "",
 };
 
-export function MIFModalButton() {
+export default function Page() {
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
   const user = useUser();
 
@@ -88,10 +82,21 @@ export function MIFModalButton() {
         toaster.error({ title: "Something went wrong!" });
       }
     },
-    []
+    [acadYear]
   );
 
-  if (user?.college !== "MANAGEMENT") return null;
+  if (user?.college !== "MANAGEMENT")
+    return (
+      <Center w={"full"} h={"64"}>
+        <VStack>
+          <Heading>You don&apos;t have permission for this setting</Heading>
+          <Text color={"fg.muted"}>
+            If you need any changes contact your admin / office with respective
+            college to manage intake & fee.
+          </Text>
+        </VStack>
+      </Center>
+    );
 
   return (
     <Formik
@@ -102,26 +107,13 @@ export function MIFModalButton() {
         await updateDetails(values);
       }}
     >
-      <DrawerRoot size={"sm"}>
-        <DrawerTrigger asChild>
-          <Button size={"xs"} variant={"subtle"}>
-            <LuSettings2 /> Manage Intake & Fee
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader>
-            <VStack gap={"0"}>
-              <DrawerTitle>Manage Intake & Fee Settings</DrawerTitle>
-              <DrawerDescription>
-                Manage all colleges intake of admissions
-              </DrawerDescription>
-            </VStack>
-          </DrawerHeader>
-          <DrawerBody>
-            <FormikContextProvider />
-          </DrawerBody>
-        </DrawerContent>
-      </DrawerRoot>
+      <VStack w={"full"} px={"32"} alignItems={"start"} gap={"8"}>
+        <VStack gap={"0"} alignItems={"start"}>
+          <Heading>Manage Intake & Fee Settings</Heading>
+          <Text>Manage all colleges intake of admissions</Text>
+        </VStack>
+        <FormikContextProvider />
+      </VStack>
     </Formik>
   );
 }
@@ -174,11 +166,11 @@ const FormikContextProvider = () => {
     } catch (e) {
       toaster.error({ title: "Something went wrong" });
     }
-  }, [values.branch, values.college, values.category]);
+  }, [values.branch, values.college, values.category, acadYear, setFieldValue]);
 
   useEffect(() => {
     if (values.college && values.branch) fetchDetails();
-  }, [values.college, values.branch]);
+  }, [values.college, values.branch, fetchDetails]);
 
   useEffect(() => {
     setFieldValue("remaining", +(+values.intake - +values.alloted));
@@ -189,7 +181,7 @@ const FormikContextProvider = () => {
   }, [values.intake, values.cet, values.comedk, setFieldValue]);
 
   return (
-    <VStack>
+    <VStack gap={"2.5"} w={"full"}>
       {/* <pre>{JSON.stringify(errors)}</pre> */}
 
       <Field.Root>
@@ -220,7 +212,9 @@ const FormikContextProvider = () => {
           <NativeSelect.Indicator />
         </NativeSelect.Root>
       </Field.Root>
-      <Separator size={"sm"} />
+
+      <Separator size={"sm"} w={"full"} />
+
       {!values.branch || !values.college ? (
         <EmptyState.Root>
           <EmptyState.Content>

@@ -1,11 +1,24 @@
 import React from "react";
 import { trpc } from "./trpc-cleint";
 import { useRouter } from "next/navigation";
+import { SessionData } from "./session";
 
-export function useUser() {
-  const [userId, setUserId] = React.useState(undefined);
-  const user = trpc.getUser.useQuery(userId ?? "", { enabled: !!userId });
-  const setUser = React.useCallback(async () => {
+type SessionContextType = {
+  isLoaded: boolean;
+  user: SessionData | null;
+  fetchUser: () => Promise<void>;
+};
+
+const SessionContext = React.createContext<SessionContextType | null>(null);
+
+export function SessionProvider({ children }: { children: React.ReactNode }) {
+  const utils = trpc.useUtils();
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  /** Memoize the session data */
+  const [session, setSession] = React.useState<SessionData | null>(null);
+
+  const fetchUser = React.useCallback(async () => {
+    setIsLoaded(false);
     // Fetch session
     const sessionResponse = await fetch(`/api/session`, {
       credentials: "include",
@@ -21,26 +34,43 @@ export function useUser() {
       throw new Error("Invalid session data");
     }
 
-    setUserId(sessionData.id);
+    const user = await utils.getUser.fetch(sessionData.id);
+    setSession(user ?? null);
+    setIsLoaded(true);
   }, []);
 
+  /** Fetch the session data */
   React.useEffect(() => {
-    setUser();
-  }, [user.data?.id]);
+    fetchUser();
+  }, []);
 
-  const session = user.data;
+  return (
+    <SessionContext.Provider
+      value={{ isLoaded, user: session ?? null, fetchUser }}
+    >
+      {children}
+    </SessionContext.Provider>
+  );
+}
 
-  if (!session) return null;
+export function useUser() {
+  const session = React.useContext(SessionContext);
+
+  if (!session) {
+    throw new Error("useUser must be used within a SessionProvider");
+  }
+  const { isLoaded, user, fetchUser } = session;
 
   return {
-    isLoaded: user.isFetched,
-    ...session,
+    isLoaded,
+    ...user,
+    fetchUser,
   };
 }
 
 export function useSignIn() {
-  const [userId, setUserId] = React.useState(undefined);
-  const user = trpc.getUser.useQuery(userId ?? "", { enabled: !!userId });
+  const { fetchUser, ...user } = useUser();
+
   const router = useRouter();
   const { mutateAsync } = trpc.signIn.useMutation({
     async onSuccess(data) {
@@ -51,25 +81,10 @@ export function useSignIn() {
           "Content-Type": "application/json",
         },
       });
+
+      await fetchUser();
     },
   });
-
-  const setUser = React.useCallback(async () => {
-    // Fetch session
-    const sessionResponse = await fetch(`/api/session`, {
-      credentials: "include",
-    });
-
-    if (!sessionResponse.ok) {
-      throw new Error(`Session fetch failed: ${sessionResponse.statusText}`);
-    }
-
-    const sessionData = await sessionResponse.json();
-
-    console.log("Session Data", sessionData);
-
-    setUserId(sessionData.id);
-  }, []);
 
   const signOut = React.useCallback(async () => {
     // Fetch session
@@ -81,12 +96,8 @@ export function useSignIn() {
     router.refresh();
   }, []);
 
-  React.useEffect(() => {
-    setUser();
-  }, [user.data?.id]);
-
   return {
-    isLoggedIn: !!user.data,
+    isLoggedIn: !!user.id,
     signIn: mutateAsync,
     signOut,
   };

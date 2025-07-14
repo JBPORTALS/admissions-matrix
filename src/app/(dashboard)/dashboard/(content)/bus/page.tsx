@@ -13,7 +13,7 @@ import { useUser } from "@/utils/auth";
 
 export default function Home() {
   const user = useUser();
-  const { isLoading, data } = trpc.getOverallMatrix.useQuery(
+  const { isLoading, data } = trpc.getBusOverallMatrix.useQuery(
     {
       acadyear: process.env.NEXT_PUBLIC_ACADYEAR!,
       college: user?.college ?? "",
@@ -57,9 +57,6 @@ export default function Home() {
             <Table.ColumnHeader textAlign={"center"}>
               Allotted Seats
             </Table.ColumnHeader>
-            <Table.ColumnHeader textAlign={"center"}>
-              Total Enquiries
-            </Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -77,9 +74,6 @@ export default function Home() {
                   </Table.Cell>
                   <Table.Cell textAlign={"center"}>
                     {value.allotted_seats}
-                  </Table.Cell>
-                  <Table.Cell textAlign={"center"}>
-                    {value.total_enquiries}
                   </Table.Cell>
                 </Table.Row>
               );
