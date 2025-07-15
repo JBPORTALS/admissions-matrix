@@ -3,6 +3,7 @@
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
 import { IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import { LuArrowRight } from "react-icons/lu";
 
 export type Payment = {
@@ -57,6 +58,21 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "phone_no",
     header: "Phone No.",
+  },
+  {
+    accessorKey: "father_no",
+    header: "Alt Phone No.",
+  },
+  {
+    accessorKey: "due_date",
+    header: "Due Date",
+    cell(props) {
+      return (
+        <time>
+          {format(new Date(props.getValue() as string), "dd MMM, yyyy")}
+        </time>
+      );
+    },
   },
   {
     accessorKey: "fee_fixed",
