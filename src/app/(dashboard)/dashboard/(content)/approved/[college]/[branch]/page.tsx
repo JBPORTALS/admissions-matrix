@@ -1,5 +1,5 @@
 "use client";
-import { Breadcrumb, VStack } from "@chakra-ui/react";
+import { Breadcrumb, Center, Spinner, VStack } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { useParams } from "next/navigation";
@@ -16,6 +16,13 @@ export default function Home() {
     branch: params.branch,
     college: params.college,
   });
+
+  if (isLoading)
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
 
   return (
     <React.Fragment>

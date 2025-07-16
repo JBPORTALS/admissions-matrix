@@ -1,7 +1,7 @@
 "use client";
 
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
-import { IconButton, Link } from "@chakra-ui/react";
+import { Box, IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { LuArrowRight } from "react-icons/lu";
@@ -89,6 +89,19 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "referred_by",
     header: "Referred By",
+    cell(props) {
+      return (
+        <Box
+          w={"100px"}
+          maxW={"100px"}
+          overflow={"hidden"}
+          textOverflow={"ellipsis"}
+          textWrap={"nowrap"}
+        >
+          {props.getValue() as string}
+        </Box>
+      );
+    },
   },
   {
     accessorKey: "approved_by",
