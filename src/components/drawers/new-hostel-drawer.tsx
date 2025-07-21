@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc-cleint";
 import { toaster } from "../ui/toaster";
+import { useRouter } from "next/navigation";
 
 const newBusRouteSchema = z.object({
   hostelName: z.string().min(1, "Required"),
@@ -48,11 +49,13 @@ export function NewHostelDrawer({ children }: { children: React.ReactNode }) {
     resolver: zodResolver(newBusRouteSchema),
     mode: "onChange",
   });
+  const router = useRouter();
 
   const { mutateAsync: hostelAdd } = trpc.hostelAdd.useMutation({
     async onSuccess() {
       toaster.success({ title: "Hostel created" });
       await utils.hostelList.invalidate();
+      router.refresh();
       onOpenChange(false);
     },
   });
