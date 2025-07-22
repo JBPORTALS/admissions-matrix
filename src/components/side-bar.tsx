@@ -67,7 +67,7 @@ const items = [
     icon: LuBusFront,
   },
   {
-    label: "Setttings",
+    label: "Settings",
     href: "/dashboard/settings",
     icon: LuSettings,
   },
