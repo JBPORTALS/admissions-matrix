@@ -69,7 +69,8 @@ export const columns: ColumnDef<Payment>[] = [
     cell(props) {
       return (
         <time>
-          {isDate(new Date(props.getValue() as string))
+          {isDate(new Date(props.getValue() as string)) ||
+          (props.getValue() as string) === "0000-00-00"
             ? format(new Date(props.getValue() as string), "dd MMM, yyyy")
             : "Invalid Date"}
         </time>
