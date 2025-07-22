@@ -175,19 +175,6 @@ export default function ViewAdmissionDetailsModal({
     admissionno,
   ]);
 
-  useEffect(() => {
-    if (open && matrix?.admission_id == admissionno && intialRender) {
-      dispatch(updateSelectedMatrix({ branch: "" }));
-    }
-  }, [
-    dispatch,
-    open,
-    matrix?.admission_id,
-    matrix?.college,
-    admissionno,
-    intialRender,
-  ]);
-
   // Fetch selected matrix when dialog is open
   useEffect(() => {
     if (open && user?.college)
@@ -274,6 +261,7 @@ export default function ViewAdmissionDetailsModal({
           })
         ));
       await utils.searchClass.invalidate();
+      closeDrawer();
     }
   };
 
@@ -513,7 +501,7 @@ export default function ViewAdmissionDetailsModal({
                 value={[matrix?.category]}
                 className={"shadow-md shadow-lightBrand"}
                 onValueChange={(e) => {
-                  dispatch(updateSelectedMatrix({ category: e.value }));
+                  dispatch(updateSelectedMatrix({ category: e.value[0] }));
                 }}
               >
                 <SelectTrigger>
@@ -583,6 +571,7 @@ export default function ViewAdmissionDetailsModal({
                   w={"full"}
                   collection={branchCollection}
                   value={[matrix?.branch]}
+                  defaultValue={[matrix?.branch]}
                   onValueChange={(e) => {
                     dispatch(updateSelectedMatrix({ branch: e.value[0] }));
                   }}
