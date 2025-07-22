@@ -291,9 +291,7 @@ export default function ViewAdmissionDetailsModal({
             {isUnapproved ? "Enquiry Details" : "Admission Details"}
           </DrawerTitle>
           <DrawerDescription fontSize={"xs"}>
-            Enquired on{" "}
-            {matrix?.enquiry_date &&
-              format(new Date(matrix.enquiry_date), "dd MMM, yyyy")}
+            Enquired on {matrix?.enquiry_date && matrix.enquiry_date}
           </DrawerDescription>
         </DrawerHeader>
 
@@ -1019,7 +1017,11 @@ export default function ViewAdmissionDetailsModal({
                 <Box w={"60%"}>
                   <Input
                     type="date"
-                    value={matrix?.due_date}
+                    value={
+                      matrix?.due_date === "0000-00-00"
+                        ? new Date().getDate()
+                        : matrix.due_date
+                    }
                     onChange={(e) => {
                       dispatch(
                         updateSelectedMatrix({
