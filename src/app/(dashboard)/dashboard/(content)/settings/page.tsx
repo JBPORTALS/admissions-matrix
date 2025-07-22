@@ -30,6 +30,7 @@ import * as Yup from "yup";
 import { toaster } from "@/components/ui/toaster";
 import { LuSettings2, LuSquareMousePointer } from "react-icons/lu";
 import { useUser } from "@/utils/auth";
+import { categoryOptions } from "@/utils/constants";
 
 const Schema = Yup.object().shape({
   fee: Yup.number().required(),
@@ -46,7 +47,7 @@ let initialState = {
   remaining: "",
   college: "",
   branch: "",
-  category: "REGULAR",
+  category: "",
   cet: "",
   comedk: "",
 };
@@ -122,6 +123,7 @@ const FormikContextProvider = () => {
   const {
     values,
     setFieldValue,
+    handleReset,
     handleSubmit,
     isSubmitting,
     handleChange,
@@ -161,16 +163,28 @@ const FormikContextProvider = () => {
       setFieldValue("remaining", response.data[0].remaining_seats ?? 0);
       setFieldValue("fee", response.data[0].fee ?? 0);
       setFieldValue("intake", response.data[0].intake ?? 0);
-      setFieldValue("comedk", response.data[0].comedk ?? 0);
-      setFieldValue("cet", response.data[0].cet ?? 0);
+
+      if (values.category === "REGULAR") {
+        setFieldValue("comedk", response.data[0].comedk ?? 0);
+        setFieldValue("cet", response.data[0].cet ?? 0);
+      }
     } catch (e) {
+      handleReset();
+      console.error(e);
       toaster.error({ title: "Something went wrong" });
     }
-  }, [values.branch, values.college, values.category, acadYear, setFieldValue]);
+  }, [
+    values.branch,
+    values.college,
+    values.category,
+    acadYear,
+    handleReset,
+    setFieldValue,
+  ]);
 
   useEffect(() => {
-    if (values.college && values.branch) fetchDetails();
-  }, [values.college, values.branch, fetchDetails]);
+    if (values.college && values.branch && values.category) fetchDetails();
+  }, [values.college, values.branch, fetchDetails, values.category]);
 
   useEffect(() => {
     setFieldValue("remaining", +(+values.intake - +values.alloted));
@@ -212,10 +226,24 @@ const FormikContextProvider = () => {
           <NativeSelect.Indicator />
         </NativeSelect.Root>
       </Field.Root>
+      <Field.Root>
+        <Field.Label>Category</Field.Label>
+        <NativeSelect.Root>
+          <NativeSelect.Field name="category" onChange={handleChange}>
+            <option value={""}>Select</option>
+            {categoryOptions.items.map((opt) => (
+              <option value={opt.value} key={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      </Field.Root>
 
       <Separator size={"sm"} w={"full"} />
 
-      {!values.branch || !values.college ? (
+      {!values.branch || !values.college || !values.category ? (
         <EmptyState.Root>
           <EmptyState.Content>
             <EmptyState.Indicator>
@@ -270,40 +298,45 @@ const FormikContextProvider = () => {
                       />
                     </Field.Root>
                   </HStack>
-                  <HStack w={"full"} justifyContent={"space-between"}>
-                    <b>CET & SNQ</b>
-                    <Field.Root
-                      w={"40"}
-                      invalid={!!touched.cet && !!errors.cet}
-                    >
-                      <FormikField
-                        as={Input}
-                        name={"cet"}
-                        type="number"
-                        textAlign={"right"}
-                      />
-                      <Field.ErrorText fontSize={"xs"}>
-                        {errors.cet}
-                      </Field.ErrorText>
-                    </Field.Root>
-                  </HStack>
-                  <HStack w={"full"} justifyContent={"space-between"}>
-                    <b>COMEDK</b>
-                    <Field.Root
-                      w={"40"}
-                      invalid={!!touched.comedk && !!errors.comedk}
-                    >
-                      <FormikField
-                        as={Input}
-                        name={"comedk"}
-                        type="number"
-                        textAlign={"right"}
-                      />
-                      <Field.ErrorText fontSize={"xs"}>
-                        {errors.comedk}
-                      </Field.ErrorText>
-                    </Field.Root>
-                  </HStack>
+
+                  {values.category === "REGULAR" && (
+                    <>
+                      <HStack w={"full"} justifyContent={"space-between"}>
+                        <b>CET & SNQ</b>
+                        <Field.Root
+                          w={"40"}
+                          invalid={!!touched.cet && !!errors.cet}
+                        >
+                          <FormikField
+                            as={Input}
+                            name={"cet"}
+                            type="number"
+                            textAlign={"right"}
+                          />
+                          <Field.ErrorText fontSize={"xs"}>
+                            {errors.cet}
+                          </Field.ErrorText>
+                        </Field.Root>
+                      </HStack>
+                      <HStack w={"full"} justifyContent={"space-between"}>
+                        <b>COMEDK</b>
+                        <Field.Root
+                          w={"40"}
+                          invalid={!!touched.comedk && !!errors.comedk}
+                        >
+                          <FormikField
+                            as={Input}
+                            name={"comedk"}
+                            type="number"
+                            textAlign={"right"}
+                          />
+                          <Field.ErrorText fontSize={"xs"}>
+                            {errors.comedk}
+                          </Field.ErrorText>
+                        </Field.Root>
+                      </HStack>
+                    </>
+                  )}
                 </>
               ) : null}
               <HStack w={"full"} justifyContent={"space-between"}>
@@ -350,7 +383,6 @@ const FormikContextProvider = () => {
 
               <HStack w={"full"}>
                 <Button
-                  disabled={!isValid}
                   loading={isSubmitting}
                   onClick={() => handleSubmit()}
                   colorScheme="facebook"
