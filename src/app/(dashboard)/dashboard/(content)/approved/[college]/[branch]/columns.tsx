@@ -3,7 +3,7 @@
 import ViewAdmissionDetailsModal from "@/components/drawers/ViewAdmissionDetailsModal";
 import { Box, IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
-import { format, formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict, isDate } from "date-fns";
 import { LuArrowRight } from "react-icons/lu";
 
 export type Payment = {
@@ -69,7 +69,9 @@ export const columns: ColumnDef<Payment>[] = [
     cell(props) {
       return (
         <time>
-          {format(new Date(props.getValue() as string), "dd MMM, yyyy")}
+          {isDate(new Date(props.getValue() as string))
+            ? format(new Date(props.getValue() as string), "dd MMM, yyyy")
+            : "Invalid Date"}
         </time>
       );
     },
