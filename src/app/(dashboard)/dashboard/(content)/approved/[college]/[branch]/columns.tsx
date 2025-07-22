@@ -67,14 +67,7 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "due_date",
     header: "Due Date",
     cell(props) {
-      return (
-        <time>
-          {isDate(new Date(props.getValue() as string)) ||
-          (props.getValue() as string) === "0000-00-00"
-            ? format(new Date(props.getValue() as string), "dd MMM, yyyy")
-            : "Invalid Date"}
-        </time>
-      );
+      return <time>{props.getValue() as string}</time>;
     },
   },
   {
