@@ -67,7 +67,7 @@ const items = [
     icon: LuBusFront,
   },
   {
-    label: "Setttings",
+    label: "Settings",
     href: "/dashboard/settings",
     icon: LuSettings,
   },
@@ -109,7 +109,11 @@ export function SideBar() {
           <nav>
             <VStack w={"full"}>
               {items.map((item) => (
-                <NavButton asChild active={pathname.startsWith(item.href)}>
+                <NavButton
+                  key={item.href}
+                  asChild
+                  active={pathname.startsWith(item.href)}
+                >
                   <Link href={item.href}>
                     <item.icon />
                     {item.label}

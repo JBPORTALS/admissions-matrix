@@ -70,8 +70,6 @@ export default function CollegeList() {
           params.college === "KSSEM" ? (
             <>
               <Table.ColumnHeader>Total Seats</Table.ColumnHeader>
-              <Table.ColumnHeader>CET & SNQ</Table.ColumnHeader>
-              <Table.ColumnHeader>COMEDK</Table.ColumnHeader>
             </>
           ) : null}
           <Table.ColumnHeader>Management</Table.ColumnHeader>
@@ -110,16 +108,6 @@ export default function CollegeList() {
                       <TableCell>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
                           {value.total}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                          {value.cet}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                          {value.comedk}
                         </div>
                       </TableCell>
                     </>

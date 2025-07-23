@@ -48,6 +48,7 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 import {
+  categoryOptions,
   collegesOptions,
   examsOptions,
   hostelOptions,
@@ -124,7 +125,7 @@ export default function ViewAdmissionDetailsModal({
   const fee = useAppSelector((state) => state.admissions.fee.data.toString());
   const params = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
-  let intialRender = true;
+  let intialRender = React.useRef(true);
 
   const branchCollection = useMemo(
     () =>
@@ -145,7 +146,7 @@ export default function ViewAdmissionDetailsModal({
         fee_fixed: matrix?.fee_fixed,
         fee_quoted: matrix?.fee_quoted,
       });
-      intialRender = false;
+      intialRender.current = false;
     }
   }, [open, matrix?.fee_fixed, matrix?.fee_quoted]);
 
@@ -171,19 +172,14 @@ export default function ViewAdmissionDetailsModal({
     dispatch,
     open,
     intialRender,
+    admissionno,
   ]);
-
-  useEffect(() => {
-    if (open && matrix?.admission_id == admissionno && intialRender) {
-      dispatch(updateSelectedMatrix({ branch: "" }));
-    }
-  }, [dispatch, open, matrix?.admission_id, matrix?.college]);
 
   // Fetch selected matrix when dialog is open
   useEffect(() => {
     if (open && user?.college)
       dispatch(fetchSelectedMatrix({ admissionno, college: user.college }));
-  }, [open]);
+  }, [open, admissionno, user.college, dispatch]);
 
   const onDelete = async () => {
     setIsDeleting(true);
@@ -265,6 +261,7 @@ export default function ViewAdmissionDetailsModal({
           })
         ));
       await utils.searchClass.invalidate();
+      closeDrawer();
     }
   };
 
@@ -495,6 +492,42 @@ export default function ViewAdmissionDetailsModal({
                   color={"fg.muted"}
                   fontWeight={"medium"}
                 >
+                  Category
+                </Heading>
+              </VStack>
+              <SelectRoot
+                w={"60%"}
+                collection={categoryOptions}
+                value={[matrix?.category]}
+                className={"shadow-md shadow-lightBrand"}
+                onValueChange={(e) => {
+                  dispatch(updateSelectedMatrix({ category: e.value[0] }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValueText placeholder="Select Category..." />
+                </SelectTrigger>
+                <SelectContent portalRef={contentRef}>
+                  {categoryOptions.items.map((item) => (
+                    <SelectItem key={item.value} item={item}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
+            </Flex>
+
+            <Flex
+              w="full"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <VStack flex={"1"} alignItems={"start"}>
+                <Heading
+                  fontSize={"sm"}
+                  color={"fg.muted"}
+                  fontWeight={"medium"}
+                >
                   College
                 </Heading>
               </VStack>
@@ -538,6 +571,7 @@ export default function ViewAdmissionDetailsModal({
                   w={"full"}
                   collection={branchCollection}
                   value={[matrix?.branch]}
+                  defaultValue={[matrix?.branch]}
                   onValueChange={(e) => {
                     dispatch(updateSelectedMatrix({ branch: e.value[0] }));
                   }}

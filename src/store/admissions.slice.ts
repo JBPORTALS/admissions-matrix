@@ -440,6 +440,7 @@ export const updateMatrix = createAsyncThunk<
       formData.append("admissionno", selected_Matrix[0]?.admission_id);
       formData.append("reg_no", selected_Matrix[0].reg_no);
       formData.append("name", selected_Matrix[0].name);
+      formData.append("category", selected_Matrix[0].category);
       formData.append("college", selected_Matrix[0].college);
       formData.append("branch", selected_Matrix[0].branch);
       formData.append("fname", selected_Matrix[0].father_name);
@@ -609,6 +610,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("reg_no", selected_data.reg_no);
       formData.append("admissionno", selected_data.admission_id);
       formData.append("college", selected_data.college);
+      formData.append("category", selected_data.category);
       formData.append("branch", selected_data.branch);
       formData.append("fname", selected_data.father_name);
       formData.append("mname", selected_data.mother_name);
@@ -706,6 +708,7 @@ export interface SelectedMatrix extends BranchAdmission {
   pan_no: string;
   address: string;
   recommended_by: string;
+  category: string;
 }
 
 export interface OverallMatrix {
