@@ -141,7 +141,6 @@ export default function ViewAdmissionDetailsModal({
 
   useEffect(() => {
     if (open) {
-      console.log("triggered");
       setState({
         fee_fixed: matrix?.fee_fixed,
         fee_quoted: matrix?.fee_quoted,
@@ -159,13 +158,14 @@ export default function ViewAdmissionDetailsModal({
         })
       ).then((action) => {
         setState({
-          fee_fixed: fee,
+          fee_fixed: matrix.fee_fixed ?? fee,
           fee_quoted: fee,
         });
       });
     }
   }, [
     matrix?.college,
+    matrix?.fee_fixed,
     matrix?.branch,
     matrix?.admission_id,
     fee,
@@ -234,14 +234,13 @@ export default function ViewAdmissionDetailsModal({
         })
       );
   }, [
-    // eslint-disable-line
-    state.fee_fixed, // eslint-disable-line
-    matrix?.fee_paid, // eslint-disable-line
+    state.fee_fixed,
+    matrix?.fee_paid,
     matrix?.admission_id,
     admissionno,
     open,
     dispatch,
-  ]); // eslint-disable-line
+  ]);
 
   const onsubmit = async () => {
     if (user?.college) {
