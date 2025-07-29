@@ -559,6 +559,7 @@ export const appRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: data.msg,
+          cause: data.stack,
         });
 
       return {
