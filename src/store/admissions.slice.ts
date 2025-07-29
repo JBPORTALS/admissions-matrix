@@ -609,6 +609,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("name", selected_data.name);
       formData.append("reg_no", selected_data.reg_no);
       formData.append("admissionno", selected_data.admission_id);
+      formData.append("category", selected_data.category);
       formData.append("college", selected_data.college);
       formData.append("category", selected_data.category);
       formData.append("branch", selected_data.branch);
