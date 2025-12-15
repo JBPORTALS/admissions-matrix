@@ -140,10 +140,13 @@ export function SideBar() {
               <SelectRoot
                 value={[acadYear]}
                 collection={ACADYEARS}
+                multiple={false}
                 onValueChange={(e) => {
-                  dispatch(updateAcadYear(e.value));
+                  dispatch(updateAcadYear(e.value[0]));
                   toaster.info({
-                    title: `Academic year changed to "${e.value}"`,
+                    title: `Academic year changed to "${
+                      e.items.find((i) => i.value == e.value[0])?.label
+                    }"`,
                   });
                   router.push("/dashboard");
                 }}
