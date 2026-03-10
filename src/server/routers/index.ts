@@ -125,11 +125,18 @@ export type UpdateHistory = {
 
 export const appRouter = router({
   getUpdatesHistory: procedure
-    .input(z.object({ acadyear: z.string(), admissionId: z.string() }))
+    .input(
+      z.object({
+        acadyear: z.string(),
+        admissionId: z.string(),
+        type: z.enum(["fee_fixed", "fee_paid"]),
+      }),
+    )
     .query(async ({ input }) => {
       const formData = new FormData();
       formData.append("acadyear", input.acadyear);
-      formData.append("admissionId", input.admissionId);
+      formData.append("admissionno", input.admissionId);
+      formData.append("type", input.type);
       const response = await fetch(
         process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievefeehistory.php",
         {
@@ -139,7 +146,9 @@ export const appRouter = router({
       );
       const data = await response.json();
       console.log(data);
-      return data as Matrix[];
+      return data as
+        | { total_updates: number; history: UpdateHistory[] }
+        | undefined;
     }),
   getOverallMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))

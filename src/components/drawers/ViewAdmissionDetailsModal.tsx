@@ -16,6 +16,7 @@ import {
 } from "@/store/admissions.slice";
 import {
   AvatarFallback,
+  Badge,
   Box,
   Button,
   createListCollection,
@@ -27,8 +28,8 @@ import {
   Input,
   InputGroup,
   Popover,
-  Separator,
   Span,
+  Spinner,
   Text,
   Textarea,
   useDisclosure,
@@ -82,7 +83,7 @@ import { CloseButton } from "../ui/close-button";
 import { toaster } from "../ui/toaster";
 import { useUser } from "@/utils/auth";
 import { Avatar } from "../ui/avatar";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 
 interface props {
   children: React.ReactNode;
@@ -928,6 +929,8 @@ export default function ViewAdmissionDetailsModal({
                   }}
                 />
                 <FeeUpdateHistoryTrigger
+                  type="fee_fixed"
+                  admissionId={admissionno}
                   lastUpdatedHistory={matrix?.last_updated_history?.fee_fixed}
                 />
               </VStack>
@@ -963,6 +966,8 @@ export default function ViewAdmissionDetailsModal({
                   }}
                 />
                 <FeeUpdateHistoryTrigger
+                  type="fee_paid"
+                  admissionId={admissionno}
                   lastUpdatedHistory={matrix?.last_updated_history?.fee_paid}
                 />
               </VStack>
@@ -1430,93 +1435,16 @@ export default function ViewAdmissionDetailsModal({
   );
 }
 
-const lastUpdatedHistory = [
-  {
-    id: 1,
-    user: { name: "Mr. Manjunath" },
-    new_value: 10000,
-    old_value: 15000,
-    created_at: new Date("10/02/2025"),
-    total_updates: 10,
-  },
-  {
-    id: 2,
-    user: { name: "Ms. Anitha" },
-    new_value: 12000,
-    old_value: 10000,
-    created_at: new Date("11/02/2025"),
-    total_updates: 9,
-  },
-  {
-    id: 3,
-    user: { name: "Mr. Ramesh" },
-    new_value: 8000,
-    old_value: 12000,
-    created_at: new Date("12/02/2025"),
-    total_updates: 8,
-  },
-  {
-    id: 4,
-    user: { name: "Mr. Suresh" },
-    new_value: 15000,
-    old_value: 8000,
-    created_at: new Date("13/02/2025"),
-    total_updates: 7,
-  },
-  {
-    id: 5,
-    user: { name: "Ms. Kavya" },
-    new_value: 9000,
-    old_value: 15000,
-    created_at: new Date("14/02/2025"),
-    total_updates: 6,
-  },
-  {
-    id: 6,
-    user: { name: "Mr. Naveen" },
-    new_value: 11000,
-    old_value: 9000,
-    created_at: new Date("15/02/2025"),
-    total_updates: 5,
-  },
-  {
-    id: 7,
-    user: { name: "Mr. Arjun" },
-    new_value: 13000,
-    old_value: 11000,
-    created_at: new Date("16/02/2025"),
-    total_updates: 4,
-  },
-  {
-    id: 8,
-    user: { name: "Ms. Deepa" },
-    new_value: 7000,
-    old_value: 13000,
-    created_at: new Date("17/02/2025"),
-    total_updates: 3,
-  },
-  {
-    id: 9,
-    user: { name: "Mr. Vinay" },
-    new_value: 14000,
-    old_value: 7000,
-    created_at: new Date("18/02/2025"),
-    total_updates: 2,
-  },
-  {
-    id: 10,
-    user: { name: "Ms. Sneha" },
-    new_value: 16000,
-    old_value: 14000,
-    created_at: new Date("19/02/2025"),
-    total_updates: 1,
-  },
-];
+type FeeHistoryType = "fee_fixed" | "fee_paid";
 
 function FeeUpdateHistoryTrigger({
   lastUpdatedHistory,
+  admissionId,
+  type,
 }: {
   lastUpdatedHistory?: FeeUpdateHistory | null;
+  admissionId: string;
+  type: FeeHistoryType;
 }) {
   if (!lastUpdatedHistory) return null;
 
@@ -1536,7 +1464,7 @@ function FeeUpdateHistoryTrigger({
         })}
       </Text>
       {lastUpdatedHistory.total_updates > 1 && (
-        <FeeUpdateHistoryPopover>
+        <FeeUpdateHistoryPopover type={type} admissionId={admissionId}>
           <Button variant={"plain"} size={"2xs"}>
             {lastUpdatedHistory.total_updates > 99
               ? "99+"
@@ -1548,27 +1476,123 @@ function FeeUpdateHistoryTrigger({
   );
 }
 
-function FeeUpdateHistoryPopover({ children }: { children: React.ReactNode }) {
+function FeeUpdateHistoryPopover({
+  children,
+  type,
+  admissionId,
+}: {
+  children: React.ReactNode;
+  admissionId: string;
+  type: FeeHistoryType;
+}) {
+  const [open, setOpen] = useState(false);
+  const acadyear = useAppSelector((state) => state.admissions.acadYear);
+
+  const { data, isLoading } = trpc.getUpdatesHistory.useQuery(
+    {
+      acadyear,
+      admissionId,
+      type,
+    },
+    { enabled: open },
+  );
+
   return (
-    <Popover.Root lazyMount unmountOnExit>
+    <Popover.Root
+      open={open}
+      onOpenChange={({ open }) => setOpen(open)}
+      lazyMount
+      unmountOnExit
+    >
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Positioner>
         <Popover.Content>
           <Popover.Arrow>
             <Popover.ArrowTip />
           </Popover.Arrow>
-          <Popover.Header>
+          <Popover.Header pb={"3"}>
             <Popover.Title fontWeight={"bold"}>Updates History</Popover.Title>
           </Popover.Header>
-          <Popover.Body minH={"xs"} maxH={"xs"}>
-            <VStack>
-              {lastUpdatedHistory.map((item) => (
-                <HStack w={"full"} key={item.id}>
-                  <Avatar size={"xs"} fallback={item.user.name.charAt(0)} />
-                </HStack>
-              ))}
-            </VStack>
+          <Popover.Body minH={"xs"} overflowY={"auto"} maxH={"xs"}>
+            {isLoading ? (
+              <VStack
+                justifyContent={"center"}
+                w={"full"}
+                alignItems={"center"}
+              >
+                <Spinner />
+              </VStack>
+            ) : (
+              <VStack w={"full"}>
+                {data?.history.map((item) => (
+                  <VStack
+                    gap={"1"}
+                    alignItems={"start"}
+                    w={"full"}
+                    key={item.id}
+                    borderBottomWidth={"thin"}
+                    borderBottomColor={"border.muted"}
+                    paddingBottom={"3"}
+                  >
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <HStack flex={"1"}>
+                        <Avatar
+                          size={"xs"}
+                          fallback={item.user.fullname.charAt(0)}
+                        />
+                        <VStack spaceY={"-4"} alignItems={"start"}>
+                          <HStack>
+                            <Text fontWeight={"semibold"} fontSize={"2xs"}>
+                              {item.user.fullname}
+                            </Text>
+                            <Badge size={"xs"}>{item.user.designation}</Badge>
+                          </HStack>
+                          <Text color={"fg.muted"} fontSize={"2xs"}>
+                            {item.user.email}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <Text fontSize={"2xs"} color={"fg.muted"}>
+                        {formatDistanceToNow(
+                          new Date(
+                            format(
+                              new Date(item.created_at),
+                              "dd-MM-yyy HH:mm:ss",
+                            ),
+                          ),
+                        )}
+                      </Text>
+                    </HStack>
+                    <Text fontSize={"xs"} pl={"10"}>
+                      Changed from{" "}
+                      {item.old_value.toLocaleString("en-IN", {
+                        currency: "INR",
+                        currencySign: "standard",
+                        currencyDisplay: "symbol",
+                        style: "currency",
+                        maximumFractionDigits: 0,
+                      })}{" "}
+                      to{" "}
+                      {item.new_value.toLocaleString("en-IN", {
+                        currency: "INR",
+                        currencySign: "standard",
+                        currencyDisplay: "symbol",
+                        style: "currency",
+                        maximumFractionDigits: 0,
+                      })}
+                    </Text>
+                  </VStack>
+                ))}
+              </VStack>
+            )}
           </Popover.Body>
+          <Popover.Footer pt={"3"}>
+            {data?.total_updates && (
+              <Text fontSize={"xs"} color={"fg.muted"}>
+                Total {data?.total_updates} updates
+              </Text>
+            )}
+          </Popover.Footer>
         </Popover.Content>
       </Popover.Positioner>
     </Popover.Root>
