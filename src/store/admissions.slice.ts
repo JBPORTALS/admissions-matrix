@@ -880,8 +880,11 @@ export const AdmissionsSlice = createSlice({
   name: "admissions",
   initialState,
   reducers: {
-    updateSelectedMatrix(state, _action) {
-      state.selectedMatrix.data = state.selectedMatrix.data;
+    updateSelectedMatrix(state, action) {
+      state.selectedMatrix.data = {
+        ...state.selectedMatrix.data,
+        ...action.payload,
+      };
     },
     updateFee(state, action) {
       state.fee = action.payload;

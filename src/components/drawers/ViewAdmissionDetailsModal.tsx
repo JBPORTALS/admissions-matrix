@@ -1529,7 +1529,8 @@ function FeeUpdateHistoryTrigger({
         color={"fg.muted"}
         truncate
       >
-        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.fullname}</Span>·
+        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.fullname}</Span>
+        {" · "}
         {formatDistanceToNow(new Date(lastUpdatedHistory.created_at), {
           addSuffix: true,
         })}
@@ -1537,7 +1538,9 @@ function FeeUpdateHistoryTrigger({
       {lastUpdatedHistory.total_updates > 1 && (
         <FeeUpdateHistoryPopover>
           <Button variant={"plain"} size={"2xs"}>
-            {lastUpdatedHistory.total_updates}
+            {lastUpdatedHistory.total_updates > 99
+              ? "99+"
+              : lastUpdatedHistory.total_updates}
           </Button>
         </FeeUpdateHistoryPopover>
       )}
