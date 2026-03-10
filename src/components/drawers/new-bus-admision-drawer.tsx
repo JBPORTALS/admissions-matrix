@@ -9,7 +9,6 @@ import {
   Input,
   InputGroup,
   NativeSelect,
-  NumberInput,
   Separator,
   Spinner,
   Stack,

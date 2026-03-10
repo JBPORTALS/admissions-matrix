@@ -104,7 +104,7 @@ export function EditBusRouteDrawer({
       <DrawerContent>
         <Form {...form}>
           <DrawerHeader>
-            <DrawerTitle>Bus Route Detaisl</DrawerTitle>
+            <DrawerTitle>Bus Route Details</DrawerTitle>
           </DrawerHeader>
 
           {isLoading ? (
