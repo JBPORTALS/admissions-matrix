@@ -907,7 +907,7 @@ export default function ViewAdmissionDetailsModal({
               <Input
                 w={"60%"}
                 type={"number"}
-                readOnly={!user?.can_update_total}
+                // readOnly={!user?.can_update_total}
                 variant={"outline"}
                 value={state.fee_fixed}
                 className={"shadow-md shadow-lightBrand"}
