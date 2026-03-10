@@ -4,7 +4,7 @@ import { RootState } from ".";
 import { toaster } from "@/components/ui/toaster";
 
 export const fetchSelectedMatrix = createAsyncThunk<
-  SelectedMatrix[],
+  SelectedMatrix,
   {
     admissionno: string;
     college: string;
@@ -35,7 +35,7 @@ export const fetchSelectedMatrix = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchSearchByAdNo = createAsyncThunk<
@@ -68,7 +68,7 @@ export const fetchSearchByAdNo = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchFeeQouted = createAsyncThunk<
@@ -103,7 +103,7 @@ export const fetchFeeQouted = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchSearchClass = createAsyncThunk<
@@ -138,7 +138,7 @@ export const fetchSearchClass = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchHostelSearchClass = createAsyncThunk<
@@ -173,7 +173,7 @@ export const fetchHostelSearchClass = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchOverallMatrix = createAsyncThunk<
@@ -199,14 +199,14 @@ export const fetchOverallMatrix = createAsyncThunk<
         {
           method: "POST",
           data: formData,
-        }
+        },
       );
       data = response.data;
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchOverallHostel = createAsyncThunk<
@@ -232,14 +232,14 @@ export const fetchOverallHostel = createAsyncThunk<
         {
           method: "POST",
           data: formData,
-        }
+        },
       );
       data = response.data;
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchBranchList = createAsyncThunk<
@@ -273,7 +273,7 @@ export const fetchBranchList = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchHistory = createAsyncThunk<
@@ -306,7 +306,7 @@ export const fetchHistory = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchCollegeList = createAsyncThunk<
@@ -339,7 +339,7 @@ export const fetchCollegeList = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchBaseColleges = createAsyncThunk<
@@ -369,7 +369,7 @@ export const fetchBaseColleges = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const fetchUnApprovedAdmissions = createAsyncThunk<
@@ -404,7 +404,7 @@ export const fetchUnApprovedAdmissions = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const updateMatrix = createAsyncThunk<
@@ -413,6 +413,7 @@ export const updateMatrix = createAsyncThunk<
     fee_fixed: string;
     fee_quoted: string;
     user_college: string;
+    user_id: string;
   },
   {
     rejectValue: {
@@ -423,55 +424,56 @@ export const updateMatrix = createAsyncThunk<
   "/admissions/updateAdmissionDetail",
   async (
     payload,
-    { fulfillWithValue, rejectWithValue, getState, dispatch }
+    { fulfillWithValue, rejectWithValue, getState, dispatch },
   ) => {
     var data;
     try {
       const formData = new FormData();
       const state = getState() as RootState;
       const selected_Matrix = state.admissions.selectedMatrix
-        .data as SelectedMatrix[];
+        .data as SelectedMatrix;
       const acadyear = state.admissions.acadYear;
 
-      if (!selected_Matrix[0])
+      if (!selected_Matrix)
         return rejectWithValue({ msg: "Something went wrong" });
 
+      formData.append("user_id", payload.user_id);
       formData.append("acadyear", acadyear);
-      formData.append("admissionno", selected_Matrix[0]?.admission_id);
-      formData.append("reg_no", selected_Matrix[0].reg_no);
-      formData.append("name", selected_Matrix[0].name);
-      formData.append("category", selected_Matrix[0].category);
-      formData.append("college", selected_Matrix[0].college);
-      formData.append("branch", selected_Matrix[0].branch);
-      formData.append("fname", selected_Matrix[0].father_name);
-      formData.append("phone", selected_Matrix[0].phone_no);
-      formData.append("fphone", selected_Matrix[0].father_no);
-      formData.append("mname", selected_Matrix[0].mother_name);
-      formData.append("mphone", selected_Matrix[0].mother_no);
-      formData.append("email", selected_Matrix[0].email);
+      formData.append("admissionno", selected_Matrix?.admission_id);
+      formData.append("reg_no", selected_Matrix.reg_no);
+      formData.append("name", selected_Matrix.name);
+      formData.append("category", selected_Matrix.category);
+      formData.append("college", selected_Matrix.college);
+      formData.append("branch", selected_Matrix.branch);
+      formData.append("fname", selected_Matrix.father_name);
+      formData.append("phone", selected_Matrix.phone_no);
+      formData.append("fphone", selected_Matrix.father_no);
+      formData.append("mname", selected_Matrix.mother_name);
+      formData.append("mphone", selected_Matrix.mother_no);
+      formData.append("email", selected_Matrix.email);
       formData.append("fee_fixed", payload.fee_fixed);
       formData.append("fee_quoted", payload.fee_quoted);
-      formData.append("fee_paid", selected_Matrix[0].fee_paid);
-      formData.append("paid_date", selected_Matrix[0].paid_date);
-      formData.append("remaining", selected_Matrix[0].remaining_amount);
-      formData.append("aadhar_no", selected_Matrix[0].aadhar_no);
-      formData.append("pan_no", selected_Matrix[0].pan_no);
-      formData.append("address", selected_Matrix[0].address);
-      formData.append("recommended_by", selected_Matrix[0].recommended_by);
-      formData.append("due_date", selected_Matrix[0].due_date);
-      formData.append("approved_by", selected_Matrix[0].approved_by);
-      formData.append("referred_by", selected_Matrix[0].referred_by);
+      formData.append("fee_paid", selected_Matrix.fee_paid);
+      formData.append("paid_date", selected_Matrix.paid_date);
+      formData.append("remaining", selected_Matrix.remaining_amount);
+      formData.append("aadhar_no", selected_Matrix.aadhar_no);
+      formData.append("pan_no", selected_Matrix.pan_no);
+      formData.append("address", selected_Matrix.address);
+      formData.append("recommended_by", selected_Matrix.recommended_by);
+      formData.append("due_date", selected_Matrix.due_date);
+      formData.append("approved_by", selected_Matrix.approved_by);
+      formData.append("referred_by", selected_Matrix.referred_by);
       formData.append(
         "counselled_quoted_by",
-        selected_Matrix[0].counselled_quoted_by
+        selected_Matrix.counselled_quoted_by,
       );
-      formData.append("remarks", selected_Matrix[0].remarks);
-      formData.append("percentage", selected_Matrix[0].percentage);
-      formData.append("pcm", selected_Matrix[0].pcm);
+      formData.append("remarks", selected_Matrix.remarks);
+      formData.append("percentage", selected_Matrix.percentage);
+      formData.append("pcm", selected_Matrix.pcm);
       formData.append("user_college", payload.user_college);
-      formData.append("hostel", selected_Matrix[0].hostel);
-      formData.append("exam", selected_Matrix[0].exam);
-      formData.append("rank", selected_Matrix[0].rank);
+      formData.append("hostel", selected_Matrix.hostel);
+      formData.append("exam", selected_Matrix.exam);
+      formData.append("rank", selected_Matrix.rank);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "updatestudent.php",
         method: "POST",
@@ -480,15 +482,15 @@ export const updateMatrix = createAsyncThunk<
       data = response.data;
       dispatch(
         fetchSearchClass({
-          college: selected_Matrix[0].college,
-          branch: selected_Matrix[0].branch,
-        })
+          college: selected_Matrix.college,
+          branch: selected_Matrix.branch,
+        }),
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const updateEnquiry = createAsyncThunk<
@@ -508,7 +510,7 @@ export const updateEnquiry = createAsyncThunk<
   "/admissions/updateEnquery",
   async (
     payload,
-    { fulfillWithValue, rejectWithValue, getState, dispatch }
+    { fulfillWithValue, rejectWithValue, getState, dispatch },
   ) => {
     var data;
     try {
@@ -551,7 +553,7 @@ export const updateEnquiry = createAsyncThunk<
       formData.append("recommended_by", selected_Matrix[0].recommended_by);
       formData.append(
         "counselled_quoted_by",
-        selected_Matrix[0].counselled_quoted_by
+        selected_Matrix[0].counselled_quoted_by,
       );
       formData.append("remarks", selected_Matrix[0].remarks);
       formData.append("percentage", selected_Matrix[0].percentage);
@@ -568,14 +570,14 @@ export const updateEnquiry = createAsyncThunk<
         fetchUnApprovedAdmissions({
           college: selected_Matrix[0].college,
           branch: selected_Matrix[0].branch,
-        })
+        }),
       );
       data = response.data;
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export const updateToApprove = createAsyncThunk<
@@ -595,7 +597,7 @@ export const updateToApprove = createAsyncThunk<
   "/admissions/updateToApprove",
   async (
     payload,
-    { fulfillWithValue, rejectWithValue, getState, dispatch }
+    { fulfillWithValue, rejectWithValue, getState, dispatch },
   ) => {
     var data;
     try {
@@ -631,7 +633,7 @@ export const updateToApprove = createAsyncThunk<
       formData.append("quoted_by", selected_data.quoted_by);
       formData.append(
         "counselled_quoted_by",
-        selected_data.counselled_quoted_by
+        selected_data.counselled_quoted_by,
       );
       formData.append("remarks", selected_data.remarks);
       formData.append("percentage", selected_data.percentage);
@@ -654,13 +656,13 @@ export const updateToApprove = createAsyncThunk<
         fetchUnApprovedAdmissions({
           college: selected_data.college,
           branch: selected_data.branch,
-        })
+        }),
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
     }
-  }
+  },
 );
 
 export interface BranchAdmission {
@@ -682,10 +684,26 @@ export interface BranchAdmission {
   mother_no: string;
 }
 
-export interface AddStudent
-  extends Omit<BranchAdmission, "admission_id" | "approved_by"> {
+export interface AddStudent extends Omit<
+  BranchAdmission,
+  "admission_id" | "approved_by"
+> {
   remarks: string;
   username: string;
+}
+
+export interface FeeUpdateHistory {
+  created_at: string;
+  id: string;
+  new_value: string;
+  old_value: string;
+  total_updates: number;
+  user: {
+    designation: string;
+    email: string;
+    fullname: string;
+    id: string;
+  };
 }
 
 export interface SelectedMatrix extends BranchAdmission {
@@ -710,6 +728,10 @@ export interface SelectedMatrix extends BranchAdmission {
   address: string;
   recommended_by: string;
   category: string;
+  last_updated_history: {
+    fee_paid?: FeeUpdateHistory | null;
+    fee_fixed?: FeeUpdateHistory | null;
+  };
 }
 
 export interface OverallMatrix {
@@ -757,7 +779,7 @@ interface FeesIntialState {
     error: null | string;
   };
   selectedMatrix: {
-    data: any[];
+    data: any;
     pending: boolean;
     error: null | string;
   };
@@ -858,10 +880,8 @@ export const AdmissionsSlice = createSlice({
   name: "admissions",
   initialState,
   reducers: {
-    updateSelectedMatrix(state, action) {
-      state.selectedMatrix.data = state.selectedMatrix.data.map(
-        (value: any) => ({ ...value, ...action.payload })
-      );
+    updateSelectedMatrix(state, _action) {
+      state.selectedMatrix.data = state.selectedMatrix.data;
     },
     updateFee(state, action) {
       state.fee = action.payload;
@@ -946,7 +966,7 @@ export const AdmissionsSlice = createSlice({
       state.search_class.error = action.payload?.msg;
     },
     [fetchSelectedMatrix.pending.toString()]: (state, action) => {
-      state.selectedMatrix.data = [];
+      state.selectedMatrix.data = undefined;
       state.selectedMatrix.pending = true;
     },
     [fetchSelectedMatrix.fulfilled.toString()]: (state, action) => {
@@ -955,7 +975,7 @@ export const AdmissionsSlice = createSlice({
     },
     [fetchSelectedMatrix.rejected.toString()]: (state, action) => {
       state.selectedMatrix.pending = false;
-      state.selectedMatrix.data = [];
+      state.selectedMatrix.data = undefined;
       state.selectedMatrix.error = action.payload?.msg;
       toaster.error({ title: action.payload?.msg });
     },

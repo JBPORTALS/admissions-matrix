@@ -4,6 +4,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  FeeUpdateHistory,
   fetchFeeQouted,
   fetchSearchClass,
   fetchSelectedMatrix,
@@ -25,6 +26,7 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Popover,
   Separator,
   Span,
   Text,
@@ -80,6 +82,7 @@ import { CloseButton } from "../ui/close-button";
 import { toaster } from "../ui/toaster";
 import { useUser } from "@/utils/auth";
 import { Avatar } from "../ui/avatar";
+import { formatDistanceToNow } from "date-fns";
 
 interface props {
   children: React.ReactNode;
@@ -101,14 +104,14 @@ export default function ViewAdmissionDetailsModal({
   } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
     (state) => state.admissions.selectedMatrix.data,
-  ) as SelectedMatrix[];
+  ) as SelectedMatrix;
 
   const isLoading = useAppSelector(
     (state) => state.admissions.selectedMatrix.pending,
   ) as boolean;
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
-  const matrix = selectedAdmissionDetails[0];
+  const matrix = selectedAdmissionDetails;
 
   // Get branch list
   const { data: branch_list } = trpc.retrieveBranchList.useQuery(
@@ -247,12 +250,13 @@ export default function ViewAdmissionDetailsModal({
   ]);
 
   const onsubmit = async () => {
-    if (user?.college) {
+    if (user.college && user.id) {
       await dispatch(
         updateMatrix({
           fee_fixed: state.fee_fixed,
           fee_quoted: state.fee_quoted,
           user_college: user?.college,
+          user_id: user.id,
         }),
       );
       params.college &&
@@ -923,7 +927,9 @@ export default function ViewAdmissionDetailsModal({
                     }));
                   }}
                 />
-                <FeeUpdateHistoryTrigger />
+                <FeeUpdateHistoryTrigger
+                  lastUpdatedHistory={matrix?.last_updated_history?.fee_fixed}
+                />
               </VStack>
             </Flex>
             <Box w={"full"} />
@@ -956,7 +962,9 @@ export default function ViewAdmissionDetailsModal({
                     );
                   }}
                 />
-                <FeeUpdateHistoryTrigger />
+                <FeeUpdateHistoryTrigger
+                  lastUpdatedHistory={matrix?.last_updated_history?.fee_paid}
+                />
               </VStack>
             </Flex>
 
@@ -1422,18 +1430,96 @@ export default function ViewAdmissionDetailsModal({
   );
 }
 
-const lastUpdatedHistory = {
-  id: 1,
-  user: {
-    name: "Mr. Kiran",
+const lastUpdatedHistory = [
+  {
+    id: 1,
+    user: { name: "Mr. Manjunath" },
+    new_value: 10000,
+    old_value: 15000,
+    created_at: new Date("10/02/2025"),
+    total_updates: 10,
   },
-  new_value: 10000,
-  old_value: 15000,
-  created_at: new Date("10/02/2025"),
-  total_updates: 10,
-};
+  {
+    id: 2,
+    user: { name: "Ms. Anitha" },
+    new_value: 12000,
+    old_value: 10000,
+    created_at: new Date("11/02/2025"),
+    total_updates: 9,
+  },
+  {
+    id: 3,
+    user: { name: "Mr. Ramesh" },
+    new_value: 8000,
+    old_value: 12000,
+    created_at: new Date("12/02/2025"),
+    total_updates: 8,
+  },
+  {
+    id: 4,
+    user: { name: "Mr. Suresh" },
+    new_value: 15000,
+    old_value: 8000,
+    created_at: new Date("13/02/2025"),
+    total_updates: 7,
+  },
+  {
+    id: 5,
+    user: { name: "Ms. Kavya" },
+    new_value: 9000,
+    old_value: 15000,
+    created_at: new Date("14/02/2025"),
+    total_updates: 6,
+  },
+  {
+    id: 6,
+    user: { name: "Mr. Naveen" },
+    new_value: 11000,
+    old_value: 9000,
+    created_at: new Date("15/02/2025"),
+    total_updates: 5,
+  },
+  {
+    id: 7,
+    user: { name: "Mr. Arjun" },
+    new_value: 13000,
+    old_value: 11000,
+    created_at: new Date("16/02/2025"),
+    total_updates: 4,
+  },
+  {
+    id: 8,
+    user: { name: "Ms. Deepa" },
+    new_value: 7000,
+    old_value: 13000,
+    created_at: new Date("17/02/2025"),
+    total_updates: 3,
+  },
+  {
+    id: 9,
+    user: { name: "Mr. Vinay" },
+    new_value: 14000,
+    old_value: 7000,
+    created_at: new Date("18/02/2025"),
+    total_updates: 2,
+  },
+  {
+    id: 10,
+    user: { name: "Ms. Sneha" },
+    new_value: 16000,
+    old_value: 14000,
+    created_at: new Date("19/02/2025"),
+    total_updates: 1,
+  },
+];
 
-function FeeUpdateHistoryTrigger() {
+function FeeUpdateHistoryTrigger({
+  lastUpdatedHistory,
+}: {
+  lastUpdatedHistory?: FeeUpdateHistory | null;
+}) {
+  if (!lastUpdatedHistory) return null;
+
   return (
     <HStack gap={"0"} justifyContent={"between"} w={"full"} maxW={"full"}>
       <Text
@@ -1443,12 +1529,45 @@ function FeeUpdateHistoryTrigger() {
         color={"fg.muted"}
         truncate
       >
-        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.name}</Span>· 2
-        hours ago
+        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.fullname}</Span>·
+        {formatDistanceToNow(new Date(lastUpdatedHistory.created_at), {
+          addSuffix: true,
+        })}
       </Text>
-      <Button variant={"plain"} size={"2xs"}>
-        99+
-      </Button>
+      {lastUpdatedHistory.total_updates > 1 && (
+        <FeeUpdateHistoryPopover>
+          <Button variant={"plain"} size={"2xs"}>
+            {lastUpdatedHistory.total_updates}
+          </Button>
+        </FeeUpdateHistoryPopover>
+      )}
     </HStack>
+  );
+}
+
+function FeeUpdateHistoryPopover({ children }: { children: React.ReactNode }) {
+  return (
+    <Popover.Root lazyMount unmountOnExit>
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
+      <Popover.Positioner>
+        <Popover.Content>
+          <Popover.Arrow>
+            <Popover.ArrowTip />
+          </Popover.Arrow>
+          <Popover.Header>
+            <Popover.Title fontWeight={"bold"}>Updates History</Popover.Title>
+          </Popover.Header>
+          <Popover.Body minH={"xs"} maxH={"xs"}>
+            <VStack>
+              {lastUpdatedHistory.map((item) => (
+                <HStack w={"full"} key={item.id}>
+                  <Avatar size={"xs"} fallback={item.user.name.charAt(0)} />
+                </HStack>
+              ))}
+            </VStack>
+          </Popover.Body>
+        </Popover.Content>
+      </Popover.Positioner>
+    </Popover.Root>
   );
 }
