@@ -12,7 +12,10 @@ export const COLLEGES = () => {
   ];
 };
 export const ACADYEARS = createListCollection({
-  items: [{ value: "2026", label: "2026-27" }],
+  items: [
+    { value: "2026", label: "2026-27" },
+    { value: "2025", label: "2025-26" },
+  ],
 });
 
 export const collegesOptions = createListCollection({
