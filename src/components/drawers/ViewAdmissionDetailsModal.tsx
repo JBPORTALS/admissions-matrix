@@ -14,6 +14,7 @@ import {
   updateToApprove,
 } from "@/store/admissions.slice";
 import {
+  AvatarFallback,
   Box,
   Button,
   createListCollection,
@@ -24,6 +25,9 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Separator,
+  Span,
+  Text,
   Textarea,
   useDisclosure,
   VStack,
@@ -73,9 +77,9 @@ import {
   DialogActionTrigger,
 } from "../ui/dialog";
 import { CloseButton } from "../ui/close-button";
-import { format } from "date-fns";
 import { toaster } from "../ui/toaster";
 import { useUser } from "@/utils/auth";
+import { Avatar } from "../ui/avatar";
 
 interface props {
   children: React.ReactNode;
@@ -96,11 +100,11 @@ export default function ViewAdmissionDetailsModal({
     onClose: closeDrawer,
   } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
-    (state) => state.admissions.selectedMatrix.data
+    (state) => state.admissions.selectedMatrix.data,
   ) as SelectedMatrix[];
 
   const isLoading = useAppSelector(
-    (state) => state.admissions.selectedMatrix.pending
+    (state) => state.admissions.selectedMatrix.pending,
   ) as boolean;
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
@@ -111,7 +115,7 @@ export default function ViewAdmissionDetailsModal({
     { acadYear, college: matrix?.college },
     {
       enabled: open && !!matrix?.college,
-    }
+    },
   );
 
   const dispatch = useAppDispatch();
@@ -136,7 +140,7 @@ export default function ViewAdmissionDetailsModal({
             label: b.value,
           })) ?? [],
       }),
-    [branch_list]
+    [branch_list],
   );
 
   useEffect(() => {
@@ -155,7 +159,7 @@ export default function ViewAdmissionDetailsModal({
         fetchFeeQouted({
           college: matrix?.college,
           branch: matrix?.branch,
-        })
+        }),
       ).then((action) => {
         setState({
           fee_fixed: matrix.fee_fixed ?? fee,
@@ -200,7 +204,7 @@ export default function ViewAdmissionDetailsModal({
           fetchUnApprovedAdmissions({
             branch: matrix.branch,
             college: matrix.college,
-          })
+          }),
         );
 
         await utils.searchClass.invalidate();
@@ -209,7 +213,7 @@ export default function ViewAdmissionDetailsModal({
           fetchSearchClass({
             college: matrix.college,
             branch: matrix.branch,
-          })
+          }),
         );
       }
 
@@ -231,7 +235,7 @@ export default function ViewAdmissionDetailsModal({
           remaining_amount: (
             parseInt(state.fee_fixed) - parseInt(matrix?.fee_paid)
           ).toString(),
-        })
+        }),
       );
   }, [
     state.fee_fixed,
@@ -249,7 +253,7 @@ export default function ViewAdmissionDetailsModal({
           fee_fixed: state.fee_fixed,
           fee_quoted: state.fee_quoted,
           user_college: user?.college,
-        })
+        }),
       );
       params.college &&
         params.branch &&
@@ -257,7 +261,7 @@ export default function ViewAdmissionDetailsModal({
           fetchSearchClass({
             college: params.college as string,
             branch: params.branch as string,
-          })
+          }),
         ));
       await utils.searchClass.invalidate();
       closeDrawer();
@@ -272,7 +276,7 @@ export default function ViewAdmissionDetailsModal({
         fee_fixed: state.fee_fixed,
         fee_quoted: state.fee_quoted,
         user_college: user?.college!,
-      })
+      }),
     );
     setIsApproving(false);
   }
@@ -427,9 +431,9 @@ export default function ViewAdmissionDetailsModal({
                           e.target.value == ""
                             ? 0
                             : parseInt(e.target.value) > 100
-                            ? Math.trunc(100)
-                            : parseFloat(e.target.value),
-                      })
+                              ? Math.trunc(100)
+                              : parseFloat(e.target.value),
+                      }),
                     );
                   }}
                 />
@@ -469,9 +473,9 @@ export default function ViewAdmissionDetailsModal({
                               e.target.value == ""
                                 ? 0
                                 : parseInt(e.target.value) > 100
-                                ? Math.trunc(100)
-                                : parseFloat(e.target.value),
-                          })
+                                  ? Math.trunc(100)
+                                  : parseFloat(e.target.value),
+                          }),
                         );
                       }}
                     />
@@ -617,7 +621,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ father_name: e.target.value })
+                    updateSelectedMatrix({ father_name: e.target.value }),
                   );
                 }}
               />
@@ -667,7 +671,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ mother_name: e.target.value })
+                    updateSelectedMatrix({ mother_name: e.target.value }),
                   );
                 }}
               />
@@ -904,21 +908,25 @@ export default function ViewAdmissionDetailsModal({
                   Fee Fixed
                 </Heading>
               </VStack>
-              <Input
-                w={"60%"}
-                type={"number"}
-                // readOnly={!user?.can_update_total}
-                variant={"outline"}
-                value={state.fee_fixed}
-                className={"shadow-md shadow-lightBrand"}
-                onChange={(e) => {
-                  setState((prev) => ({
-                    ...prev,
-                    fee_fixed: e.target.value,
-                  }));
-                }}
-              />
+              <VStack gap={"1"} w={"60%"}>
+                <Input
+                  w={"full"}
+                  type={"number"}
+                  // readOnly={!user?.can_update_total}
+                  variant={"outline"}
+                  value={state.fee_fixed}
+                  className={"shadow-md shadow-lightBrand"}
+                  onChange={(e) => {
+                    setState((prev) => ({
+                      ...prev,
+                      fee_fixed: e.target.value,
+                    }));
+                  }}
+                />
+                <FeeUpdateHistoryTrigger />
+              </VStack>
             </Flex>
+            <Box w={"full"} />
 
             <Flex
               w="full"
@@ -934,18 +942,25 @@ export default function ViewAdmissionDetailsModal({
                   Fee Paid
                 </Heading>
               </VStack>
-              <Input
-                min={0}
-                w={"60%"}
-                type={"number"}
-                variant={"outline"}
-                value={matrix?.fee_paid}
-                className={"shadow-md shadow-lightBrand"}
-                onChange={(e) => {
-                  dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
-                }}
-              />
+              <VStack gap={"1"} w={"60%"}>
+                <Input
+                  min={0}
+                  w={"full"}
+                  type={"number"}
+                  variant={"outline"}
+                  value={matrix?.fee_paid}
+                  className={"shadow-md shadow-lightBrand"}
+                  onChange={(e) => {
+                    dispatch(
+                      updateSelectedMatrix({ fee_paid: e.target.value }),
+                    );
+                  }}
+                />
+                <FeeUpdateHistoryTrigger />
+              </VStack>
             </Flex>
+
+            <Box w={"full"} />
 
             <Flex
               w="full"
@@ -968,7 +983,7 @@ export default function ViewAdmissionDetailsModal({
                     value={matrix?.paid_date}
                     onChange={(e) =>
                       dispatch(
-                        updateSelectedMatrix({ paid_date: e.target.value })
+                        updateSelectedMatrix({ paid_date: e.target.value }),
                       )
                     }
                   />
@@ -1026,7 +1041,7 @@ export default function ViewAdmissionDetailsModal({
                   dispatch(
                     updateSelectedMatrix({
                       remaining_amount: e.target.value,
-                    })
+                    }),
                   );
                 }}
               />
@@ -1059,7 +1074,7 @@ export default function ViewAdmissionDetailsModal({
                       dispatch(
                         updateSelectedMatrix({
                           due_date: moment(e.target.value).format("yyyy-MM-DD"),
-                        })
+                        }),
                       );
                     }}
                   />
@@ -1138,7 +1153,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ referred_by: e.target.value })
+                    updateSelectedMatrix({ referred_by: e.target.value }),
                   );
                 }}
               />
@@ -1165,7 +1180,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ recommended_by: e.target.value })
+                    updateSelectedMatrix({ recommended_by: e.target.value }),
                   );
                 }}
               />
@@ -1255,7 +1270,7 @@ export default function ViewAdmissionDetailsModal({
                   dispatch(
                     updateSelectedMatrix({
                       counselled_quoted_by: e.target.value,
-                    })
+                    }),
                   );
                 }}
               />
@@ -1404,5 +1419,36 @@ export default function ViewAdmissionDetailsModal({
         </DrawerCloseTrigger>
       </DrawerContent>
     </DrawerRoot>
+  );
+}
+
+const lastUpdatedHistory = {
+  id: 1,
+  user: {
+    name: "Mr. Kiran",
+  },
+  new_value: 10000,
+  old_value: 15000,
+  created_at: new Date("10/02/2025"),
+  total_updates: 10,
+};
+
+function FeeUpdateHistoryTrigger() {
+  return (
+    <HStack gap={"0"} justifyContent={"between"} w={"full"} maxW={"full"}>
+      <Text
+        fontSize={"2xs"}
+        maxWidth={"full"}
+        w={"full"}
+        color={"fg.muted"}
+        truncate
+      >
+        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.name}</Span>· 2
+        hours ago
+      </Text>
+      <Button variant={"plain"} size={"2xs"}>
+        99+
+      </Button>
+    </HStack>
   );
 }

@@ -3,11 +3,6 @@
 import { Breadcrumb, LinkBox, Skeleton, Table, VStack } from "@chakra-ui/react";
 import { trpc } from "@/utils/trpc-cleint";
 import Link from "next/link";
-import {
-  ProgressBar,
-  ProgressLabel,
-  ProgressRoot,
-} from "@/components/ui/progress";
 import React from "react";
 import { useUser } from "@/utils/auth";
 
