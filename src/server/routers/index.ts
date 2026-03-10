@@ -110,7 +110,46 @@ export type BusBoardingPoint = {
   amount: string;
 };
 
+export type UpdateHistory = {
+  id: string;
+  user: {
+    id: string;
+    fullname: string;
+    email: string;
+    designation: string;
+  };
+  new_value: number;
+  old_value: number;
+  created_at: string;
+};
+
 export const appRouter = router({
+  getUpdatesHistory: procedure
+    .input(
+      z.object({
+        acadyear: z.string(),
+        admissionId: z.string(),
+        type: z.enum(["fee_fixed", "fee_paid"]),
+      }),
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("acadyear", input.acadyear);
+      formData.append("admissionno", input.admissionId);
+      formData.append("type", input.type);
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievefeehistory.php",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+      return data as
+        | { total_updates: number; history: UpdateHistory[] }
+        | undefined;
+    }),
   getOverallMatrix: procedure
     .input(z.object({ acadyear: z.string(), college: z.string() }))
     .query(async ({ input }) => {
@@ -122,7 +161,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -139,7 +178,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -156,7 +195,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -172,7 +211,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -189,7 +228,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -207,7 +246,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
       console.log(data);
@@ -224,7 +263,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       // console.log(response);
       const data = await response.json();
@@ -241,7 +280,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       // console.log(response);
       const data = await response.json();
@@ -263,7 +302,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       // console.log(response);
       const data = await response.json();
@@ -275,7 +314,7 @@ export const appRouter = router({
         acadyear: z.string(),
         college: z.string(),
         branch: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -287,7 +326,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -303,7 +342,7 @@ export const appRouter = router({
         acadyear: z.string(),
         college: z.string(),
         branch: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -315,7 +354,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -330,7 +369,7 @@ export const appRouter = router({
       z.object({
         acadyear: z.string(),
         appId: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -341,7 +380,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -358,7 +397,7 @@ export const appRouter = router({
         appId: z.string(),
         boardingPointId: z.string(),
         amountFixed: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -371,7 +410,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await response.json();
@@ -392,7 +431,7 @@ export const appRouter = router({
       z.object({
         appId: z.string(),
         acadyear: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -403,7 +442,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -418,7 +457,7 @@ export const appRouter = router({
       z.object({
         acadyear: z.string(),
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -429,7 +468,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -461,7 +500,7 @@ export const appRouter = router({
         acadyear: z.string(),
         appId: z.string(),
         college: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -473,7 +512,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await response.json();
@@ -500,7 +539,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -512,7 +551,7 @@ export const appRouter = router({
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "busrouteslist.php",
       {
         method: "POST",
-      }
+      },
     );
     const data = await response.json();
 
@@ -538,7 +577,7 @@ export const appRouter = router({
         lastPoint: z.string().min(1, "Required"),
         driverName: z.string().min(1, "Required"),
         driverNumber: z.string().min(1, "Required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -551,7 +590,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
       const data = await response.json();
 
@@ -582,7 +621,7 @@ export const appRouter = router({
         routeId: z.string().min(1, "required"),
         boardingPoint: z.string().min(1, "Required"),
         amount: z.string().min(1, "Required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -594,7 +633,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
 
       return {
@@ -606,7 +645,7 @@ export const appRouter = router({
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + `busboardinglist.php`,
       {
         method: "GET",
-      }
+      },
     );
     const data = await response.json();
 
@@ -625,7 +664,7 @@ export const appRouter = router({
           `busboardinglistbyrouteid.php?route_id=${input.routeId}`,
         {
           method: "GET",
-        }
+        },
       );
       const data = await response.json();
 
@@ -644,7 +683,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -658,7 +697,7 @@ export const appRouter = router({
         routeId: z.string().min(1, "required"),
         boardingPoint: z.string().min(1, "Required"),
         amount: z.string().min(1, "Required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -671,7 +710,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
 
       return {
@@ -683,7 +722,7 @@ export const appRouter = router({
     .input(
       z.object({
         id: z.string().min(1, "required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -693,7 +732,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
 
       return {
@@ -705,7 +744,7 @@ export const appRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -715,7 +754,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
 
       return {
@@ -731,7 +770,7 @@ export const appRouter = router({
         lastPoint: z.string().min(1, "Required"),
         driverName: z.string().min(1, "Required"),
         driverNumber: z.string().min(1, "Required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -745,7 +784,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
       const data = await response.json();
 
@@ -776,7 +815,7 @@ export const appRouter = router({
           .string()
           .min(10, "Mobile number should be maximum 10 digits")
           .max(10, "Mobile number should be maximum 10 digits"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -792,7 +831,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
       const data = await response.json();
 
@@ -824,7 +863,7 @@ export const appRouter = router({
           .string()
           .min(10, "Mobile number should be maximum 10 digits")
           .max(10, "Mobile number should be maximum 10 digits"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const fd = new FormData();
@@ -841,7 +880,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: fd,
-        }
+        },
       );
       const data = await response.json();
 
@@ -864,7 +903,7 @@ export const appRouter = router({
       process.env.NEXT_PUBLIC_ADMISSIONS_URL + "hostellist.php",
       {
         method: "POST",
-      }
+      },
     );
     const data = await response.json();
 
@@ -882,7 +921,7 @@ export const appRouter = router({
         boardingPointId: z.string(),
         amountFixed: z.string(),
         amountPaid: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -896,7 +935,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -913,7 +952,7 @@ export const appRouter = router({
       z.object({
         id: z.string(),
         acadyear: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -924,7 +963,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -940,7 +979,7 @@ export const appRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -950,7 +989,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -972,7 +1011,7 @@ export const appRouter = router({
         feeFixed: z.string(),
         feePaid: z.string(),
         feeBalance: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -988,7 +1027,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await response.json();
@@ -1016,7 +1055,7 @@ export const appRouter = router({
         feePaid: z.string(),
         feeBalance: z.string(),
         createdBy: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -1034,7 +1073,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -1052,7 +1091,7 @@ export const appRouter = router({
         acadyear: z.string(),
         college: z.string(),
         branch: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -1064,7 +1103,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -1078,7 +1117,7 @@ export const appRouter = router({
       z.object({
         college: z.string(),
         acadYear: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -1089,7 +1128,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -1100,7 +1139,7 @@ export const appRouter = router({
       z.object({
         college: z.string(),
         acadYear: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const formData = new FormData();
@@ -1111,7 +1150,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await response.json();
 
@@ -1122,7 +1161,7 @@ export const appRouter = router({
       z.object({
         email: z.string().min(1, "Email required"),
         password: z.string().min(1, "Password required"),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const formData = new FormData();
@@ -1135,7 +1174,7 @@ export const appRouter = router({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       console.log(response.status);
@@ -1164,12 +1203,12 @@ export const appRouter = router({
           {
             method: "POST", // Changed to POST as you're sending form data
             body: formData,
-          }
+          },
         );
 
         if (!userResponse.ok) {
           throw new Error(
-            `User details fetch failed: ${userResponse.statusText}`
+            `User details fetch failed: ${userResponse.statusText}`,
           );
         }
 

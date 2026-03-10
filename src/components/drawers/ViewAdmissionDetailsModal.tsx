@@ -4,6 +4,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  FeeUpdateHistory,
   fetchFeeQouted,
   fetchSearchClass,
   fetchSelectedMatrix,
@@ -14,6 +15,8 @@ import {
   updateToApprove,
 } from "@/store/admissions.slice";
 import {
+  AvatarFallback,
+  Badge,
   Box,
   Button,
   createListCollection,
@@ -24,7 +27,12 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Popover,
+  Span,
+  Spinner,
+  Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -73,9 +81,10 @@ import {
   DialogActionTrigger,
 } from "../ui/dialog";
 import { CloseButton } from "../ui/close-button";
-import { format } from "date-fns";
 import { toaster } from "../ui/toaster";
 import { useUser } from "@/utils/auth";
+import { Avatar } from "../ui/avatar";
+import { format, formatDistanceToNow } from "date-fns";
 
 interface props {
   children: React.ReactNode;
@@ -96,22 +105,22 @@ export default function ViewAdmissionDetailsModal({
     onClose: closeDrawer,
   } = useDisclosure();
   const selectedAdmissionDetails = useAppSelector(
-    (state) => state.admissions.selectedMatrix.data
-  ) as SelectedMatrix[];
+    (state) => state.admissions.selectedMatrix.data,
+  ) as SelectedMatrix;
 
   const isLoading = useAppSelector(
-    (state) => state.admissions.selectedMatrix.pending
+    (state) => state.admissions.selectedMatrix.pending,
   ) as boolean;
   const acadYear = useAppSelector((state) => state.admissions.acadYear);
 
-  const matrix = selectedAdmissionDetails[0];
+  const matrix = selectedAdmissionDetails;
 
   // Get branch list
   const { data: branch_list } = trpc.retrieveBranchList.useQuery(
     { acadYear, college: matrix?.college },
     {
       enabled: open && !!matrix?.college,
-    }
+    },
   );
 
   const dispatch = useAppDispatch();
@@ -136,7 +145,7 @@ export default function ViewAdmissionDetailsModal({
             label: b.value,
           })) ?? [],
       }),
-    [branch_list]
+    [branch_list],
   );
 
   useEffect(() => {
@@ -155,7 +164,7 @@ export default function ViewAdmissionDetailsModal({
         fetchFeeQouted({
           college: matrix?.college,
           branch: matrix?.branch,
-        })
+        }),
       ).then((action) => {
         setState({
           fee_fixed: matrix.fee_fixed ?? fee,
@@ -200,7 +209,7 @@ export default function ViewAdmissionDetailsModal({
           fetchUnApprovedAdmissions({
             branch: matrix.branch,
             college: matrix.college,
-          })
+          }),
         );
 
         await utils.searchClass.invalidate();
@@ -209,7 +218,7 @@ export default function ViewAdmissionDetailsModal({
           fetchSearchClass({
             college: matrix.college,
             branch: matrix.branch,
-          })
+          }),
         );
       }
 
@@ -231,7 +240,7 @@ export default function ViewAdmissionDetailsModal({
           remaining_amount: (
             parseInt(state.fee_fixed) - parseInt(matrix?.fee_paid)
           ).toString(),
-        })
+        }),
       );
   }, [
     state.fee_fixed,
@@ -243,13 +252,14 @@ export default function ViewAdmissionDetailsModal({
   ]);
 
   const onsubmit = async () => {
-    if (user?.college) {
+    if (user.college && user.id) {
       await dispatch(
         updateMatrix({
           fee_fixed: state.fee_fixed,
           fee_quoted: state.fee_quoted,
           user_college: user?.college,
-        })
+          user_id: user.id,
+        }),
       );
       params.college &&
         params.branch &&
@@ -257,7 +267,7 @@ export default function ViewAdmissionDetailsModal({
           fetchSearchClass({
             college: params.college as string,
             branch: params.branch as string,
-          })
+          }),
         ));
       await utils.searchClass.invalidate();
       closeDrawer();
@@ -272,7 +282,7 @@ export default function ViewAdmissionDetailsModal({
         fee_fixed: state.fee_fixed,
         fee_quoted: state.fee_quoted,
         user_college: user?.college!,
-      })
+      }),
     );
     setIsApproving(false);
   }
@@ -427,9 +437,9 @@ export default function ViewAdmissionDetailsModal({
                           e.target.value == ""
                             ? 0
                             : parseInt(e.target.value) > 100
-                            ? Math.trunc(100)
-                            : parseFloat(e.target.value),
-                      })
+                              ? Math.trunc(100)
+                              : parseFloat(e.target.value),
+                      }),
                     );
                   }}
                 />
@@ -469,9 +479,9 @@ export default function ViewAdmissionDetailsModal({
                               e.target.value == ""
                                 ? 0
                                 : parseInt(e.target.value) > 100
-                                ? Math.trunc(100)
-                                : parseFloat(e.target.value),
-                          })
+                                  ? Math.trunc(100)
+                                  : parseFloat(e.target.value),
+                          }),
                         );
                       }}
                     />
@@ -617,7 +627,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ father_name: e.target.value })
+                    updateSelectedMatrix({ father_name: e.target.value }),
                   );
                 }}
               />
@@ -667,7 +677,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ mother_name: e.target.value })
+                    updateSelectedMatrix({ mother_name: e.target.value }),
                   );
                 }}
               />
@@ -904,21 +914,29 @@ export default function ViewAdmissionDetailsModal({
                   Fee Fixed
                 </Heading>
               </VStack>
-              <Input
-                w={"60%"}
-                type={"number"}
-                // readOnly={!user?.can_update_total}
-                variant={"outline"}
-                value={state.fee_fixed}
-                className={"shadow-md shadow-lightBrand"}
-                onChange={(e) => {
-                  setState((prev) => ({
-                    ...prev,
-                    fee_fixed: e.target.value,
-                  }));
-                }}
-              />
+              <VStack gap={"1"} w={"60%"}>
+                <Input
+                  w={"full"}
+                  type={"number"}
+                  // readOnly={!user?.can_update_total}
+                  variant={"outline"}
+                  value={state.fee_fixed}
+                  className={"shadow-md shadow-lightBrand"}
+                  onChange={(e) => {
+                    setState((prev) => ({
+                      ...prev,
+                      fee_fixed: e.target.value,
+                    }));
+                  }}
+                />
+                <FeeUpdateHistoryTrigger
+                  type="fee_fixed"
+                  admissionId={admissionno}
+                  lastUpdatedHistory={matrix?.last_updated_history?.fee_fixed}
+                />
+              </VStack>
             </Flex>
+            <Box w={"full"} />
 
             <Flex
               w="full"
@@ -934,18 +952,29 @@ export default function ViewAdmissionDetailsModal({
                   Fee Paid
                 </Heading>
               </VStack>
-              <Input
-                min={0}
-                w={"60%"}
-                type={"number"}
-                variant={"outline"}
-                value={matrix?.fee_paid}
-                className={"shadow-md shadow-lightBrand"}
-                onChange={(e) => {
-                  dispatch(updateSelectedMatrix({ fee_paid: e.target.value }));
-                }}
-              />
+              <VStack gap={"1"} w={"60%"}>
+                <Input
+                  min={0}
+                  w={"full"}
+                  type={"number"}
+                  variant={"outline"}
+                  value={matrix?.fee_paid}
+                  className={"shadow-md shadow-lightBrand"}
+                  onChange={(e) => {
+                    dispatch(
+                      updateSelectedMatrix({ fee_paid: e.target.value }),
+                    );
+                  }}
+                />
+                <FeeUpdateHistoryTrigger
+                  type="fee_paid"
+                  admissionId={admissionno}
+                  lastUpdatedHistory={matrix?.last_updated_history?.fee_paid}
+                />
+              </VStack>
             </Flex>
+
+            <Box w={"full"} />
 
             <Flex
               w="full"
@@ -968,7 +997,7 @@ export default function ViewAdmissionDetailsModal({
                     value={matrix?.paid_date}
                     onChange={(e) =>
                       dispatch(
-                        updateSelectedMatrix({ paid_date: e.target.value })
+                        updateSelectedMatrix({ paid_date: e.target.value }),
                       )
                     }
                   />
@@ -1026,7 +1055,7 @@ export default function ViewAdmissionDetailsModal({
                   dispatch(
                     updateSelectedMatrix({
                       remaining_amount: e.target.value,
-                    })
+                    }),
                   );
                 }}
               />
@@ -1059,7 +1088,7 @@ export default function ViewAdmissionDetailsModal({
                       dispatch(
                         updateSelectedMatrix({
                           due_date: moment(e.target.value).format("yyyy-MM-DD"),
-                        })
+                        }),
                       );
                     }}
                   />
@@ -1138,7 +1167,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ referred_by: e.target.value })
+                    updateSelectedMatrix({ referred_by: e.target.value }),
                   );
                 }}
               />
@@ -1165,7 +1194,7 @@ export default function ViewAdmissionDetailsModal({
                 className={"shadow-md shadow-lightBrand"}
                 onChange={(e) => {
                   dispatch(
-                    updateSelectedMatrix({ recommended_by: e.target.value })
+                    updateSelectedMatrix({ recommended_by: e.target.value }),
                   );
                 }}
               />
@@ -1255,7 +1284,7 @@ export default function ViewAdmissionDetailsModal({
                   dispatch(
                     updateSelectedMatrix({
                       counselled_quoted_by: e.target.value,
-                    })
+                    }),
                   );
                 }}
               />
@@ -1404,5 +1433,189 @@ export default function ViewAdmissionDetailsModal({
         </DrawerCloseTrigger>
       </DrawerContent>
     </DrawerRoot>
+  );
+}
+
+type FeeHistoryType = "fee_fixed" | "fee_paid";
+
+function FeeUpdateHistoryTrigger({
+  lastUpdatedHistory,
+  admissionId,
+  type,
+}: {
+  lastUpdatedHistory?: FeeUpdateHistory | null;
+  admissionId: string;
+  type: FeeHistoryType;
+}) {
+  if (!lastUpdatedHistory) return null;
+
+  return (
+    <HStack gap={"0"} justifyContent={"between"} w={"full"} maxW={"full"}>
+      <Text
+        fontSize={"2xs"}
+        maxWidth={"full"}
+        w={"full"}
+        color={"fg.muted"}
+        truncate
+      >
+        Updated by <Span color={"fg"}>{lastUpdatedHistory.user.fullname}</Span>
+        {" · "}
+        {formatDistanceToNow(new Date(lastUpdatedHistory.created_at), {
+          addSuffix: true,
+        })}
+      </Text>
+      {lastUpdatedHistory.total_updates > 1 && (
+        <Tooltip.Root>
+          <Tooltip.Positioner>
+            <Tooltip.Content>
+              Updates history
+              <Tooltip.Arrow>
+                <Tooltip.ArrowTip />
+              </Tooltip.Arrow>
+            </Tooltip.Content>
+          </Tooltip.Positioner>
+
+          <Tooltip.Trigger>
+            <FeeUpdateHistoryPopover type={type} admissionId={admissionId}>
+              <Button variant={"plain"} size={"2xs"}>
+                {lastUpdatedHistory.total_updates > 99
+                  ? "99+"
+                  : lastUpdatedHistory.total_updates}
+              </Button>
+            </FeeUpdateHistoryPopover>
+          </Tooltip.Trigger>
+        </Tooltip.Root>
+      )}
+    </HStack>
+  );
+}
+
+function FeeUpdateHistoryPopover({
+  children,
+  type,
+  admissionId,
+}: {
+  children: React.ReactNode;
+  admissionId: string;
+  type: FeeHistoryType;
+}) {
+  const [open, setOpen] = useState(false);
+  const acadyear = useAppSelector((state) => state.admissions.acadYear);
+
+  const { data, isLoading } = trpc.getUpdatesHistory.useQuery(
+    {
+      acadyear,
+      admissionId,
+      type,
+    },
+    { enabled: open },
+  );
+
+  return (
+    <Popover.Root
+      open={open}
+      onOpenChange={({ open }) => setOpen(open)}
+      lazyMount
+      unmountOnExit
+    >
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
+      <Popover.Positioner>
+        <Popover.Content>
+          <Popover.Arrow>
+            <Popover.ArrowTip />
+          </Popover.Arrow>
+          <Popover.Header pb={"3"}>
+            <Popover.Title fontWeight={"bold"}>Updates History</Popover.Title>
+          </Popover.Header>
+          <Popover.Body minH={"xs"} overflowY={"auto"} maxH={"xs"}>
+            {isLoading ? (
+              <VStack
+                justifyContent={"center"}
+                w={"full"}
+                alignItems={"center"}
+              >
+                <Spinner />
+              </VStack>
+            ) : (
+              <VStack w={"full"}>
+                {data?.history.map((item) => (
+                  <VStack
+                    gap={"1"}
+                    alignItems={"start"}
+                    w={"full"}
+                    key={item.id}
+                    borderBottomWidth={"thin"}
+                    borderBottomColor={"border.muted"}
+                    paddingBottom={"3"}
+                  >
+                    <HStack w={"full"} justifyContent={"space-between"}>
+                      <HStack flex={"1"}>
+                        <Avatar
+                          size={"xs"}
+                          fallback={item.user.fullname.charAt(0)}
+                        />
+                        <VStack spaceY={"-4"} alignItems={"start"}>
+                          <HStack>
+                            <Text
+                              fontWeight={"semibold"}
+                              truncate
+                              fontSize={"2xs"}
+                            >
+                              {item.user.fullname}
+                            </Text>
+                            <Badge size={"xs"}>{item.user.designation}</Badge>
+                          </HStack>
+                          <Text color={"fg.muted"} fontSize={"2xs"}>
+                            {item.user.email}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <Text fontSize={"2xs"} truncate color={"fg.muted"}>
+                        {formatDistanceToNow(
+                          new Date(
+                            format(
+                              new Date(item.created_at),
+                              "dd-MM-yyy HH:mm:ss",
+                            ),
+                          ),
+                          {
+                            addSuffix: true,
+                          },
+                        )}
+                      </Text>
+                    </HStack>
+                    <Text fontSize={"xs"} pl={"10"}>
+                      Changed from{" "}
+                      {item.old_value.toLocaleString("en-IN", {
+                        currency: "INR",
+                        currencySign: "standard",
+                        currencyDisplay: "symbol",
+                        style: "currency",
+                        maximumFractionDigits: 0,
+                      })}{" "}
+                      to{" "}
+                      {item.new_value.toLocaleString("en-IN", {
+                        currency: "INR",
+                        currencySign: "standard",
+                        currencyDisplay: "symbol",
+                        style: "currency",
+                        maximumFractionDigits: 0,
+                      })}
+                    </Text>
+                  </VStack>
+                ))}
+              </VStack>
+            )}
+          </Popover.Body>
+          <Popover.Footer pt={"3"}>
+            {data?.total_updates && (
+              <Text fontSize={"xs"} color={"fg.muted"}>
+                Total {data?.total_updates} updates
+              </Text>
+            )}
+          </Popover.Footer>
+        </Popover.Content>
+      </Popover.Positioner>
+    </Popover.Root>
   );
 }
