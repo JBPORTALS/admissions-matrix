@@ -32,6 +32,7 @@ import {
   Spinner,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -1464,13 +1465,26 @@ function FeeUpdateHistoryTrigger({
         })}
       </Text>
       {lastUpdatedHistory.total_updates > 1 && (
-        <FeeUpdateHistoryPopover type={type} admissionId={admissionId}>
-          <Button variant={"plain"} size={"2xs"}>
-            {lastUpdatedHistory.total_updates > 99
-              ? "99+"
-              : lastUpdatedHistory.total_updates}
-          </Button>
-        </FeeUpdateHistoryPopover>
+        <Tooltip.Root>
+          <Tooltip.Positioner>
+            <Tooltip.Content>
+              Updates history
+              <Tooltip.Arrow>
+                <Tooltip.ArrowTip />
+              </Tooltip.Arrow>
+            </Tooltip.Content>
+          </Tooltip.Positioner>
+
+          <Tooltip.Trigger>
+            <FeeUpdateHistoryPopover type={type} admissionId={admissionId}>
+              <Button variant={"plain"} size={"2xs"}>
+                {lastUpdatedHistory.total_updates > 99
+                  ? "99+"
+                  : lastUpdatedHistory.total_updates}
+              </Button>
+            </FeeUpdateHistoryPopover>
+          </Tooltip.Trigger>
+        </Tooltip.Root>
       )}
     </HStack>
   );
