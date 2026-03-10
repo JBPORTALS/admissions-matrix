@@ -1542,7 +1542,11 @@ function FeeUpdateHistoryPopover({
                         />
                         <VStack spaceY={"-4"} alignItems={"start"}>
                           <HStack>
-                            <Text fontWeight={"semibold"} fontSize={"2xs"}>
+                            <Text
+                              fontWeight={"semibold"}
+                              truncate
+                              fontSize={"2xs"}
+                            >
                               {item.user.fullname}
                             </Text>
                             <Badge size={"xs"}>{item.user.designation}</Badge>
@@ -1552,7 +1556,7 @@ function FeeUpdateHistoryPopover({
                           </Text>
                         </VStack>
                       </HStack>
-                      <Text fontSize={"2xs"} color={"fg.muted"}>
+                      <Text fontSize={"2xs"} truncate color={"fg.muted"}>
                         {formatDistanceToNow(
                           new Date(
                             format(
@@ -1560,6 +1564,9 @@ function FeeUpdateHistoryPopover({
                               "dd-MM-yyy HH:mm:ss",
                             ),
                           ),
+                          {
+                            addSuffix: true,
+                          },
                         )}
                       </Text>
                     </HStack>
